@@ -16,8 +16,13 @@ class RNN(nn.Module):
 
 		# define linear connection units in the network
 		self.in2hid = nn.Linear(input_size + hidden_size, hidden_size)
-		self.in2out = nn.Linear(input_size + hidden_size, output_size)
-		self.outact = nn.Sigmoid()
+		self.hid2out = nn.Linear(hidden_size, output_size)
+		
+		# RNN hidden layer typically activated with Tanh activation function
+		self.hid_act = nn.Tanh()
+		
+		# activate output with ReLU so that outputs always positive
+		self.out_act = nn.ReLU()
 	
 	def forward(self, inputs, hidden):
 		"""forward propogation function for RNN - parameters
@@ -30,9 +35,40 @@ class RNN(nn.Module):
 		combined_in = torch.cat((inputs, hidden), 1)
 		
 		# yield values for hidden layer and the output layer
-		hidden = self.in2hid(combined_in)
-		output = self.outact(self.in2out(combined_in))
+		hidden = self.hid_act(self.in2hid(combined_in))
+		output = self.out_act(self.hid2out(hidden))
 	
 		# return information for hidden and output layer
 		return (output, hidden)
+
+
+if __name__ == '__main__':
+	"""Used for simple testing"""
 	
+	# instantiate the RNN
+	rnn = RNN(2, 5, 2)
+	
+	# instantiate all needed variables for running RNN
+	r = 50.0
+	theta = 0.0
+	hidden = torch.zeros(1, rnn.hidden_size)
+	all_pos = []
+	dr = 0.0
+	dt = 0.0
+	while(r > 0):
+		print("Current R: {0}".format(str(r)))
+		rnn_pos = (r, theta)
+		all_pos.append(rnn_pos)
+		rnn_input = [[dr, dt]]
+		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden)
+		dr, dt = outs.data[0][0], outs.data[0][1]
+		print(dr)
+		print(dt)
+		input()
+		r -= dr
+		if(r <= 0):
+			r = 0
+		theta += dt
+		theta %= 2.0
+	all_pos.append([[r, theta]])
+	print(all_pos)
