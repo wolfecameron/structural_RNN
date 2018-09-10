@@ -129,11 +129,12 @@ def train_rnn(rnn, radius, num_it, dr_target, dt_target):
 			curr_it += 1	
 		
 		# run update on rnn parameters
+		
 		print(outs)
 		loss = criterion(outs, target_tensor)
 		loss.backward(retain_graph=True)
 		optimizer.step()				
-
+		
 		# increment total iterations
 		total_it += curr_it
 
@@ -142,4 +143,4 @@ def train_rnn(rnn, radius, num_it, dr_target, dt_target):
 if __name__ == '__main__':
 	"""main loop to run code"""
 
-	main(4, 4, 2, 50)
+	main(4, 8, 2, 50)
