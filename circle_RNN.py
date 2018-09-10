@@ -35,9 +35,9 @@ class RNN(nn.Module):
 		combined_in = torch.cat((inputs, hidden), 1)
 		
 		# yield values for hidden layer and the output layer
-		hidden = self.hid_act(self.in2hid(combined_in))
+		hidden = self.in2hid(combined_in)
 		output = self.out_act(self.hid2out(hidden))
-	
+		
 		# return information for hidden and output layer
 		return (output, hidden)
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 	"""Used for simple testing"""
 	
 	# instantiate the RNN
-	rnn = RNN(2, 5, 2)
+	rnn = RNN(4, 4, 2)
 	
 	# instantiate all needed variables for running RNN
 	r = 50.0
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 		print("Current R: {0}".format(str(r)))
 		rnn_pos = (r, theta)
 		all_pos.append(rnn_pos)
-		rnn_input = [[dr, dt]]
+		rnn_input = [[r, theta, dr, dt]]
 		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden)
 		dr, dt = outs.data[0][0], outs.data[0][1]
 		print(dr)
