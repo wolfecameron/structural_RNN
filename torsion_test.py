@@ -16,8 +16,8 @@ def main(num_in, num_hid, num_out, radius):
 	
 	# train the rnn
 	training_iterations = 20000
-	target_dr = 1.0
-	target_dt = .5
+	target_dr = .1
+	target_dt = .1
 	rnn = train_rnn(rnn, radius, training_iterations, target_dr, target_dt)
 	
 	
