@@ -22,7 +22,7 @@ def main(num_in, num_hid, num_out, radius):
 	
 	
 	# get output of the RNN
-	max_t = 200
+	max_t = 1500
 	positions = run_rnn(rnn, radius, max_t)
 	
 	print(positions)   

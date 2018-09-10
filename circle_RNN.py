@@ -22,7 +22,7 @@ class RNN(nn.Module):
 		self.hid_act = nn.Tanh()
 		
 		# activate output with ReLU so that outputs always positive
-		self.out_act = nn.ReLU()
+		self.out_act = nn.Sigmoid()
 	
 	def forward(self, inputs, hidden):
 		"""forward propogation function for RNN - parameters
