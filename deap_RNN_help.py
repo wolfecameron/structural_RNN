@@ -40,8 +40,59 @@ def inject_weights(rnn, w1, w2):
 	w2 = np.reshape(w2, w2_shape)
 	
 	# set weights within the rnn equal to w1 and w2
-	rnn.in2hid.weight.data = torch.from_numpy(w1)
-	rnn.hid2out.weight.data = torch.from_numpy(w2)
+	# types of weights must be float to avoid error with double
+	rnn.in2hid.weight.data = torch.from_numpy(w1).float()
+	rnn.hid2out.weight.data = torch.from_numpy(w2).float()
 
 	# return the rnn with newly set weights
 	return rnn
+
+def get_rnn_output(rnn, radius, max_it, verbose=False):
+	"""takes rnn with current weights and gets all outputs
+	for the associated output circle
+		
+
+	Parameters:
+	rnn -- the rnn being used
+	max_it -- the maximum number of discrete points in the helical shape
+	"""
+	
+	# initialize all tracking values that are needed
+	# to create a structure with the rnn
+	r = radius
+	theta = 0.0
+	hidden = torch.zeros(1, rnn.hidden_size)
+	all_positions = []
+	dr = 0.0
+	dt = 0.0
+	curr_t = 0 # track current t so that it does not exceed max
+
+	# run rnn until candidate structure reaches the origin
+	while (r > 0 and curr_t < max_it):
+		# add current position into structure history
+		rnn_pos = (r, theta)
+		all_positions.append(rnn_pos)
+
+		# get input and activate rnn at current timestep
+		rnn_input = [[r, theta, dr, dt]]
+		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden)
+		dr, dt = outs.data[0][0].item(), outs.data[0][1].item()
+
+		# print information
+		if verbose:
+			print("Current R: {0}".format(str(r)))
+			print("dR: {0}".format(str(dr)))
+			print("dT: {0}".format(str(dt)))
+
+		# update the current position of the structure
+		r -= dr
+		theta += dt
+		theta = theta % 2.0
+
+		# increment the current time step
+		curr_t += 1
+
+	# append the last position into the list
+	all_positions.append((r, theta))
+
+	return all_positions

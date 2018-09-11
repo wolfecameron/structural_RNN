@@ -18,9 +18,12 @@ called and edited from a central location"""
 N_IN=4 
 N_HID=15
 N_OUT=2
+RADIUS = 50.0
+MAX_POINTS = 200 # maximum num of discrete points in output structure
 weights=(1.0,)
 INIT_WINDOW=.5
 POP_SIZE=100
+N_GEN=1000
 
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT)
