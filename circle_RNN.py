@@ -47,7 +47,9 @@ if __name__ == '__main__':
 	
 	# instantiate the RNN
 	rnn = RNN(4, 4, 2)
-	
+	print(rnn.in2hid.weight.data.numpy().shape)	
+	print(rnn.hid2out.weight.data.numpy().shape)
+	'''	
 	# instantiate all needed variables for running RNN
 	r = 50.0
 	theta = 0.0
@@ -72,3 +74,4 @@ if __name__ == '__main__':
 		theta %= 2.0
 	all_pos.append([[r, theta]])
 	print(all_pos)
+	'''
