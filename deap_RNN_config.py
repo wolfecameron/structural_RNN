@@ -4,6 +4,7 @@ to create circular/spiral structures
 
 # NOTE: evaluation must be imported as rnn_evaluation
 
+import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
 
@@ -41,7 +42,7 @@ toolbox.register("individual", tools.initRepeat, creator.Individual,
 toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=POP_SIZE)
 
 # register all functions needed for evolution in the toolbox
-toolbox.register("evaluate", rnn_evaluation)
+#toolbox.register("evaluate", rnn_evaluation)
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
 toolbox.register("select", tools.selTournament, tournsize=3)
