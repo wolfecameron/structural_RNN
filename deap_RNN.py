@@ -13,9 +13,6 @@ from vis_structs import vis_coil
 # import toolbox from config file
 toolbox = get_tb()
 
-# instantiate the RNN that will be used to get fitnesses
-rnn = RNN(N_IN, N_HID, N_OUT)
-
 # instantiate the population
 pop = toolbox.population()
 
@@ -26,6 +23,7 @@ for g in range(N_GEN):
 	# get output for every individual in population and store in a list
 	all_outputs = []
 	for ind in pop:
+		rnn = RNN(N_IN, N_HID, N_OUT)
 		w1, w2 = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 		rnn = inject_weights(rnn, w1, w2)
 		output = get_rnn_output(rnn, RADIUS, MAX_POINTS)
@@ -61,8 +59,10 @@ for g in range(N_GEN):
 
 # view results of the evolution
 for count, ind in enumerate(pop):
+	rnn = RNN(N_IN, N_HID, N_OUT)
 	w1, w2 = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 	rnn = inject_weights(rnn, w1, w2)
 	output_positions = get_rnn_output(rnn, RADIUS, MAX_POINTS)
+	print(output_positions)
 	vis_coil(output_positions)
 	input("Now viewing individual {0}".format(str(count)))

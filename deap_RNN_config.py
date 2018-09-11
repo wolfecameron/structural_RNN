@@ -21,10 +21,10 @@ N_OUT=2
 RADIUS = 50.0
 MAX_POINTS = 200 # maximum num of discrete points in output structure
 weights=(-1.0,)
-MUTPB = .1
-CXPB = .03
+MUTPB = .15
+CXPB = .05
 INIT_WINDOW=.5
-POP_SIZE=100
+POP_SIZE=50
 N_GEN=1000
 
 # total number of weights present in RNN

@@ -2,6 +2,8 @@
 the structural rnn
 """
 
+import numpy as np
+
 def specified_change_eval(position_list):
 	"""evaluates positions in the list based on the closeness
 	of each pair of adjacent points to a desired change in theta
@@ -21,8 +23,8 @@ def specified_change_eval(position_list):
 	for index in range(len(position_list) - 1):
 		curr_pos = position_list[index]
 		next_pos = position_list[index + 1]
-		total_diff += abs(target_diff_r - abs(curr_pos[0] - next_pos[0]))
-		total_diff += abs(target_diff_theta - abs(curr_pos[1] - next_pos[1]))
+		total_diff += np.square(target_diff_r - abs(curr_pos[0] - next_pos[0]))
+		total_diff += np.square(target_diff_theta - abs(curr_pos[1] - next_pos[1]))
 	
 	return total_diff, 
 	

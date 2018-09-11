@@ -35,7 +35,7 @@ class RNN(nn.Module):
 		combined_in = torch.cat((inputs, hidden), 1)
 		
 		# yield values for hidden layer and the output layer
-		hidden = self.in2hid(combined_in)
+		hidden = self.hid_act(self.in2hid(combined_in))
 		output = self.out_act(self.hid2out(hidden))
 		
 		# return information for hidden and output layer
