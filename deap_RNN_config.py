@@ -8,7 +8,7 @@ import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
 
-
+from deap_RNN_evals import specified_change_eval as rnn_evaluation
 
 
 """The below contains all of the deap configuration used for CPPN so that it can be
@@ -20,7 +20,7 @@ N_HID=15
 N_OUT=2
 RADIUS = 50.0
 MAX_POINTS = 200 # maximum num of discrete points in output structure
-weights=(1.0,)
+weights=(-1.0,)
 MUTPB = .25
 CXPB = .1
 INIT_WINDOW=.5
@@ -47,7 +47,7 @@ toolbox.register("individual", tools.initRepeat, creator.Individual,
 toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=POP_SIZE)
 
 # register all functions needed for evolution in the toolbox
-#toolbox.register("evaluate", rnn_evaluation)
+toolbox.register("evaluate", rnn_evaluation)
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
 toolbox.register("select", tools.selTournament, tournsize=3)

@@ -2,8 +2,10 @@
 structures - uses deap to evolve sets of weights that are inputted into RNN to yield output
 """
 
+import numpy as np
+
 from circle_RNN import RNN
-from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, RADIUS, MAX_POINTS. POP_SIZE
+from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, RADIUS, MAX_POINTS, POP_SIZE
 from deap_RNN_config import MUTPB, CXPB
 from deap_RNN_help import list_to_matrices, inject_weights, get_rnn_output
 
@@ -28,10 +30,13 @@ for g in range(N_GEN):
 		all_outputs.append(get_rnn_output(rnn, RADIUS, MAX_POINTS))  
 	
 	# get fitnesses from each of the outputs
-	fits = toolbox.map(all_outputs, toolbox.evaluate)
+	fits = []
+	for out in all_outputs:
+		fits.append(toolbox.evaluate(out))
+	#fits = toolbox.map(all_outputs, toolbox.evaluate)
 	
 	# assign fitness to individuals
-	for ind. fit in zip(pop, fits):
+	for ind, fit in zip(pop, fits):
 		ind.fitness.values = fit
 	
 	# perform selection on the population to maximize fitness
@@ -44,7 +49,8 @@ for g in range(N_GEN):
 			toolbox.mutate(ind)
 			del ind.fitness.values
 	
-	for child, child2 in zip(pop[::2], pop[1::2]):
+	for child1, child2 in zip(pop[::2], pop[1::2]):
 		if np.random.uniform() <= CXPB:
 			toolbox.mate(child1, child2)
-			del mutant.fitness.values
+			del child1.fitness.values
+			del child2.fitness.values
