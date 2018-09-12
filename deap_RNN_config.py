@@ -25,7 +25,7 @@ MUTPB = .15
 CXPB = .05
 INIT_WINDOW=.5
 POP_SIZE=50
-N_GEN=500
+N_GEN=15
 
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT

@@ -60,8 +60,8 @@ for g in range(N_GEN):
 # view results of the evolution
 for count, ind in enumerate(pop):
 	rnn = RNN(N_IN, N_HID, N_OUT)
-	w1, w2 = list_to_matrices(ind, N_IN, N_HID, N_OUT)
-	rnn = inject_weights(rnn, w1, w2)
+	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
+	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	output_positions = get_rnn_output(rnn, RADIUS, MAX_POINTS)
 	print(output_positions)
 	vis_coil(output_positions)
