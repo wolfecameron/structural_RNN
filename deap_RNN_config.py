@@ -16,7 +16,7 @@ called and edited from a central location"""
 
 # constants used for deap configuration
 N_IN=4 
-N_HID=10
+N_HID=5
 N_OUT=2
 RADIUS = 50.0
 MAX_POINTS = 200 # maximum num of discrete points in output structure
@@ -25,10 +25,10 @@ MUTPB = .15
 CXPB = .05
 INIT_WINDOW=.5
 POP_SIZE=50
-N_GEN=1000
+N_GEN=500
 
 # total number of weights present in RNN
-TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT)
+TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
 
 #create types needed for deap
 creator.create("FitnessMax", base.Fitness, weights=weights)

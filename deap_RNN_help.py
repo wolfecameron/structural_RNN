@@ -17,15 +17,21 @@ def list_to_matrices(weight_list, num_in, num_hid, num_out):
 	# define size of first weight matrix
 	# size of second weight matrix follows from this
 	w1_size = (num_in + num_hid)*num_hid
-
+	w1_bias_size = num_hid
+	w2_size = (num_hid*num_out)
+	w2_bias_size = num_out
+	
 	# separate each of the weight into separate numpy arrays
 	# resized after - returned now as 1D arrays
 	w1 = np.array(weight_list[: w1_size], copy=True)
-	w2 = np.array(weight_list[w1_size:], copy=True)
+	w1_bias = np.array(weight_list[w1_size: (w1_size + w1_bias_size)], copy=True)
+	w2 = np.array(weight_list[(w1_size + w1_bias_size): (w1_size + w1_bias_size + w2_size)],
+			copy=True)
+	w2_bias = np.array(weight_list[(w1_size + w1_bias_size + w2_size): ], copy=True)
+	
+	return (w1, w1_bias, w2, w2_bias)
 
-	return (w1, w2)
-
-def inject_weights(rnn, w1, w2):
+def inject_weights(rnn, w1, w1_bias, w2, w2_bias):
 	"""method that takes a pytorch rnn and sets the
 	weights of its two linear units equal to w1 and 
 	w2 so that their fitness can be tested with the RNN
@@ -33,16 +39,34 @@ def inject_weights(rnn, w1, w2):
 	
 	# find needed shapes of weight matrices
 	w1_shape = rnn.in2hid.weight.data.numpy().shape
+	w1_bias_shape = rnn.in2hid.bias.data.numpy().shape
 	w2_shape = rnn.hid2out.weight.data.numpy().shape
-	
+	w2_bias_shape = rnn.hid2out.bias.data.numpy().shape	
+
 	# reshape matrices to the proper shape
 	w1 = np.reshape(w1, w1_shape)
+	w1_bias = np.reshape(w1_bias, w1_bias_shape)
 	w2 = np.reshape(w2, w2_shape)
+	w2_bias = np.reshape(w2_bias, w2_bias_shape)
+	
+	# convert numpy arrays to tensors
+	w1 = torch.from_numpy(w1).float()
+	w1_bias = torch.from_numpy(w1_bias).float()
+	w2 = torch.from_numpy(w2).float()
+	w2_bias = torch.from_numpy(w2_bias).float()
 	
 	# set weights within the rnn equal to w1 and w2
 	# types of weights must be float to avoid error with double
-	rnn.in2hid.weight.data = torch.from_numpy(w1).float()
-	rnn.hid2out.weight.data = torch.from_numpy(w2).float()
+	rnn.in2hid.weight.data = w1
+	rnn.in2hid.bias.data = w1_bias
+	rnn.hid2out.weight.data = w2
+	rnn.hid2out.bias.data = w2_bias
+	
+	# set all tensors in the state array equal to new weights
+	rnn.state_dict()['in2hid.weight'].copy_(w1)
+	rnn.state_dict()['in2hid.bias'].copy_(w1_bias)
+	rnn.state_dict()['hid2out.weight'].copy_(w2)
+	rnn.state_dict()['hid2out.bias'].copy_(w2_bias)
 
 	# return the rnn with newly set weights
 	return rnn

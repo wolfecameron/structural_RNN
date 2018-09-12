@@ -24,8 +24,8 @@ for g in range(N_GEN):
 	all_outputs = []
 	for ind in pop:
 		rnn = RNN(N_IN, N_HID, N_OUT)
-		w1, w2 = list_to_matrices(ind, N_IN, N_HID, N_OUT)
-		rnn = inject_weights(rnn, w1, w2)
+		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
+		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 		output = get_rnn_output(rnn, RADIUS, MAX_POINTS)
 		all_outputs.append(output)  
 	
@@ -65,4 +65,4 @@ for count, ind in enumerate(pop):
 	output_positions = get_rnn_output(rnn, RADIUS, MAX_POINTS)
 	print(output_positions)
 	vis_coil(output_positions)
-	input("Now viewing individual {0}".format(str(count)))
+	print("Now viewing individual {0}".format(str(count)))
