@@ -19,20 +19,21 @@ N_IN=4
 N_HID=5
 N_OUT=2
 RADIUS = 50.0
-MAX_POINTS = 200 # maximum num of discrete points in output structure
-weights=(-1.0,)
+MAX_POINTS = 50 # maximum num of discrete points in output structure
+weights=(-1.0, -1.0)
 MUTPB = .15
 CXPB = .05
-INIT_WINDOW=.5
+INIT_WINDOW=.1
 POP_SIZE=50
-N_GEN=15
+N_GEN=150
+
 
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
 
 #create types needed for deap
-creator.create("FitnessMax", base.Fitness, weights=weights)
-creator.create("Individual", list, fitness=creator.FitnessMax)
+creator.create("FitnessMulti", base.Fitness, weights=weights)
+creator.create("Individual", list, fitness=creator.FitnessMulti)
 
 # initialize the toolbox
 toolbox = base.Toolbox()
@@ -50,7 +51,8 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=POP
 toolbox.register("evaluate", rnn_evaluation)
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-toolbox.register("select", tools.selTournament, tournsize=3)
+#toolbox.register("select", tools.selTournament, tournsize=3)
+toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", futures.map)
 
 

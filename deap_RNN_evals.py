@@ -11,11 +11,11 @@ def specified_change_eval(position_list):
 	match a certain change in theta and r
 	"""
 	
+	'''
 	# define target values for change in r and theta
 	target_diff_r = 2.0
 	target_diff_theta = .25
 	
-	'''
 	# keep running total of the amount of difference from target
 	total_diff = 0.0
 
@@ -24,24 +24,21 @@ def specified_change_eval(position_list):
 	for index in range(len(position_list) - 1):
 		curr_pos = position_list[index]
 		next_pos = position_list[index + 1]
-		total_diff += np.square(target_diff_r - abs(curr_pos[0] - next_pos[0]))
-		if(next_pos[1] > curr_pos[1]):
-			total_diff += np.square(target_diff_theta - (next_pos[1] - curr_pos[1]))
-		else:
-			total_diff += np.square(target_diff_theta - ((next_pos[1] + 2) - curr_pos[1]))
+		total_diff += np.square(target_diff_r - (curr_pos[0] - next_pos[0]))
+		total_diff += np.square(target_diff_theta - (next_pos[1] - curr_pos[1]))
+
 	
 	return total_diff, 
 	'''
-	
-	center = position_list[-1]
-	prev = position_list[-2]
-	r_diff = np.square(target_diff_r - (prev[0] - center[0]))/target_diff_r
-	if(center[1] > prev[1]):
-		theta_diff = np.square(target_diff_theta - (center[0] - prev[1]))/target_diff_theta
-	else:
-		theta_diff = np.square(target_diff_theta - ((2 + center[0]) - prev[1]))/target_diff_theta
-	
-	return ((r_diff + theta_diff),)
-	
+	total_diff_theta = 0.0
+	total_diff_r = 0.0
+	for prev, nxt in zip(position_list[::2], position_list[1::2]):
+		delta_theta = nxt[1] - prev[1]
+		total_diff_theta += np.square(.1 - delta_theta)	
+		delta_r = prev[0] - nxt[0]
+		total_diff_r += np.square(1.0 - delta_r)
+			
+
+	return (total_diff_theta, total_diff_r)
 	
 		 

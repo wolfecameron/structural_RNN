@@ -111,12 +111,13 @@ def get_rnn_output(rnn, radius, max_it, verbose=False):
 		# update the current position of the structure
 		r -= dr
 		theta += dt
-		theta = theta % 2.0
 
 		# increment the current time step
 		curr_t += 1
 
 	# append the last position into the list
+	if(r < 0):
+		r = 0
 	all_positions.append((r, theta))
 
 	return all_positions

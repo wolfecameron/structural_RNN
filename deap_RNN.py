@@ -3,6 +3,9 @@ structures - uses deap to evolve sets of weights that are inputted into RNN to y
 """
 
 import numpy as np
+import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
 
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, RADIUS, MAX_POINTS, POP_SIZE
@@ -15,6 +18,9 @@ toolbox = get_tb()
 
 # instantiate the population
 pop = toolbox.population()
+
+# keep track of fitnesses to graph over time
+avg_fits = []
 
 # begin the evolutionary loop
 for g in range(N_GEN):
@@ -33,8 +39,10 @@ for g in range(N_GEN):
 	fits = []
 	for out in all_outputs:
 		fits.append(toolbox.evaluate(out))
-	#fits = toolbox.map(all_outputs, toolbox.evaluate)
-	
+	# get average fitness
+	#fit_np = np.array(fits)
+	#avg_fits.append(np.mean(fit_np))
+		
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
 		ind.fitness.values = fit
@@ -57,12 +65,15 @@ for g in range(N_GEN):
 				del child1.fitness.values
 				del child2.fitness.values
 
+# plot average fitnesses for each generation
+#plt.plot(avg_fits)
+#plt.show()
+
 # view results of the evolution
 for count, ind in enumerate(pop):
 	rnn = RNN(N_IN, N_HID, N_OUT)
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	output_positions = get_rnn_output(rnn, RADIUS, MAX_POINTS)
-	print(output_positions)
 	vis_coil(output_positions)
 	print("Now viewing individual {0}".format(str(count)))
