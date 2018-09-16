@@ -8,7 +8,7 @@ import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
 
-from deap_RNN_evals import specified_change_eval as rnn_evaluation
+from deap_RNN_evals import changes_zerodist_eval as rnn_evaluation
 
 
 """The below contains all of the deap configuration used for CPPN so that it can be

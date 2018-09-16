@@ -37,7 +37,7 @@ def specified_change_eval(position_list):
 	# find the total differences from the target values
 	total_diff_theta = 0.0
 	total_diff_r = 0.0
-	for prev, nxt in zip(position_list[::2], position_list[1::2]):
+	for prev, nxt in zip(position_list[:], position_list[1:]):
 		delta_theta = nxt[1] - prev[1]
 		total_diff_theta += np.square(.1 - delta_theta)	
 		delta_r = prev[0] - nxt[0]
@@ -46,4 +46,28 @@ def specified_change_eval(position_list):
 	
 	return (total_diff_theta*total_diff_r, )
 	
-		 
+def changes_zerodist_eval(position_list):
+	"""evaluates a torsional spring both based on minimizing
+	the size of the changes in r and theta and reaching the
+	origin before reaching the maximum number of points
+	"""
+	
+	# track total differences in theta/r
+	total_diff = 0.0
+	total_thick = 0.0
+	
+	# go through each pair of points and find the change in r/theta
+	for prev, nxt in zip(position_list[:], position_list[1:]):
+		delta_theta = np.square(nxt[1] - prev[1])
+		delta_r = np.square(prev[0] - nxt[0])
+		# combine values of r and theta changes
+		total_diff += (delta_theta + delta_r)
+		total_thick += nxt[2]	
+
+	# find the final position of the spring
+	# want this to be as close to 0 as possible
+	final_r = position_list[-1][0]
+	
+	# return product of the two things being minimized
+	# two separate objectives not needed because there is no trade off
+	return (total_diff*total_thick*final_r, )

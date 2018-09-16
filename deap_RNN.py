@@ -36,9 +36,14 @@ for g in range(N_GEN):
 		all_outputs.append(output)  
 	
 	# get fitnesses from each of the outputs
-	fits = []
+	fits = toolbox.map(toolbox.evaluate, all_outputs)
+	
+	# get average fit and append into running list
+	#avg_fits.append(np.mean(np.array(fits)))
+	'''
 	for out in all_outputs:
 		fits.append(toolbox.evaluate(out))
+	'''
 	# get average fitness
 	#fit_np = np.array(fits)
 	#avg_fits.append(np.mean(fit_np))
