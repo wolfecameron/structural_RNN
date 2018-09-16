@@ -30,6 +30,11 @@ def specified_change_eval(position_list):
 	
 	return total_diff, 
 	'''
+	# define the target values
+	target_r = 1.0
+	target_theta = .1
+
+	# find the total differences from the target values
 	total_diff_theta = 0.0
 	total_diff_r = 0.0
 	for prev, nxt in zip(position_list[::2], position_list[1::2]):
@@ -38,7 +43,7 @@ def specified_change_eval(position_list):
 		delta_r = prev[0] - nxt[0]
 		total_diff_r += np.square(1.0 - delta_r)
 			
-
-	return (total_diff_theta, total_diff_r)
+	
+	return (total_diff_theta*total_diff_r, )
 	
 		 

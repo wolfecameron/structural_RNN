@@ -16,16 +16,16 @@ called and edited from a central location"""
 
 # constants used for deap configuration
 N_IN=4 
-N_HID=5
+N_HID=15
 N_OUT=2
 RADIUS = 50.0
 MAX_POINTS = 50 # maximum num of discrete points in output structure
-weights=(-1.0, -1.0)
+weights=(-1.0, )
 MUTPB = .15
 CXPB = .05
 INIT_WINDOW=.1
-POP_SIZE=50
-N_GEN=150
+POP_SIZE=100
+N_GEN=20
 
 
 # total number of weights present in RNN
@@ -51,8 +51,8 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=POP
 toolbox.register("evaluate", rnn_evaluation)
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-#toolbox.register("select", tools.selTournament, tournsize=3)
-toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
+toolbox.register("select", tools.selTournament, tournsize=3)
+#toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", futures.map)
 
 
