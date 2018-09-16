@@ -18,7 +18,7 @@ def vis_coil(all_pts):
 	
 	# set title and graph the points	
 	plt.title("Polar Graph of Torsional Spring")
-	plt.plot([np.pi*(t[1] % 2.0) for t in all_pts], [t[0] for t in all_pts])
+	plt.plot([np.pi*(t[1] % 2.0) for t in all_pts], [t[0] for t in all_pts], linewidth=2.5)
 	plt.show()
 
 if __name__ == '__main__':

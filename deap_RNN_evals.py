@@ -32,7 +32,7 @@ def specified_change_eval(position_list):
 	'''
 	# define the target values
 	target_r = 1.0
-	target_theta = .1
+	target_theta = .05
 
 	# find the total differences from the target values
 	total_diff_theta = 0.0
