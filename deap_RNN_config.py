@@ -15,17 +15,19 @@ from deap_RNN_evals import specified_change_eval as rnn_evaluation
 called and edited from a central location"""
 
 # constants used for deap configuration
-N_IN=4 
+N_IN=5 
 N_HID=15
-N_OUT=2
+N_OUT=3
 RADIUS = 50.0
-MAX_POINTS = 50 # maximum num of discrete points in output structure
+MAX_POINTS = 200 # maximum num of discrete points in output structure
 weights=(-1.0, )
 MUTPB = .15
 CXPB = .05
 INIT_WINDOW=.1
 POP_SIZE=100
 N_GEN=20
+MIN_THICKNESS = .5
+MAX_THICKNESS = 5.5
 
 
 # total number of weights present in RNN

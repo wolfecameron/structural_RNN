@@ -11,7 +11,7 @@ from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, RADIUS, MAX_POINTS, POP_SIZE
 from deap_RNN_config import MUTPB, CXPB
 from deap_RNN_help import list_to_matrices, inject_weights, get_rnn_output
-from vis_structs import vis_coil
+from vis_structs import vis_spring_with_thickness
 
 # import toolbox from config file
 toolbox = get_tb()
@@ -75,5 +75,5 @@ for count, ind in enumerate(pop):
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	output_positions = get_rnn_output(rnn, RADIUS, MAX_POINTS)
-	vis_coil(output_positions)
+	vis_spring_with_thickness(output_positions)
 	print("Now viewing individual {0}".format(str(count)))
