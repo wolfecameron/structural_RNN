@@ -71,3 +71,27 @@ def changes_zerodist_eval(position_list):
 	# return product of the two things being minimized
 	# two separate objectives not needed because there is no trade off
 	return (total_diff*total_thick*final_r, )
+
+def loops_eval(position_list):
+	"""evaluates RNN based on the number of loops that
+	are created in its output divided by the distance
+	of last point to 0 - this should be maximized
+	"""
+
+	# keep tracks of the number of loops in output
+	num_loops = 0.0
+
+	# go through each adjacent pair of positions and check for loop
+	for prev, nxt in zip(position_list[:], position_list[1:]):
+		# there is a loop if modulus of theta decreased - passed by 2
+		if(nxt[1] % 2.0 < prev[1] % 2.0):
+			num_loops += 1
+
+	# get the the last radius position of the output
+	final_r = position_list[-1][0]
+
+	return (num_loops/final_r, )
+
+
+
+

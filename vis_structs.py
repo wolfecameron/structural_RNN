@@ -39,7 +39,7 @@ def vis_spring_with_thickness(all_pts):
 		thetas = [np.pi*(prev[1] % 2.0), np.pi*(nxt[1] % 2.0)]
 		radius = [prev[0], nxt[0]]
 		thickness = nxt[2]
-		plt.plot(thetas, radius, linewidth=thickness, color='black')
+		plt.plot(thetas, radius, linewidth=1.5, color='black')
 	
 	# show the plot after all lines are added
 	plt.show()

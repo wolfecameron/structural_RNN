@@ -84,7 +84,8 @@ def get_rnn_output(rnn, radius, max_it, verbose=False):
 	
 	# initialize all tracking values that are needed
 	# to create a structure with the rnn
-	theta_scale = 4.0
+	theta_scale = 16.0
+	radius_scale = 4.0
 	r = radius
 	theta = 0.0
 	hidden = torch.zeros(1, rnn.hidden_size)
@@ -118,7 +119,7 @@ def get_rnn_output(rnn, radius, max_it, verbose=False):
 			print("Thick: {0}".format(str(thick)))
 
 		# update the current position of the structure
-		r -= dr
+		r -= (dr/radius_scale)
 		theta += abs(dt)/theta_scale
 
 		# increment the current time step
