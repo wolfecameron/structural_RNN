@@ -4,6 +4,8 @@ the structural rnn
 
 import numpy as np
 
+from deap_RNN_help import get_cartesian_coordinates
+
 def specified_change_eval(position_list):
 	"""evaluates positions in the list based on the closeness
 	of each pair of adjacent points to a desired change in theta
@@ -92,6 +94,50 @@ def loops_eval(position_list):
 
 	return (num_loops/final_r, )
 
+def distance_between_lines_eval(position_list):
+	"""evaluates RNN output based on the closest point in
+	the spiral to each line formed by adjacent points in
+	the spiral - tries to avoid lines within the RNN from
+	colliding with each other by maximizing the distance from
+	each line segment to surrounding points
+	"""
 
+	# convert everything to cartesian coordinates	
+	cartesian_coords = []
+
+	# go through each position and convert to cartesian
+	for tup in position_list:
+		r = tup[0]
+		theta = tup[1]
+		x = r*np.cos(np.pi*theta)
+		y = r*np.sin(np.pi*theta)
+
+		# append each cartesian as a tuple into the resulting list
+		cartesian_coords.append((x,y))
+	
+	# find minimum distance between the line from each pair of points
+	# and another point in the torsional spring - keep a running total
+	total_dist = 0.0	
+	for prev, nxt in zip(cartesian_coords[:], cartesian_coords[1:]):
+		x1, y1 = prev
+		x2, y2 = nxt
+		
+		# go through each point and find least distance
+		min_dist = sys.maxsize
+		for point in cartesian_coords:
+			x0, y0 = point
+			numerator = abs((y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1)
+			denom = np.sqrt(np.square(y2 - y1) + np.square(x2 - x1))
+			distance = numerator/denom
+			# keep track of shortest distance
+			if(distance < min_dist):
+				min_dist = distance
+		# increment total distance with minimum distance for each
+		# pair of points within the spring
+		total_dist += min_dist
+	
+	return total_dist
+		
+	
 
 

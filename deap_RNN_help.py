@@ -131,3 +131,5 @@ def get_rnn_output(rnn, radius, max_it, verbose=False):
 	all_positions.append((r, theta, thick))
 
 	return all_positions
+
+
