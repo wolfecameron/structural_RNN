@@ -2,9 +2,11 @@
 the structural rnn
 """
 
+import sys
+
 import numpy as np
 
-from deap_RNN_help import get_cartesian_coordinates
+#from deap_RNN_help import get_cartesian_coordinates
 
 def specified_change_eval(position_list):
 	"""evaluates positions in the list based on the closeness
@@ -136,8 +138,4 @@ def distance_between_lines_eval(position_list):
 		# pair of points within the spring
 		total_dist += min_dist
 	
-	return total_dist
-		
-	
-
-
+	return total_dist,

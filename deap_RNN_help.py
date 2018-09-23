@@ -72,7 +72,7 @@ def inject_weights(rnn, w1, w1_bias, w2, w2_bias):
 	# return the rnn with newly set weights
 	return rnn
 
-def get_rnn_output(rnn, radius, max_it, verbose=False):
+def get_rnn_output(rnn, radius, max_it, sigmoid_exp, verbose=False):
 	"""takes rnn with current weights and gets all outputs
 	for the associated output circle
 		
@@ -80,12 +80,13 @@ def get_rnn_output(rnn, radius, max_it, verbose=False):
 	Parameters:
 	rnn -- the rnn being used
 	max_it -- the maximum number of discrete points in the helical shape
-	"""
+	sigmoid_exp -- constant to multiply numbers passed into sigmoid by
+`	"""
 	
 	# initialize all tracking values that are needed
 	# to create a structure with the rnn
-	theta_scale = 16.0
-	radius_scale = 4.0
+	theta_scale = 20.0
+	radius_scale = 10.0
 	r = radius
 	theta = 0.0
 	hidden = torch.zeros(1, rnn.hidden_size)
@@ -103,7 +104,7 @@ def get_rnn_output(rnn, radius, max_it, verbose=False):
 
 		# get input and activate rnn at current timestep
 		rnn_input = [[r, theta, thick, dr, dt]]
-		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden)
+		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, sigmoid_exp)
 		dr, dt, thick = outs.data[0][0].item(), outs.data[0][1].item(), outs.data[0][2].item()
 		
 		# thickness should be scaled to minimum thickness and avoid negative thickness

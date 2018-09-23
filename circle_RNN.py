@@ -3,6 +3,7 @@ that can be integrated with a CPPN to create 3D printable structures"""
 
 import torch
 import torch.nn as nn
+import numpy as np
 
 class RNN(nn.Module):
 	"""Implementation of the recurrent neural network"""
@@ -22,9 +23,9 @@ class RNN(nn.Module):
 		self.hid_act = nn.Tanh()
 		
 		# activate output with ReLU so that outputs always positive
-		self.out_act = nn.Tanh()
+		self.out_act = nn.Sigmoid()
 	
-	def forward(self, inputs, hidden):
+	def forward(self, inputs, hidden, sigmoid_exp):
 		"""forward propogation function for RNN - parameters
 		include both inputs and hidden unit so that RNN can be
 		activated during all time steps
@@ -36,7 +37,7 @@ class RNN(nn.Module):
 		
 		# yield values for hidden layer and the output layer
 		hidden = self.hid_act(self.in2hid(combined_in))
-		output = self.out_act(self.hid2out(hidden))
+		output = self.out_act(sigmoid_exp*self.hid2out(hidden))
 		
 		# return information for hidden and output layer
 		return (output, hidden)
