@@ -14,26 +14,7 @@ def specified_change_eval(position_list):
 	and r - tries to make every movement from one point to another
 	match a certain change in theta and r
 	"""
-	
-	'''
-	# define target values for change in r and theta
-	target_diff_r = 2.0
-	target_diff_theta = .25
-	
-	# keep running total of the amount of difference from target
-	total_diff = 0.0
 
-	# go through each pair of adjacent elements
-	# find value difference of theta and r
-	for index in range(len(position_list) - 1):
-		curr_pos = position_list[index]
-		next_pos = position_list[index + 1]
-		total_diff += np.square(target_diff_r - (curr_pos[0] - next_pos[0]))
-		total_diff += np.square(target_diff_theta - (next_pos[1] - curr_pos[1]))
-
-	
-	return total_diff, 
-	'''
 	# define the target values
 	target_r = 1.0
 	target_theta = .05
@@ -92,7 +73,8 @@ def loops_eval(position_list):
 			num_loops += 1
 
 	# get the the last radius position of the output
-	final_r = position_list[-1][0]
+	# must add a small value to it to avoid divide by 0
+	final_r = position_list[-1][0] + .01 
 
 	return (num_loops/final_r, )
 
