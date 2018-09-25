@@ -121,3 +121,35 @@ def distance_between_lines_eval(position_list):
 		total_dist += min_dist
 	
 	return total_dist,
+
+def loops_and_novelty_eval(positions_list, all_positions):
+	"""evaluates spring on two metrics, number of loops
+	and the average distance of this positions list to all others
+	in the population"""
+
+	# first find result of loop evaluation
+	loop_val = loops_eval(positions_list)[0]
+
+	# declare a sample size of points within each coord list to check
+	sample_size = 5	
+
+	# find average distance of current positions list to all others
+	total_distance = 0.0
+	for other_pos in all_positions:
+		# pick 5 points in each of the structures to check similarity
+		for i in range(sample_size):
+			rand_index = sys.maxsize
+			while(not (rand_index < len(positions_list) and rand_index < len(other_pos))):
+					rand_index = int(np.random.uniform()*len(positions_list))
+			coord = positions_list[rand_index]
+			other_coord = other_pos[rand_index]
+			# add radius distance to total distance
+			total_distance += np.square(coord[0] - other_coord[0])
+			# add theta distance to total distance
+			total_distance += np.square(coord[1] - other_coord[1])
+	# divide the total_distance by the total number of items_checked
+	total_distance /= len(all_positions)
+	
+	# return two fitness metrics in a tuple
+	return (loop_val, total_distance)
+

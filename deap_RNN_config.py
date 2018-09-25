@@ -8,7 +8,7 @@ import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
 
-from deap_RNN_evals import loops_eval as rnn_evaluation
+from deap_RNN_evals import  loops_and_novelty_eval as rnn_evaluation
 
 
 """The below contains all of the deap configuration used for CPPN so that it can be
@@ -20,12 +20,12 @@ N_HID=15
 N_OUT=2
 RADIUS = 20.0
 MAX_POINTS = 500 # maximum num of discrete points in output structure
-weights=(1.0, )
+weights=(1.0, 1.0)
 MUTPB = .15
 CXPB = .05
 INIT_WINDOW=.1
 POP_SIZE=50
-N_GEN=100
+N_GEN=50
 #MIN_THICKNESS = .5
 #MAX_THICKNESS = 5.5
 SIG_EXP = .01
@@ -53,9 +53,9 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=POP
 toolbox.register("evaluate", rnn_evaluation)
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-toolbox.register("select", tools.selTournament, tournsize=3)
-#toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
-toolbox.register("map", futures.map)
+#toolbox.register("select", tools.selTournament, tournsize=3)
+toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
+toolbox.register("map", map)
 
 
 def get_tb():

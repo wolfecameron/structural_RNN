@@ -35,19 +35,11 @@ for g in range(N_GEN):
 		output = get_rnn_output(rnn, RADIUS, MAX_POINTS, SIG_EXP)
 		all_outputs.append(output)  
 	
-	# get fitnesses from each of the outputs
-	fits = toolbox.map(toolbox.evaluate, all_outputs)
-	
+	fits = []	
 	# get average fit and append into running list
-	#avg_fits.append(np.mean(np.array(fits)))
-	'''
 	for out in all_outputs:
-		fits.append(toolbox.evaluate(out))
-	'''
-	# get average fitness
-	#fit_np = np.array(fits)
-	#avg_fits.append(np.mean(fit_np))
-		
+		fits.append(toolbox.evaluate(out, all_outputs))
+	
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
 		ind.fitness.values = fit
