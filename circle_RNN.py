@@ -23,9 +23,9 @@ class RNN(nn.Module):
 		self.hid_act = nn.Tanh()
 		
 		# activate output with ReLU so that outputs always positive
-		self.out_act = nn.Sigmoid()
+		self.out_act = nn.Tanh()
 	
-	def forward(self, inputs, hidden, sigmoid_exp):
+	def forward(self, inputs, hidden, activation_exponent):
 		"""forward propogation function for RNN - parameters
 		include both inputs and hidden unit so that RNN can be
 		activated during all time steps
@@ -37,8 +37,7 @@ class RNN(nn.Module):
 		
 		# yield values for hidden layer and the output layer
 		hidden = self.hid_act(self.in2hid(combined_in))
-		output = self.out_act(sigmoid_exp*self.hid2out(hidden))
-		
+		output = self.out_act(activation_exponent*self.hid2out(hidden))
 		# return information for hidden and output layer
 		return (output, hidden)
 
@@ -50,29 +49,4 @@ if __name__ == '__main__':
 	rnn = RNN(4, 4, 2)
 	print(rnn.in2hid.weight.data.numpy().shape)	
 	print(rnn.hid2out.weight.data.numpy().shape)
-	'''	
-	# instantiate all needed variables for running RNN
-	r = 50.0
-	theta = 0.0
-	hidden = torch.zeros(1, rnn.hidden_size)
-	all_pos = []
-	dr = 0.0
-	dt = 0.0
-	while(r > 0):
-		print("Current R: {0}".format(str(r)))
-		rnn_pos = (r, theta)
-		all_pos.append(rnn_pos)
-		rnn_input = [[r, theta, dr, dt]]
-		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden)
-		dr, dt = outs.data[0][0], outs.data[0][1]
-		print(dr)
-		print(dt)
-		input()
-		r -= dr
-		if(r <= 0):
-			r = 0
-		theta += dt
-		theta %= 2.0
-	all_pos.append([[r, theta]])
-	print(all_pos)
-	'''
+

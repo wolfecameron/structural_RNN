@@ -15,8 +15,8 @@ from deap_RNN_evals import  loops_and_novelty_eval as rnn_evaluation
 called and edited from a central location"""
 
 # constants used for deap configuration
-N_IN=4 
-N_HID=15
+N_IN=2 
+N_HID=10
 N_OUT=2
 RADIUS = 20.0
 MAX_POINTS = 500 # maximum num of discrete points in output structure
@@ -28,7 +28,7 @@ POP_SIZE=50
 N_GEN=50
 #MIN_THICKNESS = .5
 #MAX_THICKNESS = 5.5
-SIG_EXP = .01
+ACT_EXP = .1
 
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT

@@ -76,7 +76,7 @@ def loops_eval(position_list):
 	# must add a small value to it to avoid divide by 0
 	final_r = position_list[-1][0] + .01 
 
-	return (num_loops/final_r, )
+	return num_loops,#(num_loops/final_r, )
 
 def distance_between_lines_eval(position_list):
 	"""evaluates RNN output based on the closest point in

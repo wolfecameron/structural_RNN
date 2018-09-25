@@ -84,13 +84,11 @@ def get_rnn_output(rnn, radius, max_it, sigmoid_exp, verbose=False):
 	# initialize all tracking values that are needed
 	# to create a structure with the rnn
 	theta_scale = 20.0
-	radius_scale = 10.0
-	r_mean = radius/2.0
-	r = radius
-	theta = 0.0
-	theta_mean = 1.0
+	radius_scale = 4.0
 	hidden = torch.zeros(1, rnn.hidden_size)
 	all_positions = []
+	r = radius
+	theta = 0.0
 	dr = 0.0
 	dt = 0.0
 	curr_t = 0 # track current t so that it does not exceed max
@@ -103,7 +101,7 @@ def get_rnn_output(rnn, radius, max_it, sigmoid_exp, verbose=False):
 
 		# get input and activate rnn at current timestep
 		# be sure to normalize inputs before they are passed into RNN
-		rnn_input = [[(r - r_mean)/r_mean, ((theta % 2.0) - theta_mean)/theta_mean, dr, dt]]
+		rnn_input = [[dr, dt]]
 		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, sigmoid_exp)
 		dr, dt = outs.data[0][0].item(), outs.data[0][1].item()
 		
@@ -120,8 +118,9 @@ def get_rnn_output(rnn, radius, max_it, sigmoid_exp, verbose=False):
 			#print("Thick: {0}".format(str(thick)))
 
 		# update the current position of the structure
-		r -= (dr/radius_scale)
-		theta += abs(dt)/theta_scale
+		# outputs are scaled to make changes not as large
+		r -= dr#(dr/radius_scale)
+		theta += dt#abs(dt)/theta_scale
 
 		# increment the current time step
 		curr_t += 1

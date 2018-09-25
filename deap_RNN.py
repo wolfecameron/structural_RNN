@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, RADIUS, MAX_POINTS, POP_SIZE
-from deap_RNN_config import MUTPB, CXPB, SIG_EXP
+from deap_RNN_config import MUTPB, CXPB, ACT_EXP
 from deap_RNN_help import list_to_matrices, inject_weights, get_rnn_output
 from vis_structs import vis_spring_with_thickness
 
@@ -32,7 +32,7 @@ for g in range(N_GEN):
 		rnn = RNN(N_IN, N_HID, N_OUT)
 		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-		output = get_rnn_output(rnn, RADIUS, MAX_POINTS, SIG_EXP)
+		output = get_rnn_output(rnn, RADIUS, MAX_POINTS, ACT_EXP)
 		all_outputs.append(output)  
 	
 	fits = []	
@@ -71,6 +71,6 @@ for count, ind in enumerate(pop):
 	rnn = RNN(N_IN, N_HID, N_OUT)
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-	output_positions = get_rnn_output(rnn, RADIUS, MAX_POINTS, SIG_EXP)
+	output_positions = get_rnn_output(rnn, RADIUS, MAX_POINTS, ACT_EXP)
 	vis_spring_with_thickness(output_positions)
 	print("Now viewing individual {0}".format(str(count)))
