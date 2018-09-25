@@ -18,8 +18,8 @@ called and edited from a central location"""
 N_IN=2 
 N_HID=10
 N_OUT=2
-RADIUS = 20.0
-MAX_POINTS = 500 # maximum num of discrete points in output structure
+#RADIUS = 20.0
+MAX_POINTS = 250 # maximum num of discrete points in output structure
 weights=(1.0, 1.0)
 MUTPB = .15
 CXPB = .05

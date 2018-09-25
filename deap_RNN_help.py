@@ -70,7 +70,7 @@ def inject_weights(rnn, w1, w1_bias, w2, w2_bias):
 	# return the rnn with newly set weights
 	return rnn
 
-def get_rnn_output(rnn, radius, max_it, sigmoid_exp, verbose=False):
+def get_rnn_output(rnn, max_it, act_exp, verbose=False):
 	"""takes rnn with current weights and gets all outputs
 	for the associated output circle
 		
@@ -78,7 +78,7 @@ def get_rnn_output(rnn, radius, max_it, sigmoid_exp, verbose=False):
 	Parameters:
 	rnn -- the rnn being used
 	max_it -- the maximum number of discrete points in the helical shape
-	sigmoid_exp -- constant to multiply numbers passed into sigmoid by
+	sigmoid_exp -- constant to multiply numbers passed into output activation
 `	"""
 	
 	# initialize all tracking values that are needed
@@ -87,14 +87,14 @@ def get_rnn_output(rnn, radius, max_it, sigmoid_exp, verbose=False):
 	radius_scale = 4.0
 	hidden = torch.zeros(1, rnn.hidden_size)
 	all_positions = []
-	r = radius
+	r = 0.0
 	theta = 0.0
 	dr = 0.0
 	dt = 0.0
 	curr_t = 0 # track current t so that it does not exceed max
 
 	# run rnn until candidate structure reaches the origin
-	while (r > 0 and curr_t < max_it):
+	while (curr_t < max_it):
 		# add current position into structure history
 		rnn_pos = (r, theta)
 		all_positions.append(rnn_pos)
@@ -102,7 +102,7 @@ def get_rnn_output(rnn, radius, max_it, sigmoid_exp, verbose=False):
 		# get input and activate rnn at current timestep
 		# be sure to normalize inputs before they are passed into RNN
 		rnn_input = [[dr, dt]]
-		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, sigmoid_exp)
+		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, act_exp)
 		dr, dt = outs.data[0][0].item(), outs.data[0][1].item()
 		
 		# thickness should be scaled to minimum thickness and avoid negative thickness
@@ -119,15 +119,17 @@ def get_rnn_output(rnn, radius, max_it, sigmoid_exp, verbose=False):
 
 		# update the current position of the structure
 		# outputs are scaled to make changes not as large
-		r -= dr#(dr/radius_scale)
+		r += dr#(dr/radius_scale)
 		theta += dt#abs(dt)/theta_scale
 
 		# increment the current time step
 		curr_t += 1
 
 	# append the last position into the list
+	'''
 	if(r < 0):
 		r = 0
+	'''
 	all_positions.append((r, theta))
 
 	return all_positions
