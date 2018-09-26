@@ -134,4 +134,43 @@ def get_rnn_output(rnn, max_it, act_exp, verbose=False):
 
 	return all_positions
 
+def get_RNN_output_cartesian(rnn, max_y, max_t, act_exp):
+	"""gets RNN output for the gear tooth evolution - output starts at (0,0)
+	in cartesian coordinates and moves upwards until it reaches a maximum value
+	of y, forming a unique path from bottom to top that will be used as the shape
+	of the gear tooth"""
 
+	# intialize all values that need to be tracked by rnn
+	x = 0.0
+	y = 0.0
+	dx = 0.0
+	dy = 0.0
+	x_scale = 4.0
+	y_scale = 4.0
+	curr_t = 0
+
+	# initialize hidden state
+	hidden = torch.zeros(1, rnn.hidden_size)
+
+	# track all positions of RNN
+	all_positions = []
+	
+	# run RNN until output reaches desired y position
+	while(y < max_y and curr_t < max_t):
+		# add current position into the positions list
+		rnn_pos = (x, y)
+		all_positions.append(rnn_pos)
+
+		# form input and activte the rnn
+		rnn_input = [[dx, dy]]
+		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, act_exp)
+		dx, dy = outs.data[0][0].item(), outs.data[0][0].item()
+
+		# update x and y pos with rnn output
+		x += dx
+		y += abs(dy) # y must always move upward ? or is it ok?
+		curr_t += 1
+	
+	# append the last position of the RNN
+	all_positions.append((x, y))
+	return all_positions

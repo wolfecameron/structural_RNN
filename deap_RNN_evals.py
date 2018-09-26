@@ -153,3 +153,15 @@ def loops_and_novelty_eval(positions_list, all_positions):
 	# return two fitness metrics in a tuple
 	return (loop_val, total_distance)
 
+def gear_tooth_eval(positions_list):
+	"""evaluates the gear tooth cartesian output for RNN based on how far
+	out the tooth goes in the x direction and making it back to 0 once it
+	reaches the top position in y"""
+
+	# find the final distance from 0 x
+	final_x_dist = positions_list[-1][0]
+
+	all_x = [abs(x[0]) for x in positions_list]
+	largest_x = max(all_x)
+	
+	return (largest_x/(final_x_dist + .01), )

@@ -8,7 +8,7 @@ import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
 
-from deap_RNN_evals import  loops_and_novelty_eval as rnn_evaluation
+from deap_RNN_evals import  gear_tooth_eval as rnn_evaluation
 
 
 """The below contains all of the deap configuration used for CPPN so that it can be
@@ -20,7 +20,7 @@ N_HID=10
 N_OUT=2
 #RADIUS = 20.0
 MAX_POINTS = 250 # maximum num of discrete points in output structure
-weights=(1.0, 1.0)
+weights=(1.0, )
 MUTPB = .15
 CXPB = .05
 INIT_WINDOW=.1
@@ -29,6 +29,7 @@ N_GEN=50
 #MIN_THICKNESS = .5
 #MAX_THICKNESS = 5.5
 ACT_EXP = .1
+MAX_Y = 10.0
 
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT

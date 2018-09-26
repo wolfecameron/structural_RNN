@@ -50,4 +50,21 @@ if __name__ == '__main__':
 	vis_circle(points)
 
 
-	 
+def vis_cartesian_output(all_pts):
+	"""creates a visualization of an RNNs outputs in the cartesian
+	space - these outputs are used to create the geometry for the
+	tooth of a gear"""
+	
+	# create an axis to plot on
+	axis = plt.subplot(111)
+	
+	# title the graph
+	plt.title("Graph of Gear Tooth Geometry")
+	
+	# go through each pair of points in the geometry and graph them one by one
+	for prev, nxt in zip(all_pts[:], all_pts[1:]):
+		x_vals = [prev[0], nxt[0]]
+		y_vals = [prev[1], nxt[1]]
+		plt.plot(x_vals, y_vals, linewidth=2.0, color='black')
+
+	plt.show()	 
