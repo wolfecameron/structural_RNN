@@ -153,7 +153,7 @@ def loops_and_novelty_eval(positions_list, all_positions):
 	# return two fitness metrics in a tuple
 	return (loop_val, total_distance)
 
-def gear_tooth_eval(positions_list):
+def gear_tooth_eval(positions_list, all_pos):
 	"""evaluates the gear tooth cartesian output for RNN based on how far
 	out the tooth goes in the x direction and making it back to 0 once it
 	reaches the top position in y"""
@@ -161,13 +161,18 @@ def gear_tooth_eval(positions_list):
 	# find the final distance from 0 x
 	final_x_dist = np.square(positions_list[-1][0])
 
+	# get all x coordinates in numpy array so mean can be easily calculated
 	all_x = [np.square(x[0]) for x in positions_list]
 	x_np = np.array(all_x)
-	
-	'''	
+
 	total_distance = 0.0
-	# find all distances between points
-	for curr, nxt in zip(positions_list[:], positions_list[1:]):
-		total_distance += np.sqrt(np.square(curr[0] - nxt[0]) + np.square(curr[1] - nxt[1]))
-	'''	
-	return ((final_x_dist)*np.mean(x_np), )
+	# evaluate novelty - based on distance of outputs to other outputs in group
+	for other_out in all_pos:
+		for pos, o_pos in zip(positions_list, other_out):
+			total_distance += np.sqrt(np.square(pos[0] - o_pos[0]) + np.square(pos[1] - o_pos[1]))
+
+	# make total distance an average by dividing by number of other outputs
+	total_distance /= len(all_pos) 
+			
+
+	return ((final_x_dist)*np.mean(x_np), total_distance)

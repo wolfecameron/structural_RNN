@@ -39,7 +39,7 @@ for g in range(N_GEN):
 	fits = []	
 	# get average fit and append into running list
 	for out in all_outputs:
-		fits.append(toolbox.evaluate(out))
+		fits.append(toolbox.evaluate(out, all_outputs))
 	
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
@@ -78,7 +78,8 @@ for count, ind in enumerate(pop):
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	# get output for each individual in final generation
 	output_positions = get_output(rnn, MAX_Y, MAX_X, MAX_POINTS, ACT_EXP)
-	fitness = toolbox.evaluate(output_positions)
+	# insert placeholder list into evaluation - only first fitness value matters for sorting
+	fitness = toolbox.evaluate(output_positions, [[(1, 1)]])[0]
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((output_positions, fitness))
 
