@@ -61,6 +61,10 @@ def vis_cartesian_output(all_pts):
 	# title the graph
 	plt.title("Graph of Gear Tooth Geometry")
 	
+	# set equal limits of the axis
+	plt.xlim(-.5, .5)
+	plt.ylim(0.0, 1.0)
+
 	# go through each pair of points in the geometry and graph them one by one
 	for prev, nxt in zip(all_pts[:], all_pts[1:]):
 		x_vals = [prev[0], nxt[0]]

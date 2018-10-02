@@ -134,7 +134,7 @@ def get_rnn_output(rnn, max_it, act_exp, verbose=False):
 
 	return all_positions
 
-def get_RNN_output_cartesian(rnn, max_y, max_t, act_exp):
+def get_RNN_output_cartesian(rnn, max_y, max_x, max_t, act_exp, verbose=False):
 	"""gets RNN output for the gear tooth evolution - output starts at (0,0)
 	in cartesian coordinates and moves upwards until it reaches a maximum value
 	of y, forming a unique path from bottom to top that will be used as the shape
@@ -145,8 +145,8 @@ def get_RNN_output_cartesian(rnn, max_y, max_t, act_exp):
 	y = 0.0
 	dx = 0.0
 	dy = 0.0
-	x_scale = 4.0
-	y_scale = 4.0
+	x_scale = 5.0
+	y_scale = 5.0
 	curr_t = 0
 
 	# initialize hidden state
@@ -164,11 +164,24 @@ def get_RNN_output_cartesian(rnn, max_y, max_t, act_exp):
 		# form input and activte the rnn
 		rnn_input = [[dx, dy]]
 		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, act_exp)
-		dx, dy = outs.data[0][0].item(), outs.data[0][0].item()
+		dx, dy = outs.data[0][0].item(), outs.data[0][1].item()
+
+		# print out the dx and dy if it is verbose
+		if(verbose):
+			print("X: {0}".format(str(x)))
+			print("Y: {0}".format(str(y)))
+			print("dx: {0}".format(str(dx)))
+			print("dy: {0}".format(str(dy)))
+			input()
 
 		# update x and y pos with rnn output
-		x += dx
-		y += abs(dy) # y must always move upward ? or is it ok?
+		x += (dx/x_scale)
+		# x must be kept from going much too far from center
+		if(x < -max_x):
+			x = -max_x
+		elif(x > max_x):
+			x = max_x
+		y += abs(dy/y_scale) # y must always move upward ? or is it ok?
 		curr_t += 1
 	
 	# append the last position of the RNN

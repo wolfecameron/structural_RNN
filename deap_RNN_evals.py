@@ -159,9 +159,15 @@ def gear_tooth_eval(positions_list):
 	reaches the top position in y"""
 
 	# find the final distance from 0 x
-	final_x_dist = positions_list[-1][0]
+	final_x_dist = np.square(positions_list[-1][0])
 
-	all_x = [abs(x[0]) for x in positions_list]
-	largest_x = max(all_x)
+	all_x = [np.square(x[0]) for x in positions_list]
+	x_np = np.array(all_x)
 	
-	return (largest_x/(final_x_dist + .01), )
+	'''	
+	total_distance = 0.0
+	# find all distances between points
+	for curr, nxt in zip(positions_list[:], positions_list[1:]):
+		total_distance += np.sqrt(np.square(curr[0] - nxt[0]) + np.square(curr[1] - nxt[1]))
+	'''	
+	return ((final_x_dist)*np.mean(x_np), )

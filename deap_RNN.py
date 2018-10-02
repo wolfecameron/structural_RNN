@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_SIZE
-from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y
+from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X
 from deap_RNN_help import list_to_matrices, inject_weights
 from deap_RNN_help import get_RNN_output_cartesian as get_output
-from vis_structs import vis_spring_with_thickness
+from vis_structs import vis_cartesian_output as vis_output
 
 # import toolbox from config file
 toolbox = get_tb()
@@ -33,7 +33,7 @@ for g in range(N_GEN):
 		rnn = RNN(N_IN, N_HID, N_OUT)
 		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-		output = get_output(rnn, MAX_Y, MAX_POINTS, ACT_EXP)
+		output = get_output(rnn, MAX_Y, MAX_X, MAX_POINTS, ACT_EXP)
 		all_outputs.append(output)  
 	
 	fits = []	
@@ -67,11 +67,25 @@ for g in range(N_GEN):
 #plt.plot(avg_fits)
 #plt.show()
 
+# contains tuples of individuals and their associated fitness
+# used to sort individual's output by fitness for viewing
+ind_and_fits = []
+
 # view results of the evolution
 for count, ind in enumerate(pop):
 	rnn = RNN(N_IN, N_HID, N_OUT)
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-	output_positions = get_output(rnn, MAX_Y, MAX_POINTS, ACT_EXP)
-	vis_spring_with_thickness(output_positions)
+	# get output for each individual in final generation
+	output_positions = get_output(rnn, MAX_Y, MAX_X, MAX_POINTS, ACT_EXP)
+	fitness = toolbox.evaluate(output_positions)
+	# append tuple of individual's outputs and fitness to the global list
+	ind_and_fits.append((output_positions, fitness))
+
+# sort list of outputs by fitness
+ind_and_fits = sorted(ind_and_fits, key=lambda x: x[1])
+
+# go through outputs sorted by fintess for viewing
+for count, out in enumerate(ind_and_fits):
+	vis_output(out[0])
 	print("Now viewing individual {0}".format(str(count)))
