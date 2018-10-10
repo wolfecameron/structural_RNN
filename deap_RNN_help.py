@@ -187,3 +187,31 @@ def get_RNN_output_cartesian(rnn, max_y, max_x, max_t, act_exp, verbose=False):
 	# append the last position of the RNN
 	all_positions.append((x, y))
 	return all_positions
+
+def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh):
+	"""method for getting output of RNN representing an entire mechanism of gears
+	rnn outputs at each t a value deciding if next gear will be to left, to right,
+	or attached to back, and another value dictating the pitch radius of the gear -
+	also outputs a value that decides if rnn should stop at this gear"""	
+
+
+	# initialize all variables needed to get output
+	gear_pos = 0
+	stop = 0
+    radius = 0
+	
+	# length of the outputs is the number of gears that have been added to system
+	all_outputs = []
+
+    while((len(all_outputs) < min_gears) or (len(all_outputs) < max_gears and stop < stop_thresh)):
+		# must run inputs through RNN first to get values for first gear
+		rnn_input = [[radius, gear_pos, stop]]
+		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, act_exp)
+		radius, gear_pos, stop = outs.data[0][0].item(), outs.data[0][1].item(), outs.data[0][2].item()
+
+		# append outputs into list
+		all_outputs.append((radius, gear_pos, stop))
+	
+	return all_outputs		
+
+

@@ -8,16 +8,16 @@ import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
 
-from deap_RNN_evals import  gear_tooth_eval as rnn_evaluation
+from deap_RNN_evals import  get_gear_mechanism as rnn_evaluation
 
 
 """The below contains all of the deap configuration used for CPPN so that it can be
 called and edited from a central location"""
 
 # constants used for deap configuration
-N_IN=2 
+N_IN=3
 N_HID=10
-N_OUT=2
+N_OUT=3
 #RADIUS = 20.0
 MAX_POINTS = 250 # maximum num of discrete points in output structure
 weights=(-1.0, 1.0)
@@ -31,6 +31,11 @@ N_GEN=50
 ACT_EXP = .1
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
+
+# the below constants are used for gear generation
+MAX_GEARS = 10
+MIN_GEARS = 2
+STOP_THRESHOLD = .9
 
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
