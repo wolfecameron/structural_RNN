@@ -43,12 +43,6 @@ def vis_spring_with_thickness(all_pts):
 	# show the plot after all lines are added
 	plt.show()
 
-if __name__ == '__main__':
-	"""Main conditional block for simple testing"""
-
-	points = []
-	vis_circle(points)
-
 
 def vis_cartesian_output(all_pts):
 	"""creates a visualization of an RNNs outputs in the cartesian
@@ -71,4 +65,57 @@ def vis_cartesian_output(all_pts):
 		y_vals = [prev[1], nxt[1]]
 		plt.plot(x_vals, y_vals, linewidth=2.0, color='black')
 
-	plt.show()	 
+	plt.show()
+
+def vis_gear_mechanism(outputs, pos_thresholds):
+	"""takes all values from gear mechanism output of rnn and uses them
+	to generate a visualization of the gear system with matplotlib, the
+	pitch diameter of the gears is graphed
+
+	each element of outputs is of form (radius, gear_pos, stop)
+
+	pos_thresholds contains the two threshold values to interpret value of gear_pos
+	if lower than two values, it is to left, if in middle it is attached to back, and
+	if greater it is to right of the previous gear
+	"""
+
+	# create matplotlib axis to plot circles on
+	fig, ax = plt.subplots()
+
+	# instantiate variables to be used in plotting
+	position = (0, 0)
+	radius = outputs[0][0]
+	circles = []
+	
+	# create circle object for first gear and add into list
+	circles.append(plt.Circle(position, radius, alpha=.4))
+
+	# go through all other outputs to create each gear
+	for out_ind in range(1, len(outputs)):
+		radius = outputs[out_ind][0]
+		# direction dictates if gear placed to left, right, or attached to back
+		# determined by gear_pos value in relation to position thresholds
+		direction = 1
+		if(outputs[out_ind][1] < pos_thresholds[0]):
+			direction = -1
+		elif(outputs[out_ind][1] >= pos_thresholds[0] and outputs[out_ind][1] <= pos_thresholds[1]):
+			direction = 0
+		
+		# add up radius of current and previous gear to find change in x location for them to mesh
+		pos_delta = outputs[out_ind][0] + outputs[out_ind - 1][0]
+		position = (position[0] + direction*pos_delta, 0)
+		
+		# create and append circle object for current gear
+		circles.append(plt.Circle(position, radius, alpha=.4))
+
+	# plot all the circles on the matplotlib axis
+	for c in circles:
+		ax.add_artist(c)
+	
+	plt.show()
+	
+if __name__ == '__main__':
+	"""main loop used for simple testing"""
+
+	outputs = [(.5, 0, 0), (.25, -1, 0), (.15, -1, 0)]
+	vis_gear_mechanism(outputs, (-.5, .5))
