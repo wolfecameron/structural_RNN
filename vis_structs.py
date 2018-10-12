@@ -86,6 +86,7 @@ def vis_gear_mechanism(outputs, pos_thresholds):
 	position = (0, 0)
 	radius = outputs[0][0]
 	circles = []
+	all_pos = [0] # keep this so you know the maximum location
 	
 	# create circle object for first gear and add into list
 	circles.append(plt.Circle(position, radius, alpha=.4))
@@ -104,14 +105,23 @@ def vis_gear_mechanism(outputs, pos_thresholds):
 		# add up radius of current and previous gear to find change in x location for them to mesh
 		pos_delta = outputs[out_ind][0] + outputs[out_ind - 1][0]
 		position = (position[0] + direction*pos_delta, 0)
-		
+		all_pos.append(position[0])		
+
 		# create and append circle object for current gear
 		circles.append(plt.Circle(position, radius, alpha=.4))
 
 	# plot all the circles on the matplotlib axis
 	for c in circles:
 		ax.add_artist(c)
-	
+
+    # set max/default window size of matplotlib
+	x_max = max(all_pos)
+	x_min = min(all_pos)
+	all_rad = [x[0] for x in outputs]
+	max_rad = 1.25*max(all_rad) # scale max radius up slightly so window not too tight
+	ax.set_ylim((-max_rad, max_rad))
+	ax.set_xlim((x_min - max_rad, x_max + max_rad)) 
+
 	plt.show()
 	
 if __name__ == '__main__':
