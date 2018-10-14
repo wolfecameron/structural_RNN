@@ -8,11 +8,12 @@ matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 
 from circle_RNN import RNN
-from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_SIZE
+from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
-from deap_RNN_help import list_to_matrices, inject_weights
-from deap_RNN_help import get_RNN_output_cartesian as get_output
-from vis_structs import vis_cartesian_output as vis_output
+from deap_RNN_config import RADIUS_SCALE
+from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio
+from deap_RNN_help import get_gear_mechanism as get_output
+from vis_structs import vis_gear_mechanism as vis_output
 
 # import toolbox from config file
 toolbox = get_tb()
@@ -33,13 +34,13 @@ for g in range(N_GEN):
 		rnn = RNN(N_IN, N_HID, N_OUT)
 		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-		output = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, ACT_EXP)
+		output = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 		all_outputs.append(output)  
 	
 	fits = []	
 	# get average fit and append into running list
 	for out in all_outputs:
-		fits.append(toolbox.evaluate(out, all_outputs))
+		fits.append(toolbox.evaluate(out, all_outputs, PLACEMENT_THRESH))
 	
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
@@ -77,9 +78,9 @@ for count, ind in enumerate(pop):
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	# get output for each individual in final generation
-	output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, ACT_EXP)
+	output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
-	fitness = toolbox.evaluate(output_positions, [[(1, 1)]])[0]
+	fitness = get_gear_ratio(output_positions, PLACEMENT_THRESH)
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((output_positions, fitness))
 
@@ -88,5 +89,5 @@ ind_and_fits = sorted(ind_and_fits, key=lambda x: x[1])
 
 # go through outputs sorted by fintess for viewing
 for count, out in enumerate(ind_and_fits):
-	vis_output(out[0])
+	vis_output(out[0], PLACEMENT_THRESH)
 	print("Now viewing individual {0}".format(str(count)))

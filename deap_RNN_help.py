@@ -125,11 +125,6 @@ def get_rnn_output(rnn, max_it, act_exp, verbose=False):
 		# increment the current time step
 		curr_t += 1
 
-	# append the last position into the list
-	'''
-	if(r < 0):
-		r = 0
-	'''
 	all_positions.append((r, theta))
 
 	return all_positions
@@ -188,7 +183,7 @@ def get_RNN_output_cartesian(rnn, max_y, max_x, max_t, act_exp, verbose=False):
 	all_positions.append((x, y))
 	return all_positions
 
-def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh):
+def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_exp, pos_thresh):
 	"""method for getting output of RNN representing an entire mechanism of gears
 	rnn outputs at each t a value deciding if next gear will be to left, to right,
 	or attached to back, and another value dictating the pitch radius of the gear -
@@ -198,20 +193,58 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh):
 	# initialize all variables needed to get output
 	gear_pos = 0
 	stop = 0
-    radius = 0
+	radius = 0
+
+	# initialize the hidden layer
+	hidden = torch.zeros(1, rnn.hidden_size)	
 	
 	# length of the outputs is the number of gears that have been added to system
 	all_outputs = []
 
-    while((len(all_outputs) < min_gears) or (len(all_outputs) < max_gears and stop < stop_thresh)):
+	while((len(all_outputs) < min_gears) or (len(all_outputs) < max_gears and stop < stop_thresh)):
 		# must run inputs through RNN first to get values for first gear
 		rnn_input = [[radius, gear_pos, stop]]
 		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, act_exp)
 		radius, gear_pos, stop = outs.data[0][0].item(), outs.data[0][1].item(), outs.data[0][2].item()
+		
+		# make sure the pos does not go from left to right, must be placed on back first
+		if(gear_pos < pos_thresh[0] and len(all_outputs) > 0 and all_outputs[-1][1] > pos_thresh[1]):
+			gear_pos = pos_thresh[1]
+		elif(gear_pos > pos_thresh[1] and len(all_outputs) > 0 and all_outputs[-1][1] < pos_thresh[0]):
+			gear_pos = pos_thresh[0]
+		
+		# make sure radius is positive and scale it to fit between 0 and maximum possible value
+		radius = (radius + 1.5)*rad_scale	
 
 		# append outputs into list
 		all_outputs.append((radius, gear_pos, stop))
 	
-	return all_outputs		
+	return all_outputs
 
+def get_gear_ratio(outputs, pos_thresh):
+	"""method for finding the gear ratio of a set of gears that is generated
+	by the rnn - assumes that the first gear in the list is the input and
+	the last gear in the list is the output"""
 
+	# set radius to the intial value
+	radius = outputs[0][0]
+	ratio = 1.0	
+
+	# go through each gear and update the ratio by multiplying with current ratio
+	for gear_ind in range(1, len(outputs)):
+		gear = outputs[gear_ind]
+		nxt_radius = gear[0]
+		direction = gear[1]
+		if(direction < pos_thresh[0] or direction > pos_thresh[1]):
+			ratio *= radius/nxt_radius
+		# if gear is attached to back only need to update radius
+		radius = nxt_radius
+
+	return ratio
+
+if __name__ == '__main__':
+	""" main function for quick tests"""
+
+	gears = [(20.0, 0, 0), (10.0, 0.0, 0), (20.0, 1.6, 0)]
+	pos_thresh = (-1.5, 1.5)
+	print(get_gear_ratio(gears, pos_thresh))

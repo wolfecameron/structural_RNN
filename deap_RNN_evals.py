@@ -6,7 +6,7 @@ import sys
 
 import numpy as np
 
-#from deap_RNN_help import get_cartesian_coordinates
+from deap_RNN_help import get_gear_ratio
 
 def specified_change_eval(position_list):
 	"""evaluates positions in the list based on the closeness
@@ -176,3 +176,36 @@ def gear_tooth_eval(positions_list, all_pos):
 			
 
 	return ((final_x_dist)*np.mean(x_np), total_distance)
+
+def gear_mechanism_eval(outputs):
+	""" basic evaluation method for the gear mechanisms, just takes into accout
+	the size of the mechanism and the differences in radius """
+
+	# get number of gears and a list of radius
+	radii = np.array([x[0] for x in outputs])
+	placements = np.array([x[1] for x in outputs])
+	
+	return ((np.var(radii)*np.var(placements)*len(outputs)), )
+	
+def gear_mechanism_novelty_eval(outputs, all_outs, pos_thresh):
+	""" basic evaluation method for the gear mechanisms, just takes into accout
+	the size of the mechanism and the differences in radius """
+
+	# get fitness from normal evaluation
+	fitness = get_gear_ratio(outputs, pos_thresh)
+
+	# find the difference between this solution and all other solutions
+	total_diff = 0.0
+	for o in all_outs:
+		for curr, other in zip(outputs, o):
+			total_diff += np.square(curr[0] - other[0])
+			total_diff += np.square(curr[1] - other[1])
+		
+	return (fitness, total_diff)
+
+
+
+
+
+
+

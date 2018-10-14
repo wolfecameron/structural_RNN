@@ -8,8 +8,8 @@ import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
 
-from deap_RNN_evals import  get_gear_mechanism as rnn_evaluation
-
+from deap_RNN_evals import gear_mechanism_novelty_eval as eval_double_obj
+from deap_RNN_evals import gear_mechanism_eval as eval_single_obj
 
 """The below contains all of the deap configuration used for CPPN so that it can be
 called and edited from a central location"""
@@ -18,24 +18,23 @@ called and edited from a central location"""
 N_IN=3
 N_HID=10
 N_OUT=3
-#RADIUS = 20.0
 MAX_POINTS = 250 # maximum num of discrete points in output structure
-weights=(-1.0, 1.0)
+weights=(1.0, 1.0)
 MUTPB = .15
 CXPB = .05
 INIT_WINDOW=.1
 POP_SIZE=50
-N_GEN=50
-#MIN_THICKNESS = .5
-#MAX_THICKNESS = 5.5
+N_GEN=200
 ACT_EXP = .1
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
 
 # the below constants are used for gear generation
-MAX_GEARS = 10
+MAX_GEARS = 6
 MIN_GEARS = 2
 STOP_THRESHOLD = .9
+PLACEMENT_THRESH = (-.5, .5)
+RADIUS_SCALE = 10.0
 
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
@@ -57,7 +56,8 @@ toolbox.register("individual", tools.initRepeat, creator.Individual,
 toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=POP_SIZE)
 
 # register all functions needed for evolution in the toolbox
-toolbox.register("evaluate", rnn_evaluation)
+toolbox.register("evaluate", eval_double_obj)
+toolbox.register("evaluate_single_objective", eval_single_obj)
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
 #toolbox.register("select", tools.selTournament, tournsize=3)
