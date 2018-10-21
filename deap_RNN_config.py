@@ -29,6 +29,10 @@ ACT_EXP = .1
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
 
+# below are constants related to RNN output
+OUTPUT_MIN = -1
+OUTPUT_MAX = 1
+
 # the below constants are used for gear generation
 MAX_GEARS = 6
 MIN_GEARS = 2
