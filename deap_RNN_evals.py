@@ -6,7 +6,7 @@ import sys
 
 import numpy as np
 
-from deap_RNN_help import get_gear_ratio
+from deap_RNN_help import get_gear_ratio, get_centers_and_radii, check_intersect
 
 def specified_change_eval(position_list):
 	"""evaluates positions in the list based on the closeness
@@ -203,7 +203,17 @@ def gear_mechanism_novelty_eval(outputs, all_outs, pos_thresh):
 		
 	return (fitness, total_diff)
 
-
+def eval_nonlin_gears(outputs, placement_thresh, output_min):
+	"""performs simple evaluation on set of gears by checking if they
+	intersect and how many gears are in system"""
+	
+	circles = get_centers_and_radii(outputs, placement_thresh, output_min)
+	intersect = check_intersect(circles)
+	if(intersect):
+		return -1,
+	else:
+		return len(circles),
+	
 
 
 

@@ -8,8 +8,8 @@ import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
 
-from deap_RNN_evals import gear_mechanism_novelty_eval as eval_double_obj
-from deap_RNN_evals import gear_mechanism_eval as eval_single_obj
+from deap_RNN_evals import eval_nonlin_gears as eval_single_obj
+from deap_RNN_evals import eval_nonlin_gears as eval_double_obj
 
 """The below contains all of the deap configuration used for CPPN so that it can be
 called and edited from a central location"""
@@ -19,7 +19,7 @@ N_IN=3
 N_HID=10
 N_OUT=3
 MAX_POINTS = 250 # maximum num of discrete points in output structure
-weights=(1.0, 1.0)
+weights=(1.0,)
 MUTPB = .15
 CXPB = .05
 INIT_WINDOW=.1
@@ -37,7 +37,7 @@ OUTPUT_MAX = 1
 MAX_GEARS = 6
 MIN_GEARS = 2
 STOP_THRESHOLD = .9
-PLACEMENT_THRESH = (-.5, .5)
+PLACEMENT_THRESH = .5
 RADIUS_SCALE = 10.0
 
 # total number of weights present in RNN
@@ -64,8 +64,8 @@ toolbox.register("evaluate", eval_double_obj)
 toolbox.register("evaluate_single_objective", eval_single_obj)
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-#toolbox.register("select", tools.selTournament, tournsize=3)
-toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
+toolbox.register("select", tools.selTournament, tournsize=3)
+#toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", map)
 
 
