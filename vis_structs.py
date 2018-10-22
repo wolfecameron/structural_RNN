@@ -123,9 +123,38 @@ def vis_gear_mechanism(outputs, pos_thresholds):
 	ax.set_xlim((x_min - max_rad, x_max + max_rad)) 
 
 	plt.show()
+
+def vis_gears_nonlinear(outputs):
+	"""takes in a list of tuples containing center location of gear
+	and the radius and outputs a matplotlib visualization of the gear
+	system - where the gears may be placed at angles instead of always
+	in a straight line"""
+
+	# create matplotlib axis for the visualization
+	fig, ax = plt.subplots()
+
+	# create a circle object for each gear
+	circles = []
+	for c_tup in outputs:
+		circles.append(plt.Circle(c_tup[0], c_tup[1], alpha=.2))
+
+	# plot all circles onto the matplotlib axis
+	for c in circles:
+		ax.add_artist(c)
+	
+	# find bounds for creating the window of the visualization
+	max_radius = max([x[1] for x in outputs])
+	max_x = max([abs(x[0][0]) for x in outputs])
+	max_y = max([abs(x[0][1]) for x in outputs])
+	x_lim = 1.1*(max_radius + max_x) # scale up a bit to give extra space
+	y_lim = 1.1*(max_radius + max_y)
+	ax.set_xlim((-x_lim, x_lim))
+	ax.set_ylim((-y_lim, y_lim))
+
+	plt.show()
 	
 if __name__ == '__main__':
 	"""main loop used for simple testing"""
-
-	outputs = [(.5, 0, 0), (.25, -1, 0), (.15, -1, 0)]
-	vis_gear_mechanism(outputs, (-.5, .5))
+	
+	output = [((0,0), 1.0), ((5, 2), 3.0), ((-5, -2), 1.5)]
+	vis_gears_nonlinear(output)
