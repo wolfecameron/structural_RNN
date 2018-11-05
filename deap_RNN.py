@@ -44,6 +44,8 @@ for g in range(N_GEN):
 	
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
+		print(fit)
+		input()
 		ind.fitness.values = fit
 	
 	# perform selection on the population to maximize fitness
@@ -64,9 +66,6 @@ for g in range(N_GEN):
 				del child1.fitness.values
 				del child2.fitness.values
 
-# plot average fitnesses for each generation
-#plt.plot(avg_fits)
-#plt.show()
 
 # contains tuples of individuals and their associated fitness
 # used to sort individual's output by fitness for viewing

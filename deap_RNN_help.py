@@ -249,22 +249,31 @@ def get_centers_and_radii(outputs, pos_thresh, output_min):
 	transforms it into a list of center locations and radii - any values below
 	pos_thresh for position output are scaled between 0 and 360 degrees for placement
 	relative to the last gear in the list, anything greater or equal represents gear
-	being attached to back of previous gear"""
+	being attached to back of previous gear
+	
+	each element of result has form (position, radius, z_position)
+	"""
 
 	# find how much positions should be scaled to get to 360
-	total_range = pos_thresh + -output_min# range is from -1 to pos thresh for tanh
+	total_range = pos_thresh - output_min# range is from -1 to pos thresh for tanh
 	scale_factor = 2*np.pi/total_range
 
+	# third element of position tuple is a z dimension that tells you if gear is attached to back of another
+	z = 0	
+	
 	# instantiate resulting list - first circle always at origin
-	result = [((0, 0), outputs[0][0])]
+	result = [((0, 0), outputs[0][0], z)]
 
 	# go through each gear and find position relative to previous gear
 	for curr, last in zip(outputs[1:], outputs):
 		# if position greater than pos_thresh, gear is attached to back of previous
 		if(curr[1] > pos_thresh):
-			result.append((result[-1][0], curr[0]))
+			# increment z because gears are now placed behind the others
+			z += 1
+			result.append((result[-1][0], curr[0], z))
+		
 		else:
-			angle = (curr[1] + 1)*scale_factor
+			angle = (curr[1] - output_min)*scale_factor
 			distance = curr[0] + last[0]
 			last_pos = result[-1][0]
 			
@@ -287,7 +296,7 @@ def get_centers_and_radii(outputs, pos_thresh, output_min):
 			
 			# update the position with change in x and y relative to last pos
 			pos = (last_pos[0] + x_change, last_pos[1] + y_change)			
-			result.append((pos, curr[0]))
+			result.append((pos, curr[0], z))
 	
 	return result
 
@@ -300,17 +309,18 @@ def check_intersect(circles):
 		left_c = i[1]
 		right_ind = i[0] + 1
 		while(right_ind < len(circles)):
+			# grab current circle to test for intersection
 			right_c = circles[right_ind]
-			if(left_c[0] != right_c[0]):
-					# find distance between centers and sum of radii
-					center_dist = np.sqrt(np.square(right_c[0][0] - left_c[0][0]) \
-						+ np.square(right_c[0][1] - left_c[0][1]))
-					radii_sum = right_c[1] + left_c[1]
-					
-					# if sum of radii is greater than the distance between centers
-					# then these two circles intersect
-					if(radii_sum > center_dist):
-						return True
+			
+			# find distance between centers and sum of radii
+			center_dist = np.sqrt(np.square(right_c[0][0] - left_c[0][0]) \
+				+ np.square(right_c[0][1] - left_c[0][1]))
+			radii_sum = right_c[1] + left_c[1]
+			
+			# if sum of radii is greater than the distance between centers
+			# then these two circles intersect if at same z position
+			if(radii_sum > center_dist and left_c[2] == right_c[2]):
+				return True
 			right_ind += 1
 
 	# only reaches this point if no circles intersect

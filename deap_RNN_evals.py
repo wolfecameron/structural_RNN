@@ -209,10 +209,14 @@ def eval_nonlin_gears(outputs, placement_thresh, output_min):
 	
 	circles = get_centers_and_radii(outputs, placement_thresh, output_min)
 	intersect = check_intersect(circles)
+	radii = [c[1] for c in circles]
+	pos_x = [c[0][0] for c in circles]
+	pos_y = [c[0][1] for c in circles]
+	
 	if(intersect):
 		return -1,
 	else:
-		return len(circles),
+		return np.var(np.array(radii)),
 	
 
 
