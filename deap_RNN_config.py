@@ -15,9 +15,9 @@ from deap_RNN_evals import eval_nonlin_gears as eval_double_obj
 called and edited from a central location"""
 
 # constants used for deap configuration
-N_IN=3
+N_IN=4
 N_HID=10
-N_OUT=3
+N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
 weights=(1.0,)
 MUTPB = .15
@@ -37,7 +37,7 @@ OUTPUT_MAX = 1
 MAX_GEARS = 6
 MIN_GEARS = 2
 STOP_THRESHOLD = .9
-PLACEMENT_THRESH = .5
+PLACEMENT_THRESH = .75
 RADIUS_SCALE = 10.0
 
 # total number of weights present in RNN
