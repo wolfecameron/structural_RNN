@@ -40,8 +40,11 @@ STOP_THRESHOLD = .9
 PLACEMENT_THRESH = .75
 RADIUS_SCALE = 10.0
 
+# defines all constants for torsional spring
+NUM_SPRING_PARAMS = 5
+
 # total number of weights present in RNN
-TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
+TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT + NUM_SPRING_PARAMS
 
 #create types needed for deap
 creator.create("FitnessMulti", base.Fitness, weights=weights)

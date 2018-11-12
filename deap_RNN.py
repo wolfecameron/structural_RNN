@@ -12,7 +12,7 @@ from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_S
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, get_centers_and_radii
-from deap_RNN_help	import create_mechanism_representation
+from deap_RNN_help import NUM_SPRING_PARAMS
 from deap_RNN_help import get_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
 
@@ -32,6 +32,11 @@ for g in range(N_GEN):
 	# get output for every individual in population and store in a list
 	all_outputs = []
 	for ind in pop:
+		# separate individual into weights for RNN and torsional spring parameters
+		tor_spring = ind[ :NUM_SPRING_PARAMS]
+		weights = ind[NUM_SPRING_PARAMS: ]
+		
+		# run the RNN to get gear mechanisms to evaluate
 		rnn = RNN(N_IN, N_HID, N_OUT)
 		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
@@ -45,8 +50,6 @@ for g in range(N_GEN):
 	
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
-		print(fit)
-		input()
 		ind.fitness.values = fit
 	
 	# perform selection on the population to maximize fitness
