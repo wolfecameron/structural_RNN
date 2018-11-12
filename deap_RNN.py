@@ -12,6 +12,7 @@ from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_S
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, get_centers_and_radii
+from deap_RNN_help	import create_mechanism_representation
 from deap_RNN_help import get_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
 

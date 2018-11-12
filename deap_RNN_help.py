@@ -304,26 +304,26 @@ def get_centers_and_radii(outputs, pos_thresh, output_min):
 	
 	return result
 
-def check_intersect(circles):
+def check_intersect(mechanism):
 	"""takes a list of circles (defined as a tuple with center position and the radii)
 	and returns true if any circles intersect and false if not circles intersect"""
 
 	# perform nested loop and check if each pair of circles intersects
-	for i in enumerate(circles):
+	for i in enumerate(mechanism):
 		left_c = i[1]
 		right_ind = i[0] + 1
-		while(right_ind < len(circles)):
+		while(right_ind < len(mechanism)):
 			# grab current circle to test for intersection
-			right_c = circles[right_ind]
+			right_c = mechanism[right_ind]
 			
 			# find distance between centers and sum of radii
-			center_dist = np.sqrt(np.square(right_c[0][0] - left_c[0][0]) \
-				+ np.square(right_c[0][1] - left_c[0][1]))
-			radii_sum = right_c[1] + left_c[1]
+			center_dist = np.sqrt(np.square(right_c.pos[0] - left_c.pos[0]) \
+				+ np.square(right_c.pos[1] - left_c.pos[1]))
+			radii_sum = right_c.radius + left_c.radius
 			
 			# if sum of radii is greater than the distance between centers
 			# then these two circles intersect if at same z position
-			if(radii_sum > center_dist and left_c[2] == right_c[2]):
+			if(radii_sum > center_dist and left_c.pos[2] == right_c.pos[2]):
 				return True
 			right_ind += 1
 
