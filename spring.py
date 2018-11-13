@@ -6,14 +6,14 @@ import numpy as np
 from deap_RNN_config import M_INIT, B_INIT, T_INIT, L_INIT
 class Spring():
 
-	def __init__(self, m=np.random.normal(M_INIT, .25, 1), b=np.random.normal(B_INIT, .25, 1), \
-					t=np.random.normal(T_INIT, .25, 1), l=np.random.normal(1.0, .25, 1)):
+	def __init__(self, m=np.random.normal(M_INIT, .25, 1)[0], b=np.random.normal(B_INIT, .25, 1)[0], \
+					t=np.random.normal(T_INIT, .25, 1)[0], l=L_INIT*np.random.normal(1.0, .25, 1)[0]):
 		"""initializes the spring to values that are passed"""
 		
-		self.shape_slope = m[0]
-		self.z_thick = b[0]
-		self.thick = t[0]
-		self.length = l[0]*L_INIT
+		self.shape_slope = m
+		self.z_thick = b
+		self.thick = t
+		self.length = l
 
 	def get_k(self, modulus):
 		"""returns the spring constant for the given torsional spring"""

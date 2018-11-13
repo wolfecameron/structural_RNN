@@ -7,6 +7,7 @@ import sys
 import numpy as np
 
 from deap_RNN_help import get_gear_ratio, get_centers_and_radii, check_intersect
+from deap_RNN_help import create_mechanism_representation
 
 def specified_change_eval(position_list):
 	"""evaluates positions in the list based on the closeness
@@ -203,23 +204,27 @@ def gear_mechanism_novelty_eval(outputs, all_outs, pos_thresh):
 		
 	return (fitness, total_diff)
 
-def eval_nonlin_gears(outputs, placement_thresh, output_min):
+def eval_nonlin_gears(outputs, spring, placement_thresh, output_min):
 	"""performs simple evaluation on set of gears by checking if they
 	intersect and how many gears are in system"""
 	
-	circles = get_centers_and_radii(outputs, placement_thresh, output_min)
-	intersect = check_intersect(circles)
-	radii = [c[1] for c in circles]
-	pos_x = [c[0][0] for c in circles]
-	pos_y = [c[0][1] for c in circles]
+	# get mechanism representation from the outputs
+	mechanism = create_mechanism_representation(outputs, placement_thresh, output_min)	
 	
-	if(intersect):
-		return -1,
-	else:
-		return np.var(np.array(radii)),
+	# find all gears that are an output in the system
+	outputs = []
+	for g in mechanism:
+		if len(g.next_gears) == 0:
+			outputs.append(g)	
+
+	# find torque of each gear to get the average 
+	total_torque = 0.0
+	input_torque = spring.get_torque(2.0*np.pi, 1.0)
+	for g in outputs:
+		total_torque += (input_torque/g.ratio)
+	total_torque /= len(outputs)
 	
+	return total_torque,
 
-
-
-
+	
 

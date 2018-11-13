@@ -50,11 +50,12 @@ for g in range(N_GEN):
 		output = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 		all_outputs.append(output)  
 		
-	input()
 	fits = []	
 	# get average fit and append into running list
-	for out in all_outputs:
-		fits.append(toolbox.evaluate(out, PLACEMENT_THRESH, OUTPUT_MIN))
+	for ind, out in zip(pop, all_outputs):
+		# create a spring object with given params to use in fitness evaluation
+		s = Spring(ind[0], ind[1], ind[2], ind[3])
+		fits.append(toolbox.evaluate(out, s, PLACEMENT_THRESH, OUTPUT_MIN))
 	
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
@@ -85,13 +86,17 @@ ind_and_fits = []
 
 # view results of the evolution
 for count, ind in enumerate(pop):
+	# separate spring and weights within individual
+	sp_param = ind[ :NUM_SPRING_PARAMS]
+	weights = ind[NUM_SPRING_PARAMS: ]
+
 	rnn = RNN(N_IN, N_HID, N_OUT)
-	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
+	w1, w1_bias, w2, w2_bias = list_to_matrices(weights, N_IN, N_HID, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	# get output for each individual in final generation
 	output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
-	fitness = toolbox.evaluate(output_positions, PLACEMENT_THRESH, OUTPUT_MIN)
+	fitness = toolbox.evaluate(output_positions, Spring(ind[0], ind[1], ind[2], ind[3]), PLACEMENT_THRESH, OUTPUT_MIN)
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((output_positions, fitness))
 

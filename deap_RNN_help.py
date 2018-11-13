@@ -383,7 +383,7 @@ def get_gear_pos(previous_pos, angle, prev_rad, curr_rad, pos_thresh, output_min
 		pos = (previous_pos[0], previous_pos[1], previous_pos[2] - 1)	
 	
 	else:
-		angle = (angle + position_thresh)*scale_factor
+		angle = (angle + pos_thresh)*scale_factor
 		distance = curr_rad + prev_rad
 			
 		# must handle each quadrant specifically depending on angle
