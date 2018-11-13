@@ -208,7 +208,8 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 		# must run inputs through RNN first to get values for first gear
 		rnn_input = [[radius, gear_pos_a, gear_pos_i, stop]]
 		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, act_exp)
-		radius, gear_pos_a, gear_pos_i, stop = outs.data[0][0].item(), outs.data[0][1].item(), outs.data[0][2].item()
+		radius, gear_pos_a, gear_pos_i, stop = outs.data[0][0].item(), outs.data[0][1].item() \
+												, outs.data[0][2].item(), outs.data[0][3].item()
 
 		# make sure radius is positive and scale it to fit between 0 and maximum possible value
 		# do not input scaled value back into RNN - large values can bias the input
@@ -220,7 +221,7 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 		curr_len = len(all_outputs)
 		if(curr_len != 0):
 			# output of pos_i should be scaled to the length of the current list to get index
-			pos_index = int((gear_pos_i/2.0)*curr_len) # cast to int so it is an index
+			pos_index = int(((gear_pos_i + 1.0)/2.0)*curr_len) # cast to int so it is an index
 		
 		# append outputs into list
 		all_outputs.append((radius_scaled, gear_pos_a, pos_index, stop))

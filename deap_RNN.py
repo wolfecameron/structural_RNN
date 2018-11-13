@@ -12,15 +12,22 @@ from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_S
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, get_centers_and_radii
-from deap_RNN_help import NUM_SPRING_PARAMS
+from deap_RNN_config import NUM_SPRING_PARAMS
 from deap_RNN_help import get_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
+from spring import Spring
 
 # import toolbox from config file
 toolbox = get_tb()
 
 # instantiate the population
 pop = toolbox.population()
+
+# go through population and initialize spring params properly
+for ind in pop:
+	s = Spring()
+	params = s.get_params_as_list()
+	ind[ :NUM_SPRING_PARAMS] = params	
 
 # keep track of fitnesses to graph over time
 avg_fits = []
@@ -38,11 +45,12 @@ for g in range(N_GEN):
 		
 		# run the RNN to get gear mechanisms to evaluate
 		rnn = RNN(N_IN, N_HID, N_OUT)
-		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
+		w1, w1_bias, w2, w2_bias = list_to_matrices(weights, N_IN, N_HID, N_OUT)
 		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 		output = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 		all_outputs.append(output)  
-	
+		
+	input()
 	fits = []	
 	# get average fit and append into running list
 	for out in all_outputs:
