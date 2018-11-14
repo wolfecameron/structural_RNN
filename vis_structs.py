@@ -134,7 +134,7 @@ def vis_gears_nonlinear(mechanism):
 
 	# create a circle object for each gear
 	circles = []
-	for gear in outputs:
+	for gear in mechanism:
 		circles.append(plt.Circle((gear.pos[0], gear.pos[1]), gear.radius, alpha=.2))
 
 	# plot all circles onto the matplotlib axis

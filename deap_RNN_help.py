@@ -221,7 +221,7 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 		curr_len = len(all_outputs)
 		if(curr_len != 0):
 			# output of pos_i should be scaled to the length of the current list to get index
-			pos_index = int(((gear_pos_i + 1.0)/2.0)*curr_len) # cast to int so it is an index
+			pos_index = int(((gear_pos_i + 1.0)/2.0)*(curr_len - 1)) # cast to int so it is an index
 		
 		# append outputs into list
 		all_outputs.append((radius_scaled, gear_pos_a, pos_index, stop))
