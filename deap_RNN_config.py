@@ -48,7 +48,7 @@ T_INIT = 1.0
 L_INIT = 100.0
 
 # total number of weights present in RNN
-TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT + NUM_SPRING_PARAMS
+TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
 
 #create types needed for deap
 creator.create("FitnessMulti", base.Fitness, weights=weights)

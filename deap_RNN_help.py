@@ -364,6 +364,55 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 	
 	return mechanism	
 
+def find_novelty(curr_vec, other_vecs):
+	"""pass in a numpy vector characterizing gear mechanism and find the average distance between
+	it and all other vectors in matrix other_vecs - returns average distance from the rest
+	of the vectors
+	"""
+	
+	# find difference between elements of vector and all other vectors
+	# square difference to avoid negative values
+	difference = other_vecs - curr_vec
+	difference = np.square(difference)
+
+	# find total difference for each vector and grab average of values
+	summed_rows = np.sum(difference, axis=1)	
+	average_distance = np.mean(summed_rows)
+
+	return average_distance
+
+def get_mechanism_vector(mechanism):
+	"""this method creates a charactaristic vector to describe a mechanism
+	that contains avg and var of x, y, z, avg and var # of connecting gears,
+	and total # gears"""
+	
+	# create lists that can be populated with all mechanism data
+	x = []
+	y = []
+	z = []
+	num_con = []
+	total_gear = len(mechanism)
+	
+	# populate all of the lists
+	for gear in mechanism:
+		x.append(gear.pos[0])
+		y.append(gear.pos[1])
+		z.append(gear.pos[2])
+		num_con.append(len(gear.next_gears))
+		
+	# convert arrays to np arrays
+	x = np.array(x)
+	y = np.array(y)
+	z = np.array(z)
+	num_con = np.array(num_con)
+	
+	# construct the vector of items to characterize mechanism
+	vec = np.array([np.mean(x), np.var(x), np.mean(y), np.var(y), \
+					np.mean(z), np.var(z), np.mean(num_con), np.var(num_con), \
+					total_gear])
+	
+	return vec					
+
 def get_gear_pos(previous_pos, angle, prev_rad, curr_rad, pos_thresh, output_min):
 	"""this method outputs the position of a single gear based on the position
 	of the gear it attaches to and it's angular RNN output
