@@ -7,7 +7,8 @@ import sys
 import numpy as np
 
 from deap_RNN_help import get_gear_ratio, get_centers_and_radii, check_intersect
-from deap_RNN_help import create_mechanism_representation
+from deap_RNN_help import create_mechanism_representation, get_mechanism_vector
+from deap_RNN_help import find_novelty, check_intersect_amount
 
 def specified_change_eval(position_list):
 	"""evaluates positions in the list based on the closeness
@@ -226,5 +227,25 @@ def eval_nonlin_gears(outputs, spring, placement_thresh, output_min):
 	
 	return total_torque,
 
-	
+def phase_one_eval(ind, other_vecs):
+	"""evaluates an individual for phase one of the experiment, which
+	selects individuals based on novelty and viability. Novelty is evaluated
+	based on a characteristic vector desribing all properties of a mechanism
+	while viability is determine based on intersecting gears"""	
 
+	novelty = 0.0	
+	if(other_vecs.size != (0,0)):	
+			# normalize individual vector and matrix	
+			ind_vec = get_mechanism_vector(ind)
+			all_vecs = np.vstack([other_vecs, ind_vec])
+			all_vecs_norm = (all_vecs - np.mean(all_vecs, axis=0))/(np.std(all_vecs, axis=0) + .01)
+			ind_norm = all_vecs_norm[-1:, :]
+			all_vecs_norm = all_vecs_norm[:-1, :]
+			
+			# calculate novelty by getting average vector distance
+			novelty = find_novelty(ind_norm, all_vecs_norm)
+
+	# find the value of instersecting gears
+	v = check_intersect_amount(ind)
+
+	return (v, novelty)

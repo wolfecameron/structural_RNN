@@ -11,7 +11,8 @@ from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN
-from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_mechanism_representation 
+from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_mechanism_representation
+from deap_RNN_help import get_mechanism_vector 
 from deap_RNN_config import NUM_SPRING_PARAMS
 from deap_RNN_help import get_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
@@ -22,15 +23,6 @@ toolbox = get_tb()
 
 # instantiate the population
 pop = toolbox.population()
-
-# go through population and initialize spring params properly
-for ind in pop:
-	s = Spring()
-	params = s.get_params_as_list()
-	ind[ :NUM_SPRING_PARAMS] = params	
-
-# keep track of fitnesses to graph over time
-avg_fits = []
 
 # begin the evolutionary loop
 for g in range(N_GEN):
@@ -46,10 +38,20 @@ for g in range(N_GEN):
 		output = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 		all_outputs.append(output)  
 		
+	# generate matrix of vectors for all individuals
+	vec_list = []
+	mechanism_list = []
+	for ind in all_outputs:
+		mechanism_list.append(create_mechanism_representation(ind, PLACEMENT_THRESH, OUTPUT_MIN))
+		vec_list.append(get_mechanism_vector(mechanism_list[-1]))
+	
+	# stack all vectors together to create a matrix
+	mech_matrix = np.vstack(vec_list)
+	
 	fits = []	
 	# get average fit and append into running list
-	for ind, out in zip(pop, all_outputs):
-		fits.append(toolbox.evaluate(out, s, PLACEMENT_THRESH, OUTPUT_MIN))
+	for ind in mechanism_list:
+		fits.append(toolbox.evaluate(ind, mech_matrix))
 	
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
@@ -86,7 +88,8 @@ for count, ind in enumerate(pop):
 	# get output for each individual in final generation
 	output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
-	fitness = toolbox.evaluate(output_positions, PLACEMENT_THRESH, OUTPUT_MIN)
+	curr = create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN)
+	fitness = toolbox.evaluate(curr, np.array([[]]))
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((output_positions, fitness))
 
