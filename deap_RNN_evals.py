@@ -234,7 +234,7 @@ def phase_one_eval(ind, other_vecs):
 	while viability is determine based on intersecting gears"""	
 
 	novelty = 0.0	
-	if(other_vecs.size != (0,0)):	
+	if(other_vecs.shape != (1,0)):	
 			# normalize individual vector and matrix	
 			ind_vec = get_mechanism_vector(ind)
 			all_vecs = np.vstack([other_vecs, ind_vec])
