@@ -91,7 +91,7 @@ for count, ind in enumerate(pop):
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((output_positions, fitness))
 
-# sort list of outputs by fitness
+# sort list of outputs by fitness - only uses a single objective
 ind_and_fits = sorted(ind_and_fits, key=lambda x: x[1])
 
 # go through outputs sorted by fintess for viewing
