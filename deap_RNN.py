@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
-from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND
+from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_mechanism_representation
 from deap_RNN_help import get_mechanism_vector 
 from deap_RNN_help import get_gear_mechanism as get_output
@@ -96,5 +96,5 @@ ind_and_fits = sorted(ind_and_fits, key=lambda x: x[1])
 
 # go through outputs sorted by fintess for viewing
 for count, out in enumerate(ind_and_fits):
-	vis_output(create_mechanism_representation(out[0], PLACEMENT_THRESH, OUTPUT_MIN))
+	vis_output(create_mechanism_representation(out[0], PLACEMENT_THRESH, OUTPUT_MIN), C_DICT)
 	print("Now viewing individual {0}".format(str(count)))

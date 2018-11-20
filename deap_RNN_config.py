@@ -44,6 +44,12 @@ RADIUS_SCALE = 10.0
 X_BOUND = 20.0
 Y_BOUND = 20.0
 
+# defines dictionary of colors that are used for different z dimensions in mechanism visualization
+C_DICT = {-9: "#CD5C5C", -8: "#C0C0C0", -7: "#000000", -6: "#800000", -5: "#008000", \
+			-4: "#FFFF00", -3: "#808000", -2: "#00FF00", -1: "#FF0000", 0: "#00FFFF", \
+			1: "#800080", 2: "#000080", 3: "#DC7633", 4: "#283747", 5: "9933FF",
+			6: "#1D8348", 7: "#C39BD3", 8: "#D5F5E3", 9: "#0000FF" } 
+
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
 

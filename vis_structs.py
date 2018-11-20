@@ -124,7 +124,7 @@ def vis_gear_mechanism(outputs, pos_thresholds):
 
 	plt.show()
 
-def vis_gears_nonlinear(mechanism):
+def vis_gears_nonlinear(mechanism, c_dict):
 	"""takes in a list gear objects and outputs a matplotlib visualization
 	of the gear system - where the gears may be placed at angles instead of
 	always in a straight line"""
@@ -135,7 +135,8 @@ def vis_gears_nonlinear(mechanism):
 	# create a circle object for each gear
 	circles = []
 	for gear in mechanism:
-		circles.append(plt.Circle((gear.pos[0], gear.pos[1]), gear.radius, alpha=.2))
+		circles.append(plt.Circle((gear.pos[0], gear.pos[1]), gear.radius, \
+						alpha=.1, color=c_dict[gear.pos[2]]))
 
 	# plot all circles onto the matplotlib axis
 	for c in circles:
