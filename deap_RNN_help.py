@@ -486,6 +486,31 @@ def get_gear_pos(previous_pos, angle, prev_rad, curr_rad, pos_thresh, output_min
 
 	return pos			
 
+def check_bounding_box(ind, x_bound, y_bound):
+	"""finds the total amount of gears that lie out of the desired boudning
+	box for gear system and adds all x and y distances outside of the desired
+	bounding box
+	"""
+	
+	total_outside = 0.0
+	for g in ind:
+		r = g.radius
+		# find the amount the gear lies out of x bound
+		x = g.pos[0]
+		if((x - r) < -x_bound):
+			total_outside += np.square((x - r) + x_bound)
+		elif((x + r) > x_bound):
+			total_outside += np.square((x + r) - x_bound)
+		
+		# find the amount the gear lies out of y bound
+		y = g.pos[1]
+		if((y - r) < -y_bound):
+			total_outside += np.square((y - r) + y_bound)
+		elif((y + r) > y_bound):
+			total_outside += np.square((y + r) - y_bound)
+
+	return total_outside
+
 
 if __name__ == '__main__':
 	""" main function for quick tests"""

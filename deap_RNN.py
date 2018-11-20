@@ -10,13 +10,11 @@ import matplotlib.pyplot as plt
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
-from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN
+from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_mechanism_representation
 from deap_RNN_help import get_mechanism_vector 
-from deap_RNN_config import NUM_SPRING_PARAMS
 from deap_RNN_help import get_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
-from spring import Spring
 
 # import toolbox from config file
 toolbox = get_tb()
@@ -51,7 +49,7 @@ for g in range(N_GEN):
 	fits = []	
 	# get average fit and append into running list
 	for ind in mechanism_list:
-		fits.append(toolbox.evaluate(ind, mech_matrix))
+		fits.append(toolbox.evaluate(ind, mech_matrix, X_BOUND, Y_BOUND))
 	
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
@@ -89,7 +87,7 @@ for count, ind in enumerate(pop):
 	output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
 	curr = create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN)
-	fitness = toolbox.evaluate(curr, np.array([[]]))
+	fitness = toolbox.evaluate(curr, np.array([[]]), X_BOUND, Y_BOUND)
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((output_positions, fitness))
 

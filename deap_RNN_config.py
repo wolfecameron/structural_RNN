@@ -40,12 +40,9 @@ STOP_THRESHOLD = .9
 PLACEMENT_THRESH = .75
 RADIUS_SCALE = 10.0
 
-# defines all constants for torsional spring
-NUM_SPRING_PARAMS = 4
-M_INIT = 1.0
-B_INIT = 1.0
-T_INIT = 1.0
-L_INIT = 100.0
+# define bounding box constraints for RNN
+X_BOUND = 20.0
+Y_BOUND = 20.0
 
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
