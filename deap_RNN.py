@@ -97,4 +97,5 @@ ind_and_fits = sorted(ind_and_fits, key=lambda x: x[1])
 # go through outputs sorted by fintess for viewing
 for count, out in enumerate(ind_and_fits):
 	vis_output(create_mechanism_representation(out[0], PLACEMENT_THRESH, OUTPUT_MIN), C_DICT)
+	print(out[1])
 	print("Now viewing individual {0}".format(str(count)))

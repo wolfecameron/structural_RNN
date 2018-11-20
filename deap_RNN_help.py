@@ -437,8 +437,7 @@ def get_mechanism_vector(mechanism):
 	
 	# construct the vector of items to characterize mechanism
 	vec = np.array([np.mean(x), np.var(x), np.mean(y), np.var(y), \
-					np.mean(z), np.var(z), np.mean(num_con), np.var(num_con), \
-					total_gear])
+					np.mean(z), np.var(z), np.mean(num_con), np.var(num_con)])
 	
 	return vec					
 
