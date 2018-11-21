@@ -240,15 +240,15 @@ def phase_one_eval(ind, other_vecs, x_bound, y_bound):
 			all_vecs = np.vstack([other_vecs, ind_vec])
 			all_vecs_norm = (all_vecs - np.mean(all_vecs, axis=0))/(np.std(all_vecs, axis=0) + .01)
 			ind_norm = all_vecs_norm[-1:, :]
-			all_vecs_norm = all_vecs_norm[:-1, :]
-			
+			all_vecs_norm = all_vecs_norm[:-1, :]	
+
 			# calculate novelty by getting average vector distance
 			novelty = find_novelty(ind_norm, all_vecs_norm)
-
+	
 	# find the value of instersecting gears
 	v = check_intersect_amount(ind)
 		
 	# check if any gears lie outside of bounding box
 	d = check_bounding_box(ind, x_bound, y_bound)
-		
-	return (v*d, novelty)
+	
+	return (novelty, v*d)

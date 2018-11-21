@@ -10,6 +10,7 @@ from scoop import futures
 
 from deap_RNN_evals import phase_one_eval as eval_single_obj
 from deap_RNN_evals import phase_one_eval  as eval_double_obj
+from deap_RNN_sel import select_binary_CV
 
 """The below contains all of the deap configuration used for CPPN so that it can be
 called and edited from a central location"""
@@ -19,12 +20,12 @@ N_IN=4
 N_HID=10
 N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
-weights=(-1.0, 1.0)
+weights=(1.0, -1.0)
 MUTPB = .15
 CXPB = .05
 INIT_WINDOW=.1
 POP_SIZE=50
-N_GEN=1000
+N_GEN=400
 ACT_EXP = .1
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
@@ -74,8 +75,8 @@ toolbox.register("evaluate", eval_double_obj)
 toolbox.register("evaluate_single_objective", eval_single_obj)
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-#toolbox.register("select", tools.selTournament, tournsize=3)
-toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
+toolbox.register("select", select_binary_CV)
+#toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", map)
 
 

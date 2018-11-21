@@ -56,7 +56,7 @@ for g in range(N_GEN):
 		ind.fitness.values = fit
 	
 	# perform selection on the population to maximize fitness
-	pop = toolbox.select(pop, k=POP_SIZE)
+	pop = toolbox.select(pop)
 	
 	# only apply mutation if not last generation
 	if(g < N_GEN - 1):
@@ -78,6 +78,8 @@ for g in range(N_GEN):
 # used to sort individual's output by fitness for viewing
 ind_and_fits = []
 
+mechanism_list = []
+vec_list = []
 # view results of the evolution
 for count, ind in enumerate(pop):
 	rnn = RNN(N_IN, N_HID, N_OUT)
@@ -86,13 +88,20 @@ for count, ind in enumerate(pop):
 	# get output for each individual in final generation
 	output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
-	curr = create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN)
-	fitness = toolbox.evaluate(curr, np.array([[]]), X_BOUND, Y_BOUND)
+	mechanism_list.append(create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN))
+	vec_list.append(get_mechanism_vector(mechanism_list[-1]))
+
+# stack all vectors into a matrix
+mech_matrix = np.vstack(vec_list)
+
+# go through all mechanisms and assign fitness
+for mechanism in mechanism_list:
+	fitness = toolbox.evaluate(mechanism, mech_matrix, X_BOUND, Y_BOUND)
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((output_positions, fitness))
 
 # sort list of outputs by fitness - only uses a single objective
-ind_and_fits = sorted(ind_and_fits, key=lambda x: x[1])
+ind_and_fits = sorted(ind_and_fits, key=lambda x: x[0], reverse=True)
 
 # go through outputs sorted by fintess for viewing
 for count, out in enumerate(ind_and_fits):
