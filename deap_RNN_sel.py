@@ -22,22 +22,31 @@ def select_binary_CV(pop):
 	for ind1, ind2 in zip(pop, pop_o):
 		ind1_fit = ind1.fitness.values
 		ind2_fit = ind2.fitness.values
-
+		#print(ind1_fit)
+		#print(ind2_fit)
+	
 		# always select inds who satisfy constraints if only one satisfies
 		# select for highest fitness/lowest constraint violation
-		if(ind1_fit[1] <= 0 and ind2_fit[1] > 0):
+		if(ind1_fit[1] == 0 and ind2_fit[1] > 0):
 			new_pop.append(ind1)
-		elif(ind1_fit[1] > 0 and ind2_fit[1] <= 0):
+			#print("ind1 selected")
+		elif(ind1_fit[1] > 0 and ind2_fit[1] == 0):
 			new_pop.append(ind2)
-		elif(ind1_fit[1] <= 0 and ind2_fit[1] <= 0):
+			#print("ind2 selected")
+		elif(ind1_fit[1] == 0 and ind2_fit[1] == 0):
 			if(ind1_fit[0] > ind2_fit[0]):
 				new_pop.append(ind1)
+				#print("ind1 selected")
 			else:
 				new_pop.append(ind2)
+				#print("ind2 selected")
 		else:
 			if(ind1_fit[1] < ind2_fit[1]):
 				new_pop.append(ind1)
+				#print("ind1 selected")
 			else:
 				new_pop.append(ind2)
+				#print("ind2 selected")
+		#input()
 
 	return new_pop

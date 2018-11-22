@@ -45,12 +45,18 @@ for g in range(N_GEN):
 	
 	# stack all vectors together to create a matrix
 	mech_matrix = np.vstack(vec_list)
-	
+
+	# normalize the mechanism matrix by simply dividing by avg column value
+	col_avg = np.mean(mech_matrix, axis=0) + .001
+	mech_matrix /= col_avg	
+
 	fits = []	
 	# get average fit and append into running list
 	for ind in mechanism_list:
-		fits.append(toolbox.evaluate(ind, mech_matrix, X_BOUND, Y_BOUND))
-	
+		# create vector for individual and normalize it
+		ind_vec = get_mechanism_vector(ind)/col_avg
+		fits.append(toolbox.evaluate(ind, ind_vec, mech_matrix, X_BOUND, Y_BOUND))
+		
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
 		ind.fitness.values = fit
@@ -91,20 +97,25 @@ for count, ind in enumerate(pop):
 	mechanism_list.append(create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN))
 	vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 
-# stack all vectors into a matrix
+# stack all vectors into a matrix and normalize
 mech_matrix = np.vstack(vec_list)
+col_avg = np.mean(mech_matrix, axis=0) + .001
+mech_matrix /= col_avg
 
 # go through all mechanisms and assign fitness
 for mechanism in mechanism_list:
-	fitness = toolbox.evaluate(mechanism, mech_matrix, X_BOUND, Y_BOUND)
+	# get individual vector and normalize
+	ind_vec = get_mechanism_vector(mechanism)/col_avg
+	fitness = toolbox.evaluate(mechanism, ind_vec, mech_matrix, X_BOUND, Y_BOUND)
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((output_positions, fitness))
 
 # sort list of outputs by fitness - only uses a single objective
-ind_and_fits = sorted(ind_and_fits, key=lambda x: x[0], reverse=True)
+#ind_and_fits = sorted(ind_and_fits, key=lambda x: x[0], reverse=True)
 
 # go through outputs sorted by fintess for viewing
 for count, out in enumerate(ind_and_fits):
-	vis_output(create_mechanism_representation(out[0], PLACEMENT_THRESH, OUTPUT_MIN), C_DICT)
-	print(out[1])
+	mech = create_mechanism_representation(out[0], PLACEMENT_THRESH, OUTPUT_MIN)
+	vis_output(mech, C_DICT)
+	#print(get_mechanism_vector(mech))	
 	print("Now viewing individual {0}".format(str(count)))

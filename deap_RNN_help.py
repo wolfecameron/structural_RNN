@@ -419,7 +419,7 @@ def get_mechanism_vector(mechanism):
 	x = []
 	y = []
 	z = []
-	num_con = []
+	r = []
 	total_gear = len(mechanism)
 	
 	# populate all of the lists
@@ -427,17 +427,18 @@ def get_mechanism_vector(mechanism):
 		x.append(gear.pos[0])
 		y.append(gear.pos[1])
 		z.append(gear.pos[2])
-		num_con.append(len(gear.next_gears))
-		
+		r.append(gear.radius)
+	
 	# convert arrays to np arrays
 	x = np.array(x)
 	y = np.array(y)
 	z = np.array(z)
-	num_con = np.array(num_con)
+	r = np.array(r)
 	
 	# construct the vector of items to characterize mechanism
 	vec = np.array([np.mean(x), np.var(x), np.mean(y), np.var(y), \
-					np.mean(z), np.var(z), np.mean(num_con), np.var(num_con)])
+					np.mean(z), np.var(z), np.mean(r), np.var(r), \
+					float(total_gear)])
 	
 	return vec					
 

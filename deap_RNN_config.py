@@ -17,7 +17,7 @@ called and edited from a central location"""
 
 # constants used for deap configuration
 N_IN=4
-N_HID=10
+N_HID=1
 N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
 weights=(1.0, -1.0)
@@ -42,8 +42,8 @@ PLACEMENT_THRESH = .75
 RADIUS_SCALE = 10.0
 
 # define bounding box constraints for RNN
-X_BOUND = 20.0
-Y_BOUND = 20.0
+X_BOUND = 50.0
+Y_BOUND = 50.0
 
 # defines dictionary of colors that are used for different z dimensions in mechanism visualization
 C_DICT = {-9: "#CD5C5C", -8: "#C0C0C0", -7: "#000000", -6: "#800000", -5: "#008000", \
