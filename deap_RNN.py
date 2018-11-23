@@ -74,12 +74,30 @@ for g in range(N_GEN):
 				del ind.fitness.values
 		
 		for child1, child2 in zip(pop[::2], pop[1::2]):
-			if np.random.uniform() <= CXPB:
-				toolbox.mate(child1, child2)
+			# find boundary of first and second layers
+			end_first_layer = (N_HID + N_IN)*N_HID + N_HID
+			print(child1)
+			print(child2)
+			print("#####################################")
+			rand = np.random.uniform()
+			if rand <= (CXPB/2.0):
+				print("ins_mate")
+				child1[ :end_first_layer], child2[ :end_first_layer] = toolbox.ins_mate(child1[ :end_first_layer], child2[ :end_first_layer])
+				child1[end_first_layer: ], child2[end_first_layer: ] = toolbox.ins_mate(child1[end_first_layer: ], child2[end_first_layer: ])
 				del child1.fitness.values
 				del child2.fitness.values
+			elif (CXPB/2.0) < rand <= CXPB:
+				print("ex_mate")
+				child1[ :end_first_layer], child2[ :end_first_layer] = toolbox.ex_mate(child1[ :end_first_layer], child2[ :end_first_layer], CXPB)
+				child1[end_first_layer: ], child2[end_first_layer: ] = toolbox.ex_mate(child1[end_first_layer: ], child2[end_first_layer: ], CXPB)
+				del child1.fitness.values
+				del child2.fitness.values
+			print(child1)
+			print(child2)
+			input()
 
-
+ins_mate
+ex_mate
 # contains tuples of individuals and their associated fitness
 # used to sort individual's output by fitness for viewing
 ind_and_fits = []

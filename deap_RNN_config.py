@@ -8,6 +8,7 @@ import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
 
+from deap_RNN_xover import insertion_xover, exchange_xover
 from deap_RNN_evals import phase_one_eval as eval_single_obj
 from deap_RNN_evals import phase_one_eval  as eval_double_obj
 from deap_RNN_sel import select_binary_CV
@@ -22,7 +23,7 @@ N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
 weights=(1.0, -1.0)
 MUTPB = .15
-CXPB = .05
+CXPB = .5
 INIT_WINDOW=2.0
 POP_SIZE=50
 N_GEN=500
@@ -73,7 +74,9 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=POP
 # register all functions needed for evolution in the toolbox
 toolbox.register("evaluate", eval_double_obj)
 toolbox.register("evaluate_single_objective", eval_single_obj)
-toolbox.register("mate", tools.cxTwoPoint)
+#toolbox.register("mate", tools.cxTwoPoint)
+toolbox.register("ins_mate", insertion_xover)
+toolbox.register("ex_mate", exchange_xover)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
 toolbox.register("select", select_binary_CV)
 #toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
