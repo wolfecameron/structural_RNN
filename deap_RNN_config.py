@@ -23,7 +23,7 @@ N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
 weights=(1.0, -1.0)
 MUTPB = .15
-CXPB = .5
+CXPB = .1
 INIT_WINDOW=2.0
 POP_SIZE=50
 N_GEN=500
@@ -36,7 +36,7 @@ OUTPUT_MIN = -1
 OUTPUT_MAX = 1
 
 # the below constants are used for gear generation
-MAX_GEARS = 6
+MAX_GEARS = 10
 MIN_GEARS = 2
 STOP_THRESHOLD = .9
 PLACEMENT_THRESH = .75
