@@ -25,7 +25,7 @@ pop = toolbox.population()
 # begin the evolutionary loop
 for g in range(N_GEN):
 	print("Running Generation {0}".format(str(g)))
-	
+
 	# get output for every individual in population and store in a list
 	all_outputs = []
 	for ind in pop:
