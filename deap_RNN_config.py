@@ -24,8 +24,8 @@ weights=(1.0, -1.0)
 MUTPB = .15
 CXPB = .05
 INIT_WINDOW=2.0
-POP_SIZE=100
-N_GEN=0
+POP_SIZE=50
+N_GEN=500
 ACT_EXP = 1.0
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
@@ -48,7 +48,7 @@ Y_BOUND = 50.0
 # defines dictionary of colors that are used for different z dimensions in mechanism visualization
 C_DICT = {-9: "#CD5C5C", -8: "#C0C0C0", -7: "#000000", -6: "#800000", -5: "#008000", \
 			-4: "#FFFF00", -3: "#808000", -2: "#00FF00", -1: "#FF0000", 0: "#00FFFF", \
-			1: "#800080", 2: "#000080", 3: "#DC7633", 4: "#283747", 5: "9933FF",
+			1: "#800080", 2: "#000080", 3: "#DC7633", 4: "#283747", 5: "#9933FF",
 			6: "#1D8348", 7: "#C39BD3", 8: "#D5F5E3", 9: "#0000FF" } 
 
 # total number of weights present in RNN
