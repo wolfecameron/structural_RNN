@@ -49,7 +49,7 @@ for g in range(N_GEN):
 	# normalize the mechanism matrix by simply dividing by avg column value
 	col_avg = np.mean(mech_matrix, axis=0) + .001
 	mech_matrix /= col_avg	
-
+	
 	fits = []	
 	# get average fit and append into running list
 	for ind in mechanism_list:
@@ -83,7 +83,7 @@ for g in range(N_GEN):
 # contains tuples of individuals and their associated fitness
 # used to sort individual's output by fitness for viewing
 ind_and_fits = []
-
+outs = []
 mechanism_list = []
 vec_list = []
 # view results of the evolution
@@ -94,9 +94,14 @@ for count, ind in enumerate(pop):
 	# get output for each individual in final generation
 	output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH)
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
+	outs.append(output_positions)
 	mechanism_list.append(create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN))
-	vec_list.append(get_mechanism_vector(mechanism_list[-1]))
+	#vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 
+for m in mechanism_list:
+	vis_output(m, C_DICT)
+
+"""
 # stack all vectors into a matrix and normalize
 mech_matrix = np.vstack(vec_list)
 col_avg = np.mean(mech_matrix, axis=0) + .001
@@ -108,14 +113,9 @@ for mechanism in mechanism_list:
 	ind_vec = get_mechanism_vector(mechanism)/col_avg
 	fitness = toolbox.evaluate(mechanism, ind_vec, mech_matrix, X_BOUND, Y_BOUND)
 	# append tuple of individual's outputs and fitness to the global list
-	ind_and_fits.append((output_positions, fitness))
+	ind_and_fits.append((mechanism, fitness))
+"""
 
 # sort list of outputs by fitness - only uses a single objective
 #ind_and_fits = sorted(ind_and_fits, key=lambda x: x[0], reverse=True)
 
-# go through outputs sorted by fintess for viewing
-for count, out in enumerate(ind_and_fits):
-	mech = create_mechanism_representation(out[0], PLACEMENT_THRESH, OUTPUT_MIN)
-	vis_output(mech, C_DICT)
-	#print(get_mechanism_vector(mech))	
-	print("Now viewing individual {0}".format(str(count)))

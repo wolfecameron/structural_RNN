@@ -17,16 +17,16 @@ called and edited from a central location"""
 
 # constants used for deap configuration
 N_IN=4
-N_HID=1
+N_HID=5
 N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
 weights=(1.0, -1.0)
 MUTPB = .15
 CXPB = .05
-INIT_WINDOW=.1
-POP_SIZE=50
-N_GEN=400
-ACT_EXP = .1
+INIT_WINDOW=2.0
+POP_SIZE=100
+N_GEN=0
+ACT_EXP = 1.0
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
 

@@ -135,6 +135,7 @@ def vis_gears_nonlinear(mechanism, c_dict):
 	# create a circle object for each gear
 	circles = []
 	for gear in mechanism:
+		#print(gear)
 		circles.append(plt.Circle((gear.pos[0], gear.pos[1]), gear.radius, \
 						alpha=.1, color=c_dict[gear.pos[2]]))
 

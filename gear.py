@@ -12,3 +12,8 @@ class Gear():
 		self.prev_gear = prev_gear # stored as an index
 		self.next_gears = [] # stored as a list of indices
 		self.ratio = 1.0 # stored as a float
+
+	def __str__(self):
+		"""to string method for gear object"""
+		
+		return "(r: {0}, pos: {1})".format(str(self.radius), str(self.pos))

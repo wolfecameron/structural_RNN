@@ -376,21 +376,23 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 	mechanism = [Gear(all_outputs[0][0], (0,0,0), 0)]
 	
 	# go through all outputs and create a gear object for each one
-	for ind, curr in enumerate(all_outputs[1:]):
+	for index, curr in enumerate(all_outputs[1:]):
 		prev_gear = mechanism[curr[2]]
 		new_pos = get_gear_pos(prev_gear.pos, curr[1], prev_gear.radius, curr[0], pos_thresh, output_min)
 		mechanism.append(Gear(curr[0], new_pos, curr[2]))
 		
 		# add index of current into list of nxt gears for gear it attaches to
-		prev_gear.next_gears.append(ind + 1)
+		prev_gear.next_gears.append(index + 1)
 		
 		# find ratio of current gear - only changes if not attached to front/back
+		"""
 		new_ratio = prev_gear.ratio*(prev_gear.radius/mechanism[-1].radius)
 		if(-pos_thresh <= curr[1] <= pos_thresh ):
 			mechanism[-1].ratio = new_ratio
 		else:
 			mechanism[-1].ratio = prev_gear.ratio
-	
+		"""
+
 	return mechanism	
 
 def find_novelty(curr_vec, other_vecs):
@@ -406,9 +408,9 @@ def find_novelty(curr_vec, other_vecs):
 
 	# find total difference for each vector and grab average of values
 	summed_rows = np.sum(difference, axis=1)	
-	average_distance = np.mean(summed_rows)
+	total_distance = np.sum(summed_rows)
 
-	return average_distance
+	return total_distance
 
 def get_mechanism_vector(mechanism):
 	"""this method creates a charactaristic vector to describe a mechanism
