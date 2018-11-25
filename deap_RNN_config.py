@@ -18,7 +18,9 @@ called and edited from a central location"""
 
 # constants used for deap configuration
 N_IN=4
-N_HID=5
+MIN_NODES=3
+MAX_NODES=15
+N_HID=MAX_NODES
 N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
 weights=(1.0, -1.0)
@@ -26,7 +28,7 @@ MUTPB = .15
 CXPB = .1
 INIT_WINDOW=2.0
 POP_SIZE=50
-N_GEN=500
+N_GEN=200
 ACT_EXP = 1.0
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
@@ -57,7 +59,7 @@ TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
 
 #create types needed for deap
 creator.create("FitnessMulti", base.Fitness, weights=weights)
-creator.create("Individual", list, fitness=creator.FitnessMulti)
+creator.create("Individual", list, fitness=creator.FitnessMulti, h_nodes=np.random.randint(MIN_NODES, MAX_NODES))
 
 # initialize the toolbox
 toolbox = base.Toolbox()
