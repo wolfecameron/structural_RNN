@@ -28,7 +28,8 @@ def list_to_matrices(weight_list, num_in, num_hid, num_out):
 	w1_bias = np.array(weight_list[w1_size: (w1_size + w1_bias_size)], copy=True)
 	w2 = np.array(weight_list[(w1_size + w1_bias_size): (w1_size + w1_bias_size + w2_size)],
 			copy=True)
-	w2_bias = np.array(weight_list[(w1_size + w1_bias_size + w2_size): ], copy=True)
+	w2_bias = np.array(weight_list[(w1_size + w1_bias_size + w2_size): (w1_size + \
+			w1_bias_size + w2_size + w2_bias_size) ], copy=True)
 	
 	return (w1, w1_bias, w2, w2_bias)
 

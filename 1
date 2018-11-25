@@ -26,6 +26,9 @@ pop = toolbox.population()
 for p in pop:
 	p.h_nodes = np.random.randint(MIN_NODES, MAX_NODES + 1)
 
+for p in pop:
+	print(p.h_nodes)
+	input()
 # begin the evolutionary loop
 for g in range(N_GEN):
 	print("Running Generation {0}".format(str(g)))
@@ -56,10 +59,10 @@ for g in range(N_GEN):
 	
 	fits = []	
 	# get average fit and append into running list
-	for ind, mech in zip(pop, mechanism_list):
+	for ind in mechanism_list:
 		# create vector for individual and normalize it
-		mech_vec = get_mechanism_vector(mech)/col_avg
-		fits.append(toolbox.evaluate(ind, mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND))
+		ind_vec = get_mechanism_vector(ind)/col_avg
+		fits.append(toolbox.evaluate(ind, ind_vec, mech_matrix, X_BOUND, Y_BOUND))
 		
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):

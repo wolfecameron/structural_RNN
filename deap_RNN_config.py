@@ -59,7 +59,7 @@ TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
 
 #create types needed for deap
 creator.create("FitnessMulti", base.Fitness, weights=weights)
-creator.create("Individual", list, fitness=creator.FitnessMulti, h_nodes=np.random.randint(MIN_NODES, MAX_NODES))
+creator.create("Individual", list, fitness=creator.FitnessMulti, h_nodes=-1)
 
 # initialize the toolbox
 toolbox = base.Toolbox()

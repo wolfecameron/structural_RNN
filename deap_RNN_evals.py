@@ -227,7 +227,7 @@ def eval_nonlin_gears(outputs, spring, placement_thresh, output_min):
 	
 	return total_torque,
 
-def phase_one_eval(ind, ind_vec, other_vecs, x_bound, y_bound):
+def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 	"""evaluates an individual for phase one of the experiment, which
 	selects individuals based on novelty and viability. Novelty is evaluated
 	based on a characteristic vector desribing all properties of a mechanism
@@ -240,12 +240,12 @@ def phase_one_eval(ind, ind_vec, other_vecs, x_bound, y_bound):
 	novelty = 0.0	
 	if(other_vecs.shape != (1,0)):	
 			# calculate novelty by getting average vector distance
-			novelty = find_novelty(ind_vec, other_vecs)
+			novelty = find_novelty(mech_vec, other_vecs)
 	
 	# find the value of instersecting gears
-	v = check_intersect_amount(ind)
+	v = check_intersect_amount(mech)
 		
 	# check if any gears lie outside of bounding box
-	d = check_bounding_box(ind, x_bound, y_bound)
+	d = check_bounding_box(mech, x_bound, y_bound)
 	
-	return (novelty, v*d)
+	return (novelty, v*d, ind.h_nodes)
