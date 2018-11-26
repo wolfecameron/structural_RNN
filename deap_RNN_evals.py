@@ -248,4 +248,4 @@ def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 	# check if any gears lie outside of bounding box
 	d = check_bounding_box(mech, x_bound, y_bound)
 	
-	return (novelty, v*d, ind.h_nodes)
+	return (novelty, ind.h_nodes, v*d)

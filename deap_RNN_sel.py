@@ -4,6 +4,8 @@ for deap in the structural RNN evolution"""
 from copy import deepcopy
 from random import shuffle
 
+from deap_RNN_help import dominates, get_crowding_distance
+
 def select_binary_CV(pop):
 	"""this method performs binary selection on a population
 	with contraint violation - individuals that satisfy constraint
@@ -50,3 +52,57 @@ def select_binary_CV(pop):
 		#input()
 
 	return new_pop
+
+def NSGAII_CV_tourn(tourn):
+	"""selects one individual from the given tournament of individuals
+	using NSGAII on the two fitnesses (novelty and number of nodes) of
+	individuals
+
+	the tourn parameter contains a tournament of individuals and the best
+	individual is selected from this list
+	"""
+	
+	# initialize pareto front as empty
+	pareto_front = []
+	
+	# populate the first pareto front using individuals in tourn
+	l_ind = 0
+	while(l_ind < len(tourn)):
+		r_ind = 0
+		dominated = False
+		while(not dominated and r_ind < len(tourn)):
+			d = dominates(tourn[l_ind], tourn[r_ind])
+			if(d):
+				dominated = True
+			r_ind += 1
+		if(not dominated):
+			pareto_front.append(tourn[l_ind])
+		l_ind += 1
+	
+	# if only one dominating solution then return it
+	if(len(pareto_front) == 1):
+		return pareto_front[0]
+	# if all individuals in pareto front are not viable
+	# return the one with lowest constraint violation
+	elif(pareto_front[0].fitness[2] > 0):
+		return min(pareto_front, key=lambda x: x.fitness[2])
+	
+	crowd_dist_solutions = []
+	# calculate the crowding distance for each solution
+	l_ind = 0
+	while(l_ind < len(pareto_front)):
+		r_ind = 0
+		crowd_dists = []
+		while(r_ind < len(pareto_front)):
+			if(l_ind != r_ind):
+				crowd_dists.append(get_crowding_distance(pareto_front[l_ind], pareto_front[r_ind])
+			r_ind += 1
+		crowd_dists = sorted(crowd_dists)
+		# track individuals crowding distance so one with max crowding distance can be selected
+		crowd_dist_solutions.append((pareto_front[l_ind], crowd_dists[0] + crowd_dists[1]))
+		l_ind += 1
+	
+	# return individual with highest crowding distance
+	return max(crowd_dist_solutions, key=lambda x: x[1])[0]
+
+
