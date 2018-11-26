@@ -11,7 +11,7 @@ from scoop import futures
 from deap_RNN_xover import insertion_xover, exchange_xover
 from deap_RNN_evals import phase_one_eval as eval_single_obj
 from deap_RNN_evals import phase_one_eval  as eval_double_obj
-from deap_RNN_sel import select_binary_CV
+from deap_RNN_sel import NSGAII_CV_tourn
 
 """The below contains all of the deap configuration used for CPPN so that it can be
 called and edited from a central location"""
@@ -23,7 +23,7 @@ MAX_NODES=15
 N_HID=MAX_NODES
 N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
-weights=(1.0, -1.0)
+weights=(1.0, -1.0, -1.0)
 MUTPB = .15
 CXPB = .1
 INIT_WINDOW=2.0
@@ -32,6 +32,7 @@ N_GEN=200
 ACT_EXP = 1.0
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
+TOURN_SIZE = 3
 
 # below are constants related to RNN output
 OUTPUT_MIN = -1
@@ -80,7 +81,7 @@ toolbox.register("evaluate_single_objective", eval_single_obj)
 toolbox.register("ins_mate", insertion_xover)
 toolbox.register("ex_mate", exchange_xover)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-toolbox.register("select", select_binary_CV)
+toolbox.register("select", NSGAII_CV_tourn)
 #toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", map)
 

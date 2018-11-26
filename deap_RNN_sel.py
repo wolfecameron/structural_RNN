@@ -71,7 +71,7 @@ def NSGAII_CV_tourn(tourn):
 		r_ind = 0
 		dominated = False
 		while(not dominated and r_ind < len(tourn)):
-			d = dominates(tourn[l_ind], tourn[r_ind])
+			d = dominates(tourn[r_ind], tourn[l_ind])
 			if(d):
 				dominated = True
 			r_ind += 1
@@ -84,8 +84,8 @@ def NSGAII_CV_tourn(tourn):
 		return pareto_front[0]
 	# if all individuals in pareto front are not viable
 	# return the one with lowest constraint violation
-	elif(pareto_front[0].fitness[2] > 0):
-		return min(pareto_front, key=lambda x: x.fitness[2])
+	elif(pareto_front[0].fitness.values[2] > 0):
+		return min(pareto_front, key=lambda x: x.fitness.values[2])
 	
 	crowd_dist_solutions = []
 	# calculate the crowding distance for each solution
@@ -95,14 +95,12 @@ def NSGAII_CV_tourn(tourn):
 		crowd_dists = []
 		while(r_ind < len(pareto_front)):
 			if(l_ind != r_ind):
-				crowd_dists.append(get_crowding_distance(pareto_front[l_ind], pareto_front[r_ind])
+				crowd_dists.append(get_crowding_distance(pareto_front[l_ind], pareto_front[r_ind]))
 			r_ind += 1
 		crowd_dists = sorted(crowd_dists)
 		# track individuals crowding distance so one with max crowding distance can be selected
-		crowd_dist_solutions.append((pareto_front[l_ind], crowd_dists[0] + crowd_dists[1]))
+		crowd_dist_solutions.append((pareto_front[l_ind], crowd_dists[0]))
 		l_ind += 1
 	
 	# return individual with highest crowding distance
 	return max(crowd_dist_solutions, key=lambda x: x[1])[0]
-
-

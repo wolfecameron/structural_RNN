@@ -515,18 +515,19 @@ def check_bounding_box(ind, x_bound, y_bound):
 	return total_outside
 
 def dominates(ind1, ind2):
-	"""outputs true if ind1 dominates ind2"""
+	"""outputs true if ind1 dominates ind2, false o/w"""
 
 	# get fitness vectors for each individual
-	one_fit = ind1.fitness
-	two_fit = ind2.fitness
+	one_fit = ind1.fitness.values
+	two_fit = ind2.fitness.values
 
 	# feasible solutions dominate infeasible solutions
 	if(one_fit[2] <= 0 and two_fit[2] > 0):
 		return True
 	
 	# if both infeasible dominates if CV is less than other
-	elif(one_fit[2] > 0 and two_fit[2] > 0 and one_fit[2] < two_fit[2])	
+	# if CV less than other, other must be nonzero!
+	elif(one_fit[2] < two_fit[2]):	
 		return True
 	
 	# if both feasible check for traditional domination
@@ -534,6 +535,7 @@ def dominates(ind1, ind2):
 		# minimize hidden nodes and maximize novelty
 		if(one_fit[0] > two_fit[0] and one_fit[1] < two_fit[1]):
 			return True
+	
 	# only reaches this point if doesn't dominate
 	return False
 
@@ -542,8 +544,8 @@ def get_crowding_distance(ind1, ind2):
 	based on the first two values in fitness vector"""
 	
 	crowd_dist = 0.0
-	crowd_dist += np.square(ind1.fitness[0] - ind2.fitness[0])
-	crowd_dist += np.square(ind1.fitness[1] - ind2.fitness[1])
+	crowd_dist += np.square(ind1.fitness.values[0] - ind2.fitness.values[0])
+	crowd_dist += np.square(ind1.fitness.values[1] - ind2.fitness.values[1])
 	return crowd_dist
 
 if __name__ == '__main__':
