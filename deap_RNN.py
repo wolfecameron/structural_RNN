@@ -66,12 +66,7 @@ for g in range(N_GEN):
 		ind.fitness.values = fit
 	
 	# perform selection on the population to maximize fitness
-	new_pop = []
-	while(len(new_pop) < len(pop)):
-		indices = np.random.choice(np.arange(0, len(pop)), size=(3,1))
-		tourn = [pop[indices[0,0]], pop[indices[1,0]], pop[indices[2,0]]]
-		new_pop.append(toolbox.select(tourn))
-	pop = new_pop
+	pop = toolbox.select(pop, k=len(pop))
 	
 	# only apply mutation if not last generation
 	if(g < N_GEN - 1):

@@ -11,7 +11,7 @@ from scoop import futures
 from deap_RNN_xover import insertion_xover, exchange_xover
 from deap_RNN_evals import phase_one_eval as eval_single_obj
 from deap_RNN_evals import phase_one_eval  as eval_double_obj
-from deap_RNN_sel import NSGAII_CV_tourn
+from deap_RNN_sel import selNSGA2_cv
 
 """The below contains all of the deap configuration used for CPPN so that it can be
 called and edited from a central location"""
@@ -81,7 +81,7 @@ toolbox.register("evaluate_single_objective", eval_single_obj)
 toolbox.register("ins_mate", insertion_xover)
 toolbox.register("ex_mate", exchange_xover)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-toolbox.register("select", NSGAII_CV_tourn)
+toolbox.register("select", selNSGA2_cv)
 #toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", map)
 
