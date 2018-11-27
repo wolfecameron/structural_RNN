@@ -18,8 +18,8 @@ called and edited from a central location"""
 
 # constants used for deap configuration
 N_IN=4
-MIN_NODES=3
-MAX_NODES=15
+MIN_NODES=8
+MAX_NODES=20
 N_HID=MAX_NODES
 N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
@@ -39,7 +39,7 @@ OUTPUT_MIN = -1
 OUTPUT_MAX = 1
 
 # the below constants are used for gear generation
-MAX_GEARS = 10
+MAX_GEARS = 12
 MIN_GEARS = 2
 STOP_THRESHOLD = .9
 PLACEMENT_THRESH = .75

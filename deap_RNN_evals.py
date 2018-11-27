@@ -248,4 +248,10 @@ def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 	# check if any gears lie outside of bounding box
 	d = check_bounding_box(mech, x_bound, y_bound)
 	
+	# check to see if gear moves beyond position 0
+	avg_loc = np.mean(np.array([(x.pos[0] + x.pos[1]) for x in mech]))	
+	CV = v*d
+	if(avg_loc == 0.0):
+		CV += 1.0
+
 	return (novelty, ind.h_nodes, v*d)
