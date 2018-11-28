@@ -103,10 +103,10 @@ for g in range(N_GEN):
 
 # contains tuples of individuals and their associated fitness
 # used to sort individual's output by fitness for viewing
-#ind_and_fits = []
+ind_and_fits = []
 outs = []
 mechanism_list = []
-#vec_list = []
+vec_list = []
 # view results of the evolution
 for count, ind in enumerate(pop):
 	rnn = RNN(N_IN, N_HID, N_OUT)
@@ -117,26 +117,42 @@ for count, ind in enumerate(pop):
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
 	outs.append(output_positions)
 	mechanism_list.append(create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN))
-	#vec_list.append(get_mechanism_vector(mechanism_list[-1]))
+	vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 
+# examine distributions of gear systems with only (0,0)
+xy_dists = []
 for m in mechanism_list:
-	vis_output(m, C_DICT)
+	xy = 0.0
+	for g in m:
+		xy += abs(g.pos[0])
+		xy += abs(g.pos[1])
+	xy_dists.append(xy)
+plt.hist(xy_dists, bins=30)
+plt.show()
 
-"""
+
+
 # stack all vectors into a matrix and normalize
 mech_matrix = np.vstack(vec_list)
 col_avg = np.mean(mech_matrix, axis=0) + .001
 mech_matrix /= col_avg
 
 # go through all mechanisms and assign fitness
-for mechanism in mechanism_list:
+for ind, mechanism in zip(pop, mechanism_list):
 	# get individual vector and normalize
 	ind_vec = get_mechanism_vector(mechanism)/col_avg
-	fitness = toolbox.evaluate(mechanism, ind_vec, mech_matrix, X_BOUND, Y_BOUND)
+	fitness = toolbox.evaluate(ind, mechanism, ind_vec, mech_matrix, X_BOUND, Y_BOUND)
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((mechanism, fitness))
-"""
+
+plt.title("novelty distribution")
+plt.hist([x[1][0] for x in ind_and_fits], bins=40)
+plt.show()
+
+for ind, fit in ind_and_fits:
+	print(fit)
+	vis_output(ind, C_DICT)
+	
 
 # sort list of outputs by fitness - only uses a single objective
 #ind_and_fits = sorted(ind_and_fits, key=lambda x: x[0], reverse=True)
-

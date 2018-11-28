@@ -88,7 +88,7 @@ def get_rnn_output(rnn, max_it, act_exp, verbose=False):
 	# to create a structure with the rnn
 	theta_scale = 20.0
 	radius_scale = 4.0
-	hidden = torch.zeros(1, rnn.hidden_size)
+	hidden = torch.ones(1, rnn.hidden_size)
 	all_positions = []
 	r = 0.0
 	theta = 0.0
@@ -409,7 +409,7 @@ def find_novelty(curr_vec, other_vecs):
 
 	# find total difference for each vector and grab average of values
 	summed_rows = np.sum(difference, axis=1)	
-	total_distance = np.sum(summed_rows)
+	total_distance = np.mean(summed_rows)
 
 	return total_distance
 
@@ -440,8 +440,8 @@ def get_mechanism_vector(mechanism):
 	
 	# construct the vector of items to characterize mechanism
 	vec = np.array([np.mean(x), np.var(x), np.mean(y), np.var(y), \
-					np.mean(z), np.var(z), np.mean(r), np.var(r), \
-					float(total_gear)])
+					np.mean(z), np.var(z), np.mean(r), np.var(r)])
+					#float(total_gear)])
 	
 	return vec					
 

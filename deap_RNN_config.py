@@ -23,12 +23,12 @@ MAX_NODES=20
 N_HID=MAX_NODES
 N_OUT=4
 MAX_POINTS = 250 # maximum num of discrete points in output structure
-weights=(1.0, -1.0, -1.0)
+weights=(4.0, -1.0, -1.0)
 MUTPB = .15
 CXPB = .1
 INIT_WINDOW=2.0
-POP_SIZE=50
-N_GEN=200
+POP_SIZE=100
+N_GEN=100
 ACT_EXP = 1.0
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
@@ -46,8 +46,8 @@ PLACEMENT_THRESH = .75
 RADIUS_SCALE = 10.0
 
 # define bounding box constraints for RNN
-X_BOUND = 50.0
-Y_BOUND = 50.0
+X_BOUND = 100.0
+Y_BOUND = 100.0
 
 # defines dictionary of colors that are used for different z dimensions in mechanism visualization
 C_DICT = {-9: "#CD5C5C", -8: "#C0C0C0", -7: "#000000", -6: "#800000", -5: "#008000", \
@@ -81,8 +81,8 @@ toolbox.register("evaluate_single_objective", eval_single_obj)
 toolbox.register("ins_mate", insertion_xover)
 toolbox.register("ex_mate", exchange_xover)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-toolbox.register("select", selNSGA2_cv)
-#toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
+#toolbox.register("select", selNSGA2_cv)
+toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", map)
 
 
