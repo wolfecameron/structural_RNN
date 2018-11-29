@@ -186,7 +186,32 @@ def get_RNN_output_cartesian(rnn, max_y, max_x, max_t, act_exp, verbose=False):
 	all_positions.append((x, y))
 	return all_positions
 
-def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_exp, pos_thresh):
+def get_hidden_input(num_r, num_c, hidden_type):
+	"""creates a matrix of hidden values that are used as the initial
+	hidden values for the rnn, these initital values can be zeroes, ones,
+	or generated randomly
+
+	:hidden_type is 'rand' if generated randomly, 'zero' if all zeroes, and
+	'one' if all ones
+	"""
+	hid_mat = None
+	switch(hidden_type) {
+		case 'rand':
+			# create hidden matrix of values [-1, 1]
+			hid_mat = 2.0*(torch.rand(num_r, num_c) - .5)
+			break;
+		case 'zero':
+			hid_mat = torch.zeros(num_r, num_c)
+			break;
+		case 'one':
+			hid_mat = torch.ones(num_r, num_c)
+			break;
+		default:
+			print("The input hidden type is not a valid option - returning None")
+	return hid_mat
+			
+
+def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_exp, pos_thresh, hidden_input):
 	"""method for getting output of RNN representing an entire mechanism of gears
 	rnn outputs at each t a value deciding if next gear will be to left, to right,
 	or attached to back, and another value dictating the pitch radius of the gear -
@@ -196,26 +221,26 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 	# initialize all variables needed to get output
 	radius = 0
 	gear_pos_a = 0 # angle gear is placed at
-	gear_pos_i = 0 # index of gear to attach to
 	stop = 0
 
 	# initialize the hidden layer
-	hidden = torch.zeros(1, rnn.hidden_size)	
+	hidden = get_hidden_input(1, rnn.hidden_size, hidden_input)#torch.zeros(1, rnn.hidden_size)	
 	
 	# length of the outputs is the number of gears that have been added to system
 	all_outputs = []
 
 	while((len(all_outputs) < min_gears) or (len(all_outputs) < max_gears and stop < stop_thresh)):
 		# must run inputs through RNN first to get values for first gear
-		rnn_input = [[radius, gear_pos_a, gear_pos_i, stop]]
+		rnn_input = [[radius, gear_pos_a, stop]]
 		outs, hidden = rnn.forward(torch.Tensor(rnn_input), hidden, act_exp)
-		radius, gear_pos_a, gear_pos_i, stop = outs.data[0][0].item(), outs.data[0][1].item() \
-												, outs.data[0][2].item(), outs.data[0][3].item()
+		radius, gear_pos_a, stop = outs.data[0][0].item(), outs.data[0][1].item() \
+												, outs.data[0][2].item()
 
 		# make sure radius is positive and scale it to fit between 0 and maximum possible value
 		# do not input scaled value back into RNN - large values can bias the input
 		radius_scaled = (radius + 1.5)*rad_scale	
-		
+	
+		"""	
 		# convert pos_i into an index
 		# location of first gear is arbitrary - just set to 0
 		pos_index = 0
@@ -223,9 +248,9 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 		if(curr_len != 0):
 			# output of pos_i should be scaled to the length of the current list to get index
 			pos_index = int(((gear_pos_i + 1.0)/2.0)*(curr_len - 1)) # cast to int so it is an index
-		
+		"""
 		# append outputs into list
-		all_outputs.append((radius_scaled, gear_pos_a, pos_index, stop))
+		all_outputs.append((radius_scaled, gear_pos_a, stop))
 	
 	return all_outputs
 
@@ -378,9 +403,9 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 	
 	# go through all outputs and create a gear object for each one
 	for index, curr in enumerate(all_outputs[1:]):
-		prev_gear = mechanism[curr[2]]
+		prev_gear = mechanism[-1] # previous gear is always last outputted mechanism
 		new_pos = get_gear_pos(prev_gear.pos, curr[1], prev_gear.radius, curr[0], pos_thresh, output_min)
-		mechanism.append(Gear(curr[0], new_pos, curr[2]))
+		mechanism.append(Gear(curr[0], new_pos, len(mechanism) - 1))
 		
 		# add index of current into list of nxt gears for gear it attaches to
 		prev_gear.next_gears.append(index + 1)

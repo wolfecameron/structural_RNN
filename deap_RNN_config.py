@@ -17,11 +17,11 @@ from deap_RNN_sel import selNSGA2_cv
 called and edited from a central location"""
 
 # constants used for deap configuration
-N_IN=4
-MIN_NODES=8
+N_IN=3
+MIN_NODES=5
 MAX_NODES=20
 N_HID=MAX_NODES
-N_OUT=4
+N_OUT=3
 MAX_POINTS = 250 # maximum num of discrete points in output structure
 weights=(4.0, -1.0, -1.0)
 MUTPB = .15
@@ -39,10 +39,10 @@ OUTPUT_MIN = -1
 OUTPUT_MAX = 1
 
 # the below constants are used for gear generation
-MAX_GEARS = 12
-MIN_GEARS = 2
+MAX_GEARS = 15
+MIN_GEARS = 1
 STOP_THRESHOLD = .9
-PLACEMENT_THRESH = .75
+PLACEMENT_THRESH = .98
 RADIUS_SCALE = 10.0
 
 # define bounding box constraints for RNN
