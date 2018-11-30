@@ -194,19 +194,18 @@ def get_hidden_input(num_r, num_c, hidden_type):
 	:hidden_type is 'rand' if generated randomly, 'zero' if all zeroes, and
 	'one' if all ones
 	"""
+	
 	hid_mat = None
-	switch(hidden_type) {
-		case 'rand':
-			# create hidden matrix of values [-1, 1]
-			hid_mat = 2.0*(torch.rand(num_r, num_c) - .5)
-			break;
-		case 'zero':
-			hid_mat = torch.zeros(num_r, num_c)
-			break;
-		case 'one':
-			hid_mat = torch.ones(num_r, num_c)
-			break;
-		default:
+	
+	# decide what type of initial hidden matrix to create
+	if hidden_type == 'rand':
+		# create hidden matrix of random values [-1, 1]
+		hid_mat = 2.0*(torch.rand(num_r, num_c) - .5)
+	elif hidden_type == 'zero':
+		hid_mat = torch.zeros(num_r, num_c)
+	elif hidden_type == 'one':
+		hid_mat = torch.ones(num_r, num_c)
+	else:
 			print("The input hidden type is not a valid option - returning None")
 	return hid_mat
 			
