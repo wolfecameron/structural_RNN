@@ -2,6 +2,8 @@
 
 import numpy as np
 
+from deap_RNN_config import GEAR_THICKNESS, HOLE_SIZE, CIRCULAR_PITCH
+
 class Gear():
 
 	def __init__(self, rad, pos, prev_gear):
@@ -23,6 +25,18 @@ class Gear():
 		n_teeth = (np.pi*2.0*self.radius)/circular_pitch
 		return round(n_teeth)	
 
+	# translate([ 0,    0, 0]) rotate([0,0, $t*360/n1])                 color([1.00,0.75,0.75]) gear(mm_per_tooth,n1,thickness,hole);
+	def print_SCAD_command(self):
+		"""prints out an openSCAD command to create this gear"""
+
+		result = ""
+		result += "translate([{0}, {1}, {2}])".format(str(self.pos[0]),
+					str(self.pos[1]), str(self.pos[2]*GEAR_THICKNESS))
+		result += "gear({0}, {1}, {2}, {3});".format(str(CIRCULAR_PITCH),
+					str(self.get_num_teeth(CIRCULAR_PITCH)), str(GEAR_THICKNESS),
+					str(HOLE_SIZE)) 
+		
+	
 	def __str__(self):
 		"""to string method for gear object"""
 		
