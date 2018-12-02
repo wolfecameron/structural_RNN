@@ -123,16 +123,14 @@ for count, ind in enumerate(pop):
 # examine distributions of gear systems with only (0,0)
 xy_dists = []
 for m in mechanism_list:
-	for g in m:
-		print(g.get_SCAD_command(CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE))
-	input()
+	#for g in m:
+		#print(g.get_SCAD_command(CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE))
+	#input()
 	xy = 0.0
 	for g in m:
 		xy += abs(g.pos[0])
 		xy += abs(g.pos[1])
 	xy_dists.append(xy)
-plt.hist(xy_dists, bins=30)
-plt.show()
 
 
 
