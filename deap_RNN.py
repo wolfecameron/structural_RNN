@@ -11,6 +11,7 @@ from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT, MIN_NODES, MAX_NODES
+from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_mechanism_representation
 from deap_RNN_help import get_mechanism_vector 
 from deap_RNN_help import get_gear_mechanism as get_output
@@ -122,6 +123,9 @@ for count, ind in enumerate(pop):
 # examine distributions of gear systems with only (0,0)
 xy_dists = []
 for m in mechanism_list:
+	for g in m:
+		print(g.get_SCAD_command(CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE))
+	input()
 	xy = 0.0
 	for g in m:
 		xy += abs(g.pos[0])
