@@ -18,8 +18,8 @@ called and edited from a central location"""
 
 # constants used for deap configuration
 N_IN=3
-MIN_NODES=5
-MAX_NODES=20
+MIN_NODES=8
+MAX_NODES=12
 N_HID=MAX_NODES
 N_OUT=3
 MAX_POINTS = 250 # maximum num of discrete points in output structure

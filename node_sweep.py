@@ -6,6 +6,7 @@ from circle_RNN import RNN
 from deap_RNN_config import get_tb, MIN_NODES, MAX_NODES, N_IN, N_OUT
 from deap_RNN_config import MIN_GEARS, MAX_GEARS, STOP_THRESHOLD, RADIUS_SCALE
 from deap_RNN_config import ACT_EXP, PLACEMENT_THRESH, C_DICT, OUTPUT_MIN
+from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE
 from deap_RNN_help import get_gear_mechanism as get_output
 from deap_RNN_help import list_to_matrices, inject_weights, create_mechanism_representation
 from vis_structs import vis_gears_nonlinear as vis_output
@@ -32,5 +33,11 @@ for n in range(MIN_NODES, MAX_NODES + 1):
 		# obtain and view output
 		output = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
 		m = create_mechanism_representation(output, PLACEMENT_THRESH, OUTPUT_MIN)
-		print("Viewing individual {0} with {1} hidden nodes".format(str(i), str(n)))
-		vis_output(m, C_DICT)
+		
+		# find openSCAD representation of each gear
+		for g in m:
+			print(g.get_SCAD_command(CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE))
+		input()
+		
+		#print("Viewing individual {0} with {1} hidden nodes".format(str(i), str(n)))
+		#vis_output(m, C_DICT)

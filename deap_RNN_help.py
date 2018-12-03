@@ -403,7 +403,10 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 	# go through all outputs and create a gear object for each one
 	for index, curr in enumerate(all_outputs[1:]):
 		prev_gear = mechanism[-1] # previous gear is always last outputted mechanism
-		new_pos = get_gear_pos(prev_gear.pos, curr[1], prev_gear.radius, curr[0], pos_thresh, output_min)
+		
+		# must set padding to true if space should be inserted between gears for 3D printing
+		new_pos = get_gear_pos(prev_gear.pos, curr[1], prev_gear.radius, curr[0],
+					pos_thresh, output_min, padding=True)
 		mechanism.append(Gear(curr[0], new_pos, len(mechanism) - 1))
 		
 		# add index of current into list of nxt gears for gear it attaches to
@@ -469,7 +472,7 @@ def get_mechanism_vector(mechanism):
 	
 	return vec					
 
-def get_gear_pos(previous_pos, angle, prev_rad, curr_rad, pos_thresh, output_min):
+def get_gear_pos(previous_pos, angle, prev_rad, curr_rad, pos_thresh, output_min, padding=False):
 	"""this method outputs the position of a single gear based on the position
 	of the gear it attaches to and it's angular RNN output
 	"""
@@ -510,6 +513,12 @@ def get_gear_pos(previous_pos, angle, prev_rad, curr_rad, pos_thresh, output_min
 		
 		# update the position with change in x and y relative to last pos
 		pos = (previous_pos[0] + x_change, previous_pos[1] + y_change, previous_pos[2])
+		
+		# add space between gear centers in x-y dimensions if padding set to true
+		# makes 3D printing easier by separating gears more
+		if(padding):
+			scale_factor = 1.1
+			pos = (pos[0]*scale_factor, pos[1]*scale_factor, pos[2])
 
 	return pos			
 
