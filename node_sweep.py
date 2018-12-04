@@ -5,8 +5,9 @@ examined and determine the optimal number of hidden nodes"""
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, MIN_NODES, MAX_NODES, N_IN, N_OUT
 from deap_RNN_config import MIN_GEARS, MAX_GEARS, STOP_THRESHOLD, RADIUS_SCALE
-from deap_RNN_config import ACT_EXP, PLACEMENT_THRESH, C_DICT, OUTPUT_MIN
-from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE
+from deap_RNN_config import ACT_EXP, PLACEMENT_THRESH, C_DICT, OUTPUT_MIN, PADDING_RATIO
+from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, BED_WIDTH
+from deap_RNN_help import get_3DP_layout 
 from deap_RNN_help import get_gear_mechanism as get_output
 from deap_RNN_help import list_to_matrices, inject_weights, create_mechanism_representation
 from vis_structs import vis_gears_nonlinear as vis_output
@@ -35,7 +36,7 @@ for n in range(MIN_NODES, MAX_NODES + 1):
 		m = create_mechanism_representation(output, PLACEMENT_THRESH, OUTPUT_MIN)
 		
 		# find openSCAD representation of each gear
-		for g in m:
+		for g in get_3DP_layout(m, BED_WIDTH, PADDING_RATIO)[0]:
 			print(g.get_SCAD_command(CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE))
 		input()
 		

@@ -49,6 +49,10 @@ PRESSURE_ANGLE = 28.0
 GEAR_THICKNESS = 6.0
 HOLE_SIZE = 4.0
 
+# constants configuring the size of 3D printer
+BED_WIDTH = 400
+PADDING_RATIO = 1.35
+
 # define bounding box constraints for RNN
 X_BOUND = 100.0
 Y_BOUND = 100.0

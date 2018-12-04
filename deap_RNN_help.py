@@ -4,6 +4,7 @@ that are not evaluation or part of the evolutionary code
 
 import numpy as np
 import torch
+from copy import deepcopy
 
 from gear import Gear
 
@@ -581,6 +582,50 @@ def get_crowding_distance(ind1, ind2):
 	crowd_dist += np.square(ind1.fitness.values[1] - ind2.fitness.values[1])
 	return crowd_dist
 
+def get_3DP_layout(mechanism, bed_width, padding_ratio):
+	"""takes a list of gears (mechanism) and alters the positions of the gears
+	to be placed into a grid for easy 3D printing
+
+	bed_width: size of the 3D printing bed, used to configure how the gears are
+	laid out in a grid to fit on the 3D printer
+	padding_ratio: the amount to multiply the distance between gears by to create
+	enough padding between them to 3D print
+	
+	return: both old and newly positioned mechanism lists
+	"""
+	
+	# create a deepcopy of the original mechanism to return
+	og_mech = deepcopy(mechanism)
+	
+	# find maximum radius of all gears
+	max_r = max(mechanism, key=lambda g: g.radius).radius
+	
+	ind = 1
+	x = padding_ratio*mechanism[ind - 1].radius
+	y = padding_ratio*max_r
+	# update position to new 3DP position
+	mechanism[ind - 1].pos = (x, y, 0)
+	# place each gear from mechanism into a grid
+	while(ind < len(mechanism)):
+		curr_rad = mechanism[ind].radius
+		prev_rad = mechanism[ind - 1].radius
+		x_delta = padding_ratio*(curr_rad + prev_rad)
+		
+		# continue adding gear in current row
+		if((x_delta + x + curr_rad) < bed_width):
+			x += x_delta
+			mechanism[ind].pos = (x, y, 0)
+		# create new row for gears
+		else:
+			x = padding_ratio*mechanism[ind].radius
+			y += padding_ratio*2*max_r
+			mechanism[ind].pos = (x, y, 0)
+		ind += 1
+	
+	return (mechanism, og_mech)
+		
+		
+	
 if __name__ == '__main__':
 	""" main function for quick tests"""
 
