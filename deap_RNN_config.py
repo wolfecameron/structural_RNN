@@ -28,7 +28,7 @@ MUTPB = .15
 CXPB = .1
 INIT_WINDOW=2.0
 POP_SIZE=10
-N_GEN=1
+N_GEN=100
 ACT_EXP = 1.0
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
@@ -48,6 +48,7 @@ CIRCULAR_PITCH = 6.0
 PRESSURE_ANGLE = 28.0
 GEAR_THICKNESS = 6.0
 HOLE_SIZE = 4.0
+MIN_TEETH = 15 # minimum number of teeth a hollow gear can have
 
 # constants configuring the size of 3D printer
 BED_WIDTH = 400

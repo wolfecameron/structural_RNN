@@ -6,7 +6,7 @@ from circle_RNN import RNN
 from deap_RNN_config import get_tb, MIN_NODES, MAX_NODES, N_IN, N_OUT
 from deap_RNN_config import MIN_GEARS, MAX_GEARS, STOP_THRESHOLD, RADIUS_SCALE
 from deap_RNN_config import ACT_EXP, PLACEMENT_THRESH, C_DICT, OUTPUT_MIN, PADDING_RATIO
-from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, BED_WIDTH
+from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, BED_WIDTH, MIN_TEETH
 from deap_RNN_help import get_3DP_layout 
 from deap_RNN_help import get_gear_mechanism as get_output
 from deap_RNN_help import list_to_matrices, inject_weights, create_mechanism_representation
@@ -37,7 +37,7 @@ for n in range(MIN_NODES, MAX_NODES + 1):
 		
 		# find openSCAD representation of each gear
 		for g in get_3DP_layout(m, BED_WIDTH, PADDING_RATIO)[0]:
-			print(g.get_SCAD_command(CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE))
+			print(g.get_SCAD_command(CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, MIN_TEETH))
 		input()
 		
 		#print("Viewing individual {0} with {1} hidden nodes".format(str(i), str(n)))
