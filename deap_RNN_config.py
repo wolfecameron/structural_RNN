@@ -50,15 +50,6 @@ GEAR_THICKNESS = 6.0
 HOLE_SIZE = 4.0
 MIN_TEETH = 15 # minimum number of teeth a hollow gear can have
 
-# constants for VAE
-SEED = 1
-BATCH_SIZE = 128
-LOG_INTERVAL = 10
-EPOCHS = 10
-LATENT_DIMS = 15
-RELU_SIZE = 400
-INPUT_SIZE = 784
-
 # constants configuring the size of 3D printer
 BED_WIDTH = 400
 PADDING_RATIO = 1.35

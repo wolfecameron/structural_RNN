@@ -13,9 +13,6 @@ import torch.distributions as tdist
 from deap_RNN_config import SEED, BATCH_SIZE, LOG_INTERVAL, EPOCHS, LATENT_DIMS
 from deap_RNN_config import RELU_SIZE, INPUT_SIZE
 
-# set seed number for pytorch
-torch.manual_seed(SEED)
-
 class VAE(nn.Module):
     def __init__(self):
         super(VAE, self).__init__()
@@ -51,28 +48,20 @@ class VAE(nn.Module):
 		"""upsamples a given latent vector to recreate the input or
 		create new ouput"""
 
-		return self.sigmoid(self.dec_out(self.dec_relu(latent_vec)))
+		relu_layer = self.relu(self.dec_relu(latent_vec))
+		return self.sigmoid(self.dec_out(relu_layer))
 
-	def sample(self, mu, sigma, training=False):
+	def sample(self, mu, logvar):
 		"""sample from the vectors of mean and standard deviation created by
 		the encoder
-		
-		training: if not currently training, mu vector is returned because those
-		values are the most likely
-		
+
 		return: a vector of samples from each of the normal distributions
 		"""
 
-		if training:
-			# sample from each normal distribution
-			print(mu.element_size())
-			distrib = tdist.Normal(mu, sigma)
-			sample = distrib.sample(mu.element_size())			
-			print(sample.element_size()) # remove comment after you verify it's the same!
-			return sample
-
-		else:
-			return mu
+		# get sigma from logvar and sample from distribution
+		std = torch.exp(0.5*logvar)
+		eps = torch.randn_like(std)
+		return eps.mul(std).add_(mu)
 
 	def encode_decode(self, x):
 		"""takes and inputted vector of size [1, 784] and passes it through
