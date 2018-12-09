@@ -68,6 +68,6 @@ class VAE(nn.Module):
 		both the encoder and decoder, yielding an output"""
 
 		# pass input through encoder, sample result, and pass latent vec through decoder
-		mu, sigma = self.encode(x)
-		latent_vec = self.sample(mu, sigma)
-		return self.decode(latent_vec)
+		mu, logvar = self.encode(x)
+		latent_vec = self.sample(mu, logvar)
+		return (self.decode(latent_vec), mu, logvar)

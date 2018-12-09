@@ -1,3 +1,5 @@
+"""contains main loop for training/testing VAE"""
+
 import torch
 import torch.utils.data
 from torch import nn, optim
@@ -23,7 +25,7 @@ optimizer = optim.Adam(model.parameters(), lr=.001)
 
 # run VAE
 for epoch in range(1, EPOCHS):
-		train(model, optimizer, epoch)
+		train(model, optimizer, epoch, LOG_INTERVAL)
 		test(model, optimizer, epoch)
 		with torch.no_grad():
 			sample = torch.randn(64, 20)

@@ -16,7 +16,7 @@ def loss_function(recon_x, x, mu, logvar):
 	KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 	return recon + KLD 
 
-def train(model, optimizer, epoch):
+def train(model, optimizer, epoch, log_int):
 	"""run training on the VAE
 
 	model: the model to train
@@ -30,13 +30,14 @@ def train(model, optimizer, epoch):
 	model.train()
 	train_loss = 0
 	for batch_idx, (data, _) in enumerate(train_loader):
+		data = data.view(-1, 784)
 		optimizer.zero_grad()
-		recon_batch, mu, logvar = model(data)
+		recon_batch, mu, logvar = model.encode_decode(data)
 		loss = loss_function(recon_batch, data, mu, logvar)
 		loss.backward()
 		train_loss += loss.item()
 		optimizer.step()
-		if batch_idx % args.log_interval == 0:
+		if batch_idx % log_int == 0:
 			print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
 				epoch, batch_idx * len(data), len(train_loader.dataset),
 				100. * batch_idx / len(train_loader),
@@ -55,7 +56,8 @@ def test(model, optimizer, epoch):
 
 	with torch.no_grad():
 		for i, (data, _) in enumerate(test_loader):
-			recon_batch, mu, logvar = model(data)
+			data = data.view(-1, 784)
+			recon_batch, mu, logvar = model.encode_decode(data)
 			test_loss += loss_function(recon_batch, data, mu, logvar).item()
 			if i == 0:
 				n = min(data.size(0), 8)
