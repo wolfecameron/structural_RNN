@@ -28,6 +28,7 @@ for epoch in range(1, EPOCHS):
 		train(model, optimizer, epoch, LOG_INTERVAL)
 		test(model, optimizer, epoch)
 		with torch.no_grad():
-			sample = torch.randn(64, 20)
+			sample = torch.randn(32, LATENT_DIMS)
 			sample = model.decode(sample)
-			plt.imshow(sample.view(64, 1, 28, 28).numpy())
+			save_image(sample.view(32, 1, 28, 28),
+				'results/sample_' + str(epoch) + '.png')

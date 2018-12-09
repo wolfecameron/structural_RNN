@@ -54,16 +54,15 @@ def test(model, optimizer, epoch):
 		batch_size=BATCH_SIZE, shuffle=True)
 	model.eval()
 
+	test_loss = 0.0
 	with torch.no_grad():
 		for i, (data, _) in enumerate(test_loader):
-			data = data.view(-1, 784)
-			recon_batch, mu, logvar = model.encode_decode(data)
-			test_loss += loss_function(recon_batch, data, mu, logvar).item()
+			flat_data = data.view(-1, 784)
+			recon_batch, mu, logvar = model.encode_decode(flat_data)
+			test_loss += loss_function(recon_batch, flat_data, mu, logvar).item()
 			if i == 0:
 				n = min(data.size(0), 8)
-				comparison = torch.cat([data[:n],
-					recon_batch.view(args.batch_size, 1, 28, 28)[:n]])
-				#plt.imshow(comparison.numpy())
+				comparison = torch.cat([data[:n], recon_batch.view(BATCH_SIZE, 1, 28, 28)[:n]])
 				"""
 				save_image(comparison.cpu(),
 					'results/reconstruction_' + str(epoch) + '.png', nrow=n)
