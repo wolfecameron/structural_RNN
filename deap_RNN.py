@@ -8,7 +8,7 @@ matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 
 from circle_RNN import RNN
-from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_SIZE, PLACEMENT_THRESH
+from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT
 from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE
@@ -119,32 +119,19 @@ for count, ind in enumerate(pop):
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
 	outs.append(output_positions)
 	mechanism_list.append(create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN))
-	vec_list.append(get_mechanism_vector(mechanism_list[-1]))
+	#vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 
-# examine distributions of gear systems with only (0,0)
-xy_dists = []
-for m in mechanism_list:
-	#for g in m:
-		#print(g.get_SCAD_command(CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE))
-	#input()
-	xy = 0.0
-	for g in m:
-		xy += abs(g.pos[0])
-		xy += abs(g.pos[1])
-	xy_dists.append(xy)
-
-
-
+"""
 # stack all vectors into a matrix and normalize
 mech_matrix = np.vstack(vec_list)
 col_avg = np.mean(mech_matrix, axis=0) + .001
 mech_matrix /= col_avg
-
+"""
 # go through all mechanisms and assign fitness
 for ind, mechanism in zip(pop, mechanism_list):
 	# get individual vector and normalize
 	vis_output(mechanism, C_DICT)
-	check = input("test other inputs?")
+	"""
 	while(check.lower() == 'y'):
 		rnn = RNN(N_IN, N_HID, N_OUT)
 		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
@@ -153,15 +140,12 @@ for ind, mechanism in zip(pop, mechanism_list):
 		m = create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN)
 		vis_output(m, C_DICT)
 		check = input("test inputs again?")
-		
-	ind_vec = get_mechanism_vector(mechanism)/col_avg
-	fitness = toolbox.evaluate(ind, mechanism, ind_vec, mech_matrix, X_BOUND, Y_BOUND)
+
+	#ind_vec = get_mechanism_vector(mechanism)/col_avg
+	#fitness = toolbox.evaluate(ind, mechanism, ind_vec, mech_matrix, X_BOUND, Y_BOUND)
 	# append tuple of individual's outputs and fitness to the global list
 	ind_and_fits.append((mechanism, fitness))
-
-plt.title("novelty distribution")
-plt.hist([x[1][0] for x in ind_and_fits], bins=40)
-plt.show()
+	"""
 
 for ind, fit in ind_and_fits:
 	print(fit)

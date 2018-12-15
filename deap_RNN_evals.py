@@ -237,17 +237,15 @@ def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 	passed into this equation
 	"""	
 
-	novelty = 0.0	
-	if(other_vecs.shape != (1,0)):	
-			# calculate novelty by getting average vector distance
-			novelty = find_novelty(mech_vec, other_vecs)
-	
+	ratio = mech[-1].ratio
+	total_area = sum([x.radius for x in mech])
+	"""
 	# find the value of instersecting gears
 	v = check_intersect_amount(mech)
 		
 	# check if any gears lie outside of bounding box
 	d = check_bounding_box(mech, x_bound, y_bound)
-
+	
 	# if v and d 0, CV is 1 else 0
 	if(v <= 0 and d <= 0):
 		CV = 0
@@ -260,11 +258,11 @@ def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 		xy_sum += abs(g.pos[1])
 	if(xy_sum == 0):
 		CV = 1
-	"""	
+		
 	# check to see if gear moves beyond position 0
 	avg_loc = np.mean(np.array([(x.pos[0] + x.pos[1]) for x in mech]))	
 	CV = v*d
 	if(avg_loc == 0.0):
 		CV += 1.0
 	"""
-	return (novelty*xy_sum, v + d, CV)#(1.0/(xy_sum + .01)))#*(1/(xy_sum + .01)))
+	return (ratio, total_area)

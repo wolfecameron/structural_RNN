@@ -23,7 +23,6 @@ class Gear():
 		n_teeth = (np.pi*2.0*self.radius)/circular_pitch
 		return round(n_teeth)	
 
-	# translate([ 0,    0, 0]) rotate([0,0, $t*360/n1])                 color([1.00,0.75,0.75]) gear(mm_per_tooth,n1,thickness,hole);
 	def get_SCAD_command(self, circular_pitch, gear_thick, hole_size, min_teeth):
 		"""prints out an openSCAD command to create this gear
 	

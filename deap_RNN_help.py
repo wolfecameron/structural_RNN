@@ -240,15 +240,6 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 		# do not input scaled value back into RNN - large values can bias the input
 		radius_scaled = (radius + 1.5)*rad_scale	
 	
-		"""	
-		# convert pos_i into an index
-		# location of first gear is arbitrary - just set to 0
-		pos_index = 0
-		curr_len = len(all_outputs)
-		if(curr_len != 0):
-			# output of pos_i should be scaled to the length of the current list to get index
-			pos_index = int(((gear_pos_i + 1.0)/2.0)*(curr_len - 1)) # cast to int so it is an index
-		"""
 		# append outputs into list
 		all_outputs.append((radius_scaled, gear_pos_a, stop))
 	
@@ -414,13 +405,11 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 		prev_gear.next_gears.append(index + 1)
 		
 		# find ratio of current gear - only changes if not attached to front/back
-		"""
 		new_ratio = prev_gear.ratio*(prev_gear.radius/mechanism[-1].radius)
 		if(-pos_thresh <= curr[1] <= pos_thresh ):
 			mechanism[-1].ratio = new_ratio
 		else:
 			mechanism[-1].ratio = prev_gear.ratio
-		"""
 
 	return mechanism	
 

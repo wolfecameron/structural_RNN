@@ -20,13 +20,12 @@ called and edited from a central location"""
 N_IN=3
 N_HID=8
 N_OUT=3
-MAX_POINTS = 250 # maximum num of discrete points in output structure
-weights=(4.0, -1.0, -1.0)
-MUTPB = .15
-CXPB = .1
-INIT_WINDOW=2.0
-POP_SIZE=10
-N_GEN=100
+weights=(1.0, -1.0)
+MUTPB = .25
+CXPB = .15
+INIT_WINDOW=1.0
+POP_SIZE=50
+N_GEN=500
 ACT_EXP = 1.0
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
@@ -40,13 +39,13 @@ OUTPUT_MAX = 1
 MAX_GEARS = 10
 MIN_GEARS = 1
 STOP_THRESHOLD = .9
-PLACEMENT_THRESH = .98
+PLACEMENT_THRESH = .99
 RADIUS_SCALE = 15.0
 CIRCULAR_PITCH = 6.0
 PRESSURE_ANGLE = 28.0
 GEAR_THICKNESS = 6.0
 HOLE_SIZE = 4.0
-MIN_TEETH = 15 # minimum number of teeth a hollow gear can have
+MIN_TEETH = 20 # minimum number of teeth a hollow gear can have
 
 # constants configuring the size of 3D printer
 BED_WIDTH = 400
@@ -84,11 +83,9 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=POP
 # register all functions needed for evolution in the toolbox
 toolbox.register("evaluate", eval_double_obj)
 toolbox.register("evaluate_single_objective", eval_single_obj)
-#toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("ins_mate", insertion_xover)
 toolbox.register("ex_mate", exchange_xover)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-#toolbox.register("select", selNSGA2_cv)
 toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", map)
 
