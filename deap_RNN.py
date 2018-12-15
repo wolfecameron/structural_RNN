@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, MAX_POINTS, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
-from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT, MIN_NODES, MAX_NODES
+from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT
 from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_mechanism_representation
 from deap_RNN_help import get_mechanism_vector 
@@ -23,9 +23,10 @@ toolbox = get_tb()
 # instantiate the population
 pop = toolbox.population()
 
-# set number of hidden nodes for each individual
+# all RNNs have the same number of hidden nodes set in config
 for p in pop:
-	p.h_nodes = np.random.randint(MIN_NODES, MAX_NODES + 1)
+	p.h_nodes = N_HID
+
 
 # begin the evolutionary loop
 for g in range(N_GEN):
