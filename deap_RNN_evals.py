@@ -239,7 +239,9 @@ def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 
 	ratio = mech[-1].ratio
 	nov = find_novelty(mech_vec, other_vecs)
-	
+	total_area = 0.0
+	for g in mech:
+		total_area += g.radius
 	"""
 	total_area = 0
 	for m in mech:
@@ -251,4 +253,4 @@ def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 	d = check_bounding_box(mech, x_bound, y_bound)
 	"""
 
-	return (ratio, nov)
+	return (ratio*nov, total_area)
