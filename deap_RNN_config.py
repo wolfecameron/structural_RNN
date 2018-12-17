@@ -20,11 +20,11 @@ called and edited from a central location"""
 N_IN=3
 N_HID=8
 N_OUT=3
-weights=(1.0, 1.0)
+weights=(1.0, -1.0)
 MUTPB = .25
 CXPB = .15
-INIT_WINDOW=1.0
-POP_SIZE=100
+INIT_WINDOW=.5
+POP_SIZE=50
 N_GEN=250
 ACT_EXP = .5
 MAX_Y = 1.0
@@ -38,7 +38,7 @@ OUTPUT_MAX = 1
 # the below constants are used for gear generation
 MAX_GEARS = 10
 MIN_GEARS = 1
-STOP_THRESHOLD = .75
+STOP_THRESHOLD = .5
 PLACEMENT_THRESH = .95
 RADIUS_SCALE = 15.0
 CIRCULAR_PITCH = 6.0
@@ -52,7 +52,7 @@ BED_WIDTH = 400
 PADDING_RATIO = 1.35
 
 # define bounding box constraints for RNN
-X_BOUND = 100.0
+X_BOUND = 200.0
 Y_BOUND = 100.0
 
 # defines dictionary of colors that are used for different z dimensions in mechanism visualization

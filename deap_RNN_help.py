@@ -217,7 +217,6 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 	or attached to back, and another value dictating the pitch radius of the gear -
 	also outputs a value that decides if rnn should stop at this gear"""	
 
-
 	# initialize all variables needed to get output
 	radius = 0
 	gear_pos_a = 0 # angle gear is placed at
@@ -390,7 +389,10 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 	
 	# populate mechanism with the first gear
 	# ratio set to 1.0 by default when gear is instantiated
-	mechanism = [Gear(all_outputs[0][0], (0,0,0), 0)]
+	r = all_outputs[0][0]
+	init_x = np.cos(np.pi/4)*r
+	init_y = np.sin(np.pi/4)*r
+	mechanism = [Gear(r, (init_x, init_y, 0), 0)]
 	
 	# go through all outputs and create a gear object for each one
 	for index, curr in enumerate(all_outputs[1:]):
@@ -521,15 +523,15 @@ def check_bounding_box(ind, x_bound, y_bound):
 		r = g.radius
 		# find the amount the gear lies out of x bound
 		x = g.pos[0]
-		if((x - r) < -x_bound):
-			total_outside += np.square((x - r) + x_bound)
+		if((x - r) < 0):
+			total_outside += np.square(x - r)
 		elif((x + r) > x_bound):
 			total_outside += np.square((x + r) - x_bound)
 		
 		# find the amount the gear lies out of y bound
 		y = g.pos[1]
-		if((y - r) < -y_bound):
-			total_outside += np.square((y - r) + y_bound)
+		if((y - r) < 0):
+			total_outside += np.square(y - r)
 		elif((y + r) > y_bound):
 			total_outside += np.square((y + r) - y_bound)
 

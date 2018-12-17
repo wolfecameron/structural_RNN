@@ -121,6 +121,8 @@ for count, ind in enumerate(pop):
 	mechanism_list.append(create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN))
 	#vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 
+plt.hist([len(g) for g in mechanism_list], bins=10)
+plt.show()
 """
 # stack all vectors into a matrix and normalize
 mech_matrix = np.vstack(vec_list)
