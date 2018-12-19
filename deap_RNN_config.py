@@ -52,8 +52,8 @@ BED_WIDTH = 400
 PADDING_RATIO = 1.35
 
 # define bounding box constraints for RNN
-X_BOUND = 200.0
-Y_BOUND = 100.0
+X_BOUND = 400.0
+Y_BOUND = 400.0
 
 # defines dictionary of colors that are used for different z dimensions in mechanism visualization
 C_DICT = {-9: "#CD5C5C", -8: "#C0C0C0", -7: "#000000", -6: "#800000", -5: "#008000", \

@@ -59,29 +59,43 @@ for g in range(N_GEN):
 	col_avg = np.mean(mech_matrix, axis=0) + .001
 	mech_matrix /= col_avg	
 	
-	fits = []	
+	fits = []
+	total_bound_CV = 0.0
+	total_intersect_CV = 0.0
 	# get average fit and append into running list
 	for ind, mech in zip(pop, mechanism_list):
 		# create vector for individual and normalize it
 		mech_vec = get_mechanism_vector(mech)/col_avg
-		fits.append(toolbox.evaluate(ind, mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND))
-			
+		fit_tup = toolbox.evaluate(ind, mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND)
+		total_bound_CV += fit_tup[1]
+		total_intersect_CV += fit_tup[2]
+		fits.append(fit_tup)
+	# get averages of both CV values
+	total_bound_CV /= len(pop)
+	total_intersect_CV /= len(pop)
+		
 	# assign fitness and CV to individuals
 	for ind, fit in zip(pop, fits):
-		ind.fitness.values = fit[0]
-		ind.CV = fit[1]
+		ind.fitness.values = fit[0],
+		# CV should be the normalized sum of the two constraint types
+		ind.CV = (fit[1]/total_bound_CV) + \
+					(fit[2]/total_intersect_CV)
 	
 	# sort individuals and handle CV values
 	valid_pop = [i for i in pop if i.CV <= 0.0]
 	invalid_pop = [i for i in pop if i.CV > 0.0]
+	print(len(valid_pop))
+	input()
 	lowest_valid = min(valid_pop, key=lambda x: x.fitness.values[0]).fitness.values[0]
 	# change all fitnesses of invalid pop to be lower than lowest valid fit
 	# subtract CV from the lowest valid fitness - creates gradient even for invalid
 	for i in invalid_pop:
 		i.fitness.values = (lowest_valid - i.CV,)	
-	pop = valid_pop.extend(invalid_pop)
-	print(len(pop))
-	input()	
+	valid_pop.extend(invalid_pop)
+	pop = valid_pop
+
+	# append the most novel individual into the archive
+	ARCHIVE.append(max(pop, key=lambda x: x.fitness.values[0]))	
 
 	# perform selection on the population to maximize fitness
 	pop = toolbox.select(pop, k=len(pop))

@@ -543,7 +543,7 @@ def check_bounding_box(ind, x_bound, y_bound):
 			total_outside += np.square(y - r)
 		elif((y + r) > y_bound):
 			total_outside += np.square((y + r) - y_bound)
-
+	print(total_outside)
 	return total_outside
 
 def dominates(ind1, ind2):

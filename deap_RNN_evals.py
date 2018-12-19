@@ -235,12 +235,15 @@ def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 
 	ind vec and other vecs expected to both be normalized before they are
 	passed into this equation
+
+	return: novelty of the current vector and two values for amount of constraint violation
 	"""	
 
 	# maximize the gear ratio and novelty
 	nov = find_novelty(mech_vec, other_vecs)
 	
 	# find the amount of constraint violation
-	CV = check_bounding_box(mech, x_bound, y_bound)*check_intersect_amount(mech) 
+	CV_bound = check_bounding_box(mech, x_bound, y_bound)
+	CV_intersect = check_intersect_amount(mech) 
 
-	return (nov, CV)
+	return (nov, CV_bound, CV_intersect)
