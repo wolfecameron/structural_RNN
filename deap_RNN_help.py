@@ -527,24 +527,27 @@ def check_bounding_box(ind, x_bound, y_bound):
 	bounding box
 	"""
 	
-	total_outside = 0.0
+	# find lowest allowed x and y values
+	lower_x = ind[0].pos[0] - ind[0].radius
+	lower_y = ind[0].pos[1] - ind[0].radius
+
 	# only check individuals after the first
+	total_outside = 0.0
 	for g in ind[1:]:
 		r = g.radius
 		# find the amount the gear lies out of x bound
 		x = g.pos[0]
-		if((x - r) < 0):
-			total_outside += np.square(x - r)
+		if((x - r) < lower_x):
+			total_outside += np.square((x - r) - lower_x)
 		elif((x + r) > x_bound):
 			total_outside += np.square((x + r) - x_bound)
 		
 		# find the amount the gear lies out of y bound
 		y = g.pos[1]
-		if((y - r) < 0):
-			total_outside += np.square(y - r)
+		if((y - r) < lower_y):
+			total_outside += np.square((y - r) - lower_y)
 		elif((y + r) > y_bound):
 			total_outside += np.square((y + r) - y_bound)
-	print(total_outside)
 	return total_outside
 
 def dominates(ind1, ind2):

@@ -1,5 +1,5 @@
-"""Main deap evolution file for evolving the RNN to create different types of circular
-structures - uses deap to evolve sets of weights that are inputted into RNN to yield output
+"""Main deap evolution file for evolving the RNN to create different types of gear
+train mechanisms- uses deap to evolve sets of weights that are inputted into RNN to yield output
 """
 
 import numpy as np
@@ -86,13 +86,12 @@ for g in range(N_GEN):
 	# sort individuals and handle CV values
 	valid_pop = [i for i in pop if i.CV <= 0.0]
 	invalid_pop = [i for i in pop if i.CV > 0.0]
-	print(len(valid_pop))
-	input()
 	lowest_valid = min(valid_pop, key=lambda x: x.fitness.values[0]).fitness.values[0]
 	# change all fitnesses of invalid pop to be lower than lowest valid fit
 	# subtract CV from the lowest valid fitness - creates gradient even for invalid
 	for i in invalid_pop:
 		i.fitness.values = (lowest_valid - i.CV,)	
+
 	valid_pop.extend(invalid_pop)
 	pop = valid_pop
 
