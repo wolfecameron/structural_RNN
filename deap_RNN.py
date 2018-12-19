@@ -50,8 +50,8 @@ for g in range(N_GEN):
 	mechanism_list = []
 	for ind in all_outputs:
 		mechanism_list.append(create_mechanism_representation(ind, PLACEMENT_THRESH, OUTPUT_MIN))
-		print(ind)
-		vis_output(mechanism_list[-1], C_DICT)
+		#print(ind)
+		#vis_output(mechanism_list[-1], C_DICT)
 		vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 	
 	# stack all vectors together to create a matrix
@@ -64,24 +64,29 @@ for g in range(N_GEN):
 	fits = []
 	total_bound_CV = 0.0
 	total_intersect_CV = 0.0
+	total_axis_CV = 0.0
 	# get average fit and append into running list
 	for ind, mech in zip(pop, mechanism_list):
 		# create vector for individual and normalize it
 		mech_vec = get_mechanism_vector(mech)/col_avg
-		fit_tup = toolbox.evaluate(ind, mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND)
+		fit_tup = toolbox.evaluate(mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND, HOLE_SIZE)
 		total_bound_CV += fit_tup[1]
 		total_intersect_CV += fit_tup[2]
+		total_axis_CV += fit_tup[3]
 		fits.append(fit_tup)
-	# get averages of both CV values
+
+	# get averages of CV values
 	total_bound_CV /= len(pop)
 	total_intersect_CV /= len(pop)
-		
+	total_axis_CV /= len(pop)	
+
 	# assign fitness and CV to individuals
 	for ind, fit in zip(pop, fits):
 		ind.fitness.values = fit[0],
 		# CV should be the normalized sum of the two constraint types
 		ind.CV = (fit[1]/total_bound_CV) + \
-					(fit[2]/total_intersect_CV)
+					(fit[2]/total_intersect_CV) + \
+					(fit[3]/total_axis_CV)
 	
 	# sort individuals and handle CV values
 	valid_pop = [i for i in pop if i.CV <= 0.0]

@@ -9,6 +9,7 @@ import numpy as np
 from deap_RNN_help import get_gear_ratio, get_centers_and_radii, check_intersect
 from deap_RNN_help import create_mechanism_representation, get_mechanism_vector
 from deap_RNN_help import find_novelty, check_intersect_amount, check_bounding_box
+from deap_RNN_help import check_conflicting_gear_axis
 
 def specified_change_eval(position_list):
 	"""evaluates positions in the list based on the closeness
@@ -227,7 +228,7 @@ def eval_nonlin_gears(outputs, spring, placement_thresh, output_min):
 	
 	return total_torque,
 
-def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
+def phase_one_eval(mech, mech_vec, other_vecs, x_bound, y_bound, hole_size):
 	"""evaluates an individual for phase one of the experiment, which
 	selects individuals based on novelty and viability. Novelty is evaluated
 	based on a characteristic vector desribing all properties of a mechanism
@@ -245,5 +246,6 @@ def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 	# find the amount of constraint violation
 	CV_bound = check_bounding_box(mech, x_bound, y_bound)
 	CV_intersect = check_intersect_amount(mech) 
-
-	return (nov, CV_bound, CV_intersect)
+	CV_axis = check_conflicting_gear_axis(mech, hole_size)
+	
+	return (nov, CV_bound, CV_intersect, CV_axis)

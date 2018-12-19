@@ -375,7 +375,33 @@ def check_intersect(mechanism):
 
 	# only reaches this point if no circles intersect
 	return False
-	
+
+def check_conflicting_gear_axis(mechanism, hole_size):
+	"""finds the amount of overlapping radius of gear mechanisms that cannot be created
+	because the center axis of the gear would intersect with the body of another gear
+
+	:param hole_size: the size of the hole that runs through center of gears
+
+	:returns: the amount of overlap that is created by conflicting axis
+	"""
+
+	# store the total numeric value for conflicting gear axis
+	total_conflict = 0.0
+	for l_ind in range(len(mechanism)):
+		center = mechanism[l_ind].pos[0]
+		rad = mechanism[l_ind].radius
+		for r_ind in range(len(mechanism)):
+			# check for axis conflicts with every possible pair of gears
+			if(l_ind != r_ind):
+				o_center = mechanism[r_ind].pos[0]
+				left_bound = center - rad - hole_size
+				right_bound = center + rad + hole_size		
+				if(left_bound <= o_center < center):
+					total_conflict += np.square(o_center - left_bound)
+				elif(center < o_center <= right_bound):
+					total_conflict += np.square(right_bound - o_center)
+	return total_conflict
+
 def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 	"""uses a list of gear RNN outputs to create a more understandable representation for
 	the mechanism, each gear is represented with (radius, position, previous gear, next gears,
