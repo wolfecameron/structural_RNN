@@ -399,7 +399,7 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 		prev_gear = mechanism[-1] # previous gear is always last outputted mechanism
 		
 		# must set padding to true if space should be inserted between gears for 3D printing
-		new_pos = get_gear_pos(prev_gear.pos, curr[1], prev_gear.radius, curr[0],
+		new_pos = get_gear_pos_linear(prev_gear.pos, curr[1], prev_gear.radius, curr[0],
 					pos_thresh, output_min)
 		mechanism.append(Gear(curr[0], new_pos, len(mechanism) - 1))
 		
@@ -519,6 +519,32 @@ def get_gear_pos(previous_pos, angle, prev_rad, curr_rad, pos_thresh, output_min
 		# makes 3D printing easier by separating gears more
 		pos = (pos[0]*padding, pos[1]*padding, pos[2])
 
+	return pos			
+
+
+def get_gear_pos_linear(previous_pos, angle, prev_rad, curr_rad, pos_thresh, output_min, padding=1.0):
+	"""this method outputs the position of a single gear based on the position
+	of the gear it attaches to and it's angular RNN output - instead of placing at any
+	angle around previous gear, this method places it linearly to the right of previous
+	gear or fixes it to front or back
+
+	return: a tuple (x, y, z) that gives position of gear
+	"""
+	
+	# attack to the back of the previous gear
+	if(angle > pos_thresh):
+		# just increment z dimension
+		pos = (previous_pos[0], previous_pos[1], previous_pos[2] + 1)
+	# attach to front of previous gear
+	elif(angle < -pos_thresh):
+		# just decrement z dimension
+		pos = (previous_pos[0], previous_pos[1], previous_pos[2] - 1)	
+	# place gear to the right of previous	
+	else:
+		x_delta = curr_rad + prev_rad
+		# update the position with change in x and y relative to last pos
+		pos = ((previous_pos[0] + x_delta)*padding, previous_pos[1], previous_pos[2])
+		
 	return pos			
 
 def check_bounding_box(ind, x_bound, y_bound):

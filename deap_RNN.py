@@ -50,8 +50,8 @@ for g in range(N_GEN):
 	mechanism_list = []
 	for ind in all_outputs:
 		mechanism_list.append(create_mechanism_representation(ind, PLACEMENT_THRESH, OUTPUT_MIN))
-		#print(ind)
-		#vis_output(mechanism_list[-1], C_DICT)
+		print(ind)
+		vis_output(mechanism_list[-1], C_DICT)
 		vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 	
 	# stack all vectors together to create a matrix
