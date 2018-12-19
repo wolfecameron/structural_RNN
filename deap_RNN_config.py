@@ -64,9 +64,9 @@ C_DICT = {-9: "#CD5C5C", -8: "#C0C0C0", -7: "#000000", -6: "#800000", -5: "#0080
 # total number of weights present in RNN
 TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
 
-#create types needed for deap
+# create types needed for deap
 creator.create("FitnessMulti", base.Fitness, weights=weights)
-creator.create("Individual", list, fitness=creator.FitnessMulti, h_nodes=-1)
+creator.create("Individual", list, fitness=creator.FitnessMulti, CV=0.0, h_nodes=-1)
 
 # initialize the toolbox
 toolbox = base.Toolbox()

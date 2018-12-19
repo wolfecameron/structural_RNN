@@ -66,14 +66,23 @@ for g in range(N_GEN):
 		mech_vec = get_mechanism_vector(mech)/col_avg
 		fits.append(toolbox.evaluate(ind, mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND))
 			
-	# assign fitness to individuals
+	# assign fitness and CV to individuals
 	for ind, fit in zip(pop, fits):
-		ind.fitness.values = fit
+		ind.fitness.values = fit[0]
+		ind.CV = fit[1]
 	
 	# sort individuals and handle CV values
-	valid_pop = [i for i in pop if i.fitness.values[1] <= 0.0]
-	invalid_pop = [i for i in pop if i.fitness.values[1] > 0.0]
-	
+	valid_pop = [i for i in pop if i.CV <= 0.0]
+	invalid_pop = [i for i in pop if i.CV > 0.0]
+	lowest_valid = min(valid_pop, key=lambda x: x.fitness.values[0]).fitness.values[0]
+	# change all fitnesses of invalid pop to be lower than lowest valid fit
+	# subtract CV from the lowest valid fitness - creates gradient even for invalid
+	for i in invalid_pop:
+		i.fitness.values = (lowest_valid - i.CV,)	
+	pop = valid_pop.extend(invalid_pop)
+	print(len(pop))
+	input()	
+
 	# perform selection on the population to maximize fitness
 	pop = toolbox.select(pop, k=len(pop))
 	
