@@ -528,7 +528,8 @@ def check_bounding_box(ind, x_bound, y_bound):
 	"""
 	
 	total_outside = 0.0
-	for g in ind:
+	# only check individuals after the first
+	for g in ind[1:]:
 		r = g.radius
 		# find the amount the gear lies out of x bound
 		x = g.pos[0]
