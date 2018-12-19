@@ -238,20 +238,9 @@ def phase_one_eval(ind, mech, mech_vec, other_vecs, x_bound, y_bound):
 	"""	
 
 	# maximize the gear ratio and novelty
-	ratio = mech[-1].ratio
 	nov = find_novelty(mech_vec, other_vecs)
 	
 	# find the amount of constraint violation
 	CV = check_bounding_box(mech, x_bound, y_bound)*check_intersect_amount(mech) 
-	"""
-	total_area = 0
-	for m in mech:
-		total_area += m.radius
-	# find the value of instersecting gears
-	v = check_intersect_amount(mech)
-		
-	# check if any gears lie outside of bounding box
-	d = check_bounding_box(mech, x_bound, y_bound)
-	"""
 
-	return (ratio*nov, CV)
+	return (nov, CV)

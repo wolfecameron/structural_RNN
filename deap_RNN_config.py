@@ -20,7 +20,7 @@ called and edited from a central location"""
 N_IN=3
 N_HID=8
 N_OUT=3
-weights=(1.0, -1.0)
+weights=(1.0, )
 MUTPB = .25
 CXPB = .15
 INIT_WINDOW=.5

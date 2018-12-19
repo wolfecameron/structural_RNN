@@ -415,10 +415,15 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 
 	return mechanism	
 
-def find_novelty(curr_vec, other_vecs):
+def find_novelty(curr_vec, other_vecs, k=3):
 	"""pass in a numpy vector characterizing gear mechanism and find the average distance between
 	it and all other vectors in matrix other_vecs - returns average distance from the rest
 	of the vectors
+	
+	Paramters
+	curr_vec: the vector for which novelty is being found
+	other_vecs: all other vectors in the population
+	k: the number of distances for which average is being taken
 	"""
 	
 	# find difference between elements of vector and all other vectors
@@ -428,9 +433,13 @@ def find_novelty(curr_vec, other_vecs):
 
 	# find total difference for each vector and grab average of values
 	summed_rows = np.sum(difference, axis=1)	
-	total_distance = np.mean(summed_rows)
+	summed_rows = np.reshape(summed_rows, (1, -1))
+	sorted_dists = np.sort(summed_rows[0, :])
 
-	return total_distance
+	# take average of k closest solutions, disclude the first element because it is dist from self
+	avg_dist = np.mean(sorted_dists[1: k+1])
+	
+	return avg_dist
 
 def get_mechanism_vector(mechanism):
 	"""this method creates a charactaristic vector to describe a mechanism

@@ -27,6 +27,9 @@ pop = toolbox.population()
 for p in pop:
 	p.h_nodes = N_HID
 
+# this list holds the most novel individual from each generation
+# surrogate finds fitness for each of these individuals
+ARCHIVE = []
 
 # begin the evolutionary loop
 for g in range(N_GEN):
@@ -62,10 +65,14 @@ for g in range(N_GEN):
 		# create vector for individual and normalize it
 		mech_vec = get_mechanism_vector(mech)/col_avg
 		fits.append(toolbox.evaluate(ind, mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND))
-		
+			
 	# assign fitness to individuals
 	for ind, fit in zip(pop, fits):
 		ind.fitness.values = fit
+	
+	# sort individuals and handle CV values
+	valid_pop = [i for i in pop if i.fitness.values[1] <= 0.0]
+	invalid_pop = [i for i in pop if i.fitness.values[1] > 0.0]
 	
 	# perform selection on the population to maximize fitness
 	pop = toolbox.select(pop, k=len(pop))
