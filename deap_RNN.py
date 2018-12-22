@@ -62,31 +62,38 @@ for g in range(N_GEN):
 	mech_matrix /= col_avg	
 	
 	fits = []
-	total_bound_CV = 0.0
-	total_intersect_CV = 0.0
-	total_axis_CV = 0.0
+	total_bound_CV = []
+	total_intersect_CV = []
+	total_axis_CV = []
 	# get average fit and append into running list
 	for ind, mech in zip(pop, mechanism_list):
 		# create vector for individual and normalize it
 		mech_vec = get_mechanism_vector(mech)/col_avg
 		fit_tup = toolbox.evaluate(mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND, HOLE_SIZE)
-		total_bound_CV += fit_tup[1]
-		total_intersect_CV += fit_tup[2]
-		total_axis_CV += fit_tup[3]
+		# only consider nonzero terms in normalization to avoid watering down CV
+		# many of the CV values will be 0 and would throw off the average
+		if(fit_tup[1] > 0.0): total_bound_CV.append(fit_tup[1])
+		if(fit_tup[2] > 0.0): total_intersect_CV.append(fit_tup[2])
+		if(fit_tup[3] > 0.0): total_axis_CV.append(fit_tup[3])
 		fits.append(fit_tup)
 
-	# get averages of CV values
-	total_bound_CV /= len(pop)
-	total_intersect_CV /= len(pop)
-	total_axis_CV /= len(pop)	
+	# convert cv lists to numpy arrays
+	total_bound_CV = np.array(total_bound_CV)
+	total_intersect_CV = np.array(total_intersect_CV)
+	total_axis_CV = np.array(total_axis_CV)
 
 	# assign fitness and CV to individuals
 	for ind, fit in zip(pop, fits):
 		ind.fitness.values = fit[0],
-		# CV should be the normalized sum of the two constraint types
-		ind.CV = (fit[1]/total_bound_CV) + \
-					(fit[2]/total_intersect_CV) + \
-					(fit[3]/total_axis_CV)
+		# CV should be the normalized sum of the constraint types
+		# must ensure any divide by zero is avoided
+		bound_cv = 0.0 if total_bound_CV.shape[0] == 0 else \
+				(fit[1]/(np.sum(total_bound_CV)/total_bound_CV.shape[0]))
+		intersect_cv = 0.0 if total_intersect_CV.shape[0] == 0 else \
+				(fit[2]/(np.sum(total_intersect_CV)/total_intersect_CV.shape[0]))
+		axis_cv = 0.0 if total_axis_CV.shape[0] == 0 else \
+				(fit[3]/(np.sum(total_axis_CV)/total_axis_CV.shape[0]))
+		ind.CV = bound_cv + intersect_cv + axis_cv
 	
 	# sort individuals and handle CV values
 	valid_pop = [i for i in pop if i.CV <= 0.0]
