@@ -30,7 +30,7 @@ for p in pop:
 # this list holds the most novel individual from each generation
 # surrogate finds fitness for each of these individuals
 ARCHIVE = []
-
+ARCHIVE_MATRIX = np.array([])
 # begin the evolutionary loop
 for g in range(N_GEN):
 	print("Running Generation {0}".format(str(g)))
@@ -69,13 +69,22 @@ for g in range(N_GEN):
 	for ind, mech in zip(pop, mechanism_list):
 		# create vector for individual and normalize it
 		mech_vec = get_mechanism_vector(mech)/col_avg
-		fit_tup = toolbox.evaluate(mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND, HOLE_SIZE)
+		
+		# only evaluate based on pop in the first gen
+		if(g == 0):
+			# use k == 3 to disclude distance from self in mech matrix
+			fit_tup = toolbox.evaluate(mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND, HOLE_SIZE,k=3)
+		# evaluate based on archive in other gens
+		else:
+			# can use k == 1 because self should not be in the archive
+			fit_tup = toolbox.evaluate(mech, mech_vec, ARCHIVE_MATRIX, X_BOUND, Y_BOUND, HOLE_SIZE)
+		fits.append(fit_tup)
+			
 		# only consider nonzero terms in normalization to avoid watering down CV
 		# many of the CV values will be 0 and would throw off the average
 		if(fit_tup[1] > 0.0): total_bound_CV.append(fit_tup[1])
 		if(fit_tup[2] > 0.0): total_intersect_CV.append(fit_tup[2])
 		if(fit_tup[3] > 0.0): total_axis_CV.append(fit_tup[3])
-		fits.append(fit_tup)
 
 	# convert cv lists to numpy arrays
 	total_bound_CV = np.array(total_bound_CV)
@@ -107,8 +116,20 @@ for g in range(N_GEN):
 	valid_pop.extend(invalid_pop)
 	pop = valid_pop
 
-	# append the most novel individual into the archive
-	ARCHIVE.append(max(pop, key=lambda x: x.fitness.values[0]))	
+	# BOOK KEEPING FOR ARCHIVE
+	# append the most novel individual into the archive, update matrix with its vector
+	ARCHIVE.append(max(pop, key=lambda x: x.fitness.values[0]))
+	# get all output information for next archive ind
+	rnn = RNN(N_IN, ARCHIVE[-1].h_nodes, N_OUT)
+	w1, w1_bias, w2, w2_bias = list_to_matrices(ARCHIVE[-1], N_IN, ARCHIVE[-1].h_nodes, N_OUT)
+	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
+	arch_out = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
+	# update archive matrix from current vector
+	arch_vec = get_mechanism_vector(create_mechanism_representation(arch_out, PLACEMENT_THRESH, OUTPUT_MIN))
+	if(g == 0):
+		ARCHIVE_MATRIX = np.vstack([arch_vec])
+	else:
+		ARCHIVE_MATRIX = np.vstack([ARCHIVE_MATRIX, arch_vec])
 
 	# perform selection on the population to maximize fitness
 	pop = toolbox.select(pop, k=len(pop))

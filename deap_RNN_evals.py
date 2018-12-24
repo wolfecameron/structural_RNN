@@ -228,7 +228,7 @@ def eval_nonlin_gears(outputs, spring, placement_thresh, output_min):
 	
 	return total_torque,
 
-def phase_one_eval(mech, mech_vec, other_vecs, x_bound, y_bound, hole_size):
+def phase_one_eval(mech, mech_vec, other_vecs, x_bound, y_bound, hole_size, k=1):
 	"""evaluates an individual for phase one of the experiment, which
 	selects individuals based on novelty and viability. Novelty is evaluated
 	based on a characteristic vector desribing all properties of a mechanism
@@ -241,7 +241,7 @@ def phase_one_eval(mech, mech_vec, other_vecs, x_bound, y_bound, hole_size):
 	"""	
 
 	# maximize the gear ratio and novelty
-	nov = find_novelty(mech_vec, other_vecs)
+	nov = find_novelty(mech_vec, other_vecs, k=k)
 	
 	# find the amount of constraint violation
 	CV_bound = check_bounding_box(mech, x_bound, y_bound)
