@@ -469,12 +469,10 @@ def find_novelty(curr_vec, other_vecs, k=3):
 
 def get_mechanism_vector(mechanism):
 	"""this method creates a charactaristic vector to describe a mechanism
-	that contains avg and var of x, y, z, avg and var # of connecting gears,
-	and total # gears"""
+	based on positioning, ratios, and size"""
 	
 	# create lists that can be populated with all mechanism data
 	x = []
-	y = []
 	z = []
 	r = []
 	total_gear = len(mechanism)
@@ -482,20 +480,21 @@ def get_mechanism_vector(mechanism):
 	# populate all of the lists
 	for gear in mechanism:
 		x.append(gear.pos[0])
-		y.append(gear.pos[1])
 		z.append(gear.pos[2])
 		r.append(gear.radius)
 	
 	# convert arrays to np arrays
 	x = np.array(x)
-	y = np.array(y)
 	z = np.array(z)
 	r = np.array(r)
+
+	# find the average ratio between each gear
+	ratios = (r[:-1]/r[1:])
 	
+
 	# construct the vector of items to characterize mechanism
-	vec = np.array([np.mean(x), np.var(x), np.mean(y), np.var(y), \
-					np.mean(z), np.var(z), np.mean(r), np.var(r)])
-					#float(total_gear)])
+	vec = np.array([np.mean(x), np.var(x), np.mean(ratios), np.var(ratios), \
+					np.mean(z), np.var(z), np.mean(r), np.var(r), len(mechanism)])
 	
 	return vec					
 
