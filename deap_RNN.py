@@ -30,11 +30,11 @@ for p in pop:
 # this list holds the most novel individual from each generation
 # surrogate finds fitness for each of these individuals
 ARCHIVE = []
-ARCHIVE_MATRIX = np.array([])
+ARCHIVE_MATRIX = None
 # begin the evolutionary loop
 for g in range(N_GEN):
 	print("Running Generation {0}".format(str(g)))
-
+	
 	# get output for every individual in population and store in a list
 	all_outputs = []
 	for ind in pop:
@@ -44,7 +44,7 @@ for g in range(N_GEN):
 		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 		output = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
 		all_outputs.append(output)  
-		
+	
 	# generate matrix of vectors for all individuals
 	vec_list = []
 	mechanism_list = []
@@ -52,15 +52,13 @@ for g in range(N_GEN):
 		mechanism_list.append(create_mechanism_representation(ind, PLACEMENT_THRESH, OUTPUT_MIN))
 		#print(ind)
 		#vis_output(mechanism_list[-1], C_DICT)
-		vec_list.append(get_mechanism_vector(mechanism_list[-1]))
-	
+		vec_list.append(get_mechanism_vector(mechanism_list[-1]))	
+
 	# stack all vectors together to create a matrix
 	mech_matrix = np.vstack(vec_list)
-
 	# normalize the mechanism matrix by simply dividing by avg column value
-	col_avg = np.mean(mech_matrix, axis=0) + .001
-	mech_matrix /= col_avg	
-	
+	col_avg = np.mean(mech_matrix, axis=0) + .001	
+		
 	fits = []
 	total_bound_CV = []
 	total_intersect_CV = []
@@ -71,13 +69,14 @@ for g in range(N_GEN):
 		mech_vec = get_mechanism_vector(mech)/col_avg
 		
 		# only evaluate based on pop in the first gen
+		# normalize current vec and archive with col_avg
 		if(g == 0):
 			# use k == 3 to disclude distance from self in mech matrix
-			fit_tup = toolbox.evaluate(mech, mech_vec, mech_matrix, X_BOUND, Y_BOUND, HOLE_SIZE,k=3)
+			fit_tup = toolbox.evaluate(mech, mech_vec, mech_matrix/col_avg, X_BOUND, Y_BOUND, HOLE_SIZE,k=3)
 		# evaluate based on archive in other gens
 		else:
 			# can use k == 1 because self should not be in the archive
-			fit_tup = toolbox.evaluate(mech, mech_vec, ARCHIVE_MATRIX, X_BOUND, Y_BOUND, HOLE_SIZE)
+			fit_tup = toolbox.evaluate(mech, mech_vec, ARCHIVE_MATRIX/col_avg, X_BOUND, Y_BOUND, HOLE_SIZE)
 		fits.append(fit_tup)
 			
 		# only consider nonzero terms in normalization to avoid watering down CV
@@ -115,7 +114,7 @@ for g in range(N_GEN):
 
 	valid_pop.extend(invalid_pop)
 	pop = valid_pop
-
+	
 	# BOOK KEEPING FOR ARCHIVE
 	# append the most novel individual into the archive, update matrix with its vector
 	ARCHIVE.append(max(pop, key=lambda x: x.fitness.values[0]))

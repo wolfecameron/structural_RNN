@@ -464,7 +464,6 @@ def find_novelty(curr_vec, other_vecs, k=1):
 
 	# take average of k closest solutions, disclude the first element because it is dist from self
 	avg_dist = np.mean(sorted_dists[: k])
-	
 	return avg_dist
 
 def get_mechanism_vector(mechanism):
@@ -489,7 +488,9 @@ def get_mechanism_vector(mechanism):
 	r = np.array(r)
 
 	# find the average ratio between each gear
-	ratios = (r[:-1]/r[1:])
+	ratios = np.array([1.0])
+	if(len(mechanism) > 1):
+		ratios = (r[:-1]/r[1:])
 	
 
 	# construct the vector of items to characterize mechanism
