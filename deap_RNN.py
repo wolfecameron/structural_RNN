@@ -68,6 +68,8 @@ for g in range(N_GEN):
 		# create vector for individual and normalize it
 		mech_vec = get_mechanism_vector(mech)/col_avg
 		
+		#print(mech_vec)
+		#input()	
 		# only evaluate based on pop in the first gen
 		# normalize current vec and archive with col_avg
 		if(g == 0):
@@ -117,14 +119,19 @@ for g in range(N_GEN):
 	
 	# BOOK KEEPING FOR ARCHIVE
 	# append the most novel individual into the archive, update matrix with its vector
-	ARCHIVE.append(max(pop, key=lambda x: x.fitness.values[0]))
+	best_ind = max(pop, key=lambda x: x.fitness.values[0])
+	ARCHIVE.append(best_ind)
 	# get all output information for next archive ind
 	rnn = RNN(N_IN, ARCHIVE[-1].h_nodes, N_OUT)
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ARCHIVE[-1], N_IN, ARCHIVE[-1].h_nodes, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	arch_out = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
 	# update archive matrix from current vector
-	arch_vec = get_mechanism_vector(create_mechanism_representation(arch_out, PLACEMENT_THRESH, OUTPUT_MIN))
+	arch_mech = create_mechanism_representation(arch_out, PLACEMENT_THRESH, OUTPUT_MIN)
+	arch_vec = get_mechanism_vector(arch_mech)
+	print(best_ind.fitness.values[0])
+	vis_output(arch_mech, C_DICT)
+
 	if(g == 0):
 		ARCHIVE_MATRIX = np.vstack([arch_vec])
 	else:
@@ -174,8 +181,8 @@ mechanism_list = []
 vec_list = []
 # view results of the evolution
 for count, ind in enumerate(ARCHIVE):
-	rnn = RNN(N_IN, N_HID, N_OUT)
-	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
+	rnn = RNN(N_IN, ind.h_nodes, N_OUT)
+	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, ind.h_nodes, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	# get output for each individual in final generation
 	output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')

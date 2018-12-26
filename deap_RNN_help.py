@@ -472,19 +472,19 @@ def get_mechanism_vector(mechanism):
 	
 	# create lists that can be populated with all mechanism data
 	x = []
-	z = []
+	#z = []
 	r = []
 	total_gear = len(mechanism)
 	
 	# populate all of the lists
 	for gear in mechanism:
 		x.append(gear.pos[0])
-		z.append(gear.pos[2])
+		#z.append(gear.pos[2])
 		r.append(gear.radius)
 	
 	# convert arrays to np arrays
 	x = np.array(x)
-	z = np.array(z)
+	#z = np.array(z)
 	r = np.array(r)
 
 	# find the average ratio between each gear
@@ -495,7 +495,7 @@ def get_mechanism_vector(mechanism):
 
 	# construct the vector of items to characterize mechanism
 	vec = np.array([np.mean(x), np.var(x), np.mean(ratios), np.var(ratios), \
-					np.mean(z), np.var(z), np.mean(r), np.var(r), len(mechanism)])
+					np.mean(r), np.var(r), len(mechanism)])
 	
 	return vec					
 
