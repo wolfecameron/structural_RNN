@@ -218,9 +218,9 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 	also outputs a value that decides if rnn should stop at this gear"""	
 
 	# initialize all variables needed to get output
-	radius = 0
-	gear_pos_a = 0 # angle gear is placed at
-	stop = 0
+	radius = 1.0
+	gear_pos_a = 1.0 # angle gear is placed at
+	stop = 1.0
 
 	# initialize the hidden layer
 	hidden = get_hidden_input(1, rnn.hidden_size, hidden_input)#torch.zeros(1, rnn.hidden_size)	
