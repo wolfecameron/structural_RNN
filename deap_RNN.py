@@ -4,6 +4,7 @@ train mechanisms- uses deap to evolve sets of weights that are inputted into RNN
 
 import numpy as np
 import matplotlib
+from copy import deepcopy
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 
@@ -120,7 +121,7 @@ for g in range(N_GEN):
 	# BOOK KEEPING FOR ARCHIVE
 	# append the most novel individual into the archive, update matrix with its vector
 	best_ind = max(pop, key=lambda x: x.fitness.values[0])
-	ARCHIVE.append(best_ind)
+	ARCHIVE.append(deepcopy(best_ind))
 	# get all output information for next archive ind
 	rnn = RNN(N_IN, ARCHIVE[-1].h_nodes, N_OUT)
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ARCHIVE[-1], N_IN, ARCHIVE[-1].h_nodes, N_OUT)
@@ -129,9 +130,9 @@ for g in range(N_GEN):
 	# update archive matrix from current vector
 	arch_mech = create_mechanism_representation(arch_out, PLACEMENT_THRESH, OUTPUT_MIN)
 	arch_vec = get_mechanism_vector(arch_mech)
-	print(best_ind.fitness.values[0])
-	vis_output(arch_mech, C_DICT)
-
+	#print(best_ind.fitness.values[0])
+	#vis_output(arch_mech, C_DICT)
+	
 	if(g == 0):
 		ARCHIVE_MATRIX = np.vstack([arch_vec])
 	else:
