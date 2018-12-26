@@ -173,7 +173,7 @@ outs = []
 mechanism_list = []
 vec_list = []
 # view results of the evolution
-for count, ind in enumerate(pop):
+for count, ind in enumerate(ARCHIVE):
 	rnn = RNN(N_IN, N_HID, N_OUT)
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
@@ -184,38 +184,21 @@ for count, ind in enumerate(pop):
 	mechanism_list.append(create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN))
 	#vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 
+plt.title("Size of Mechanisms in Archive")
 plt.hist([len(g) for g in mechanism_list], bins=10)
 plt.show()
+
 """
 # stack all vectors into a matrix and normalize
 mech_matrix = np.vstack(vec_list)
 col_avg = np.mean(mech_matrix, axis=0) + .001
 mech_matrix /= col_avg
 """
+
 # go through all mechanisms and assign fitness
-for ind, mechanism in zip(pop, mechanism_list):
+for ind, mechanism in zip(ARCHIVE, mechanism_list):
 	# get individual vector and normalize
 	vis_output(mechanism, C_DICT)
-	"""
-	while(check.lower() == 'y'):
-		rnn = RNN(N_IN, N_HID, N_OUT)
-		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, N_HID, N_OUT)
-		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-		output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'rand')
-		m = create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN)
-		vis_output(m, C_DICT)
-		check = input("test inputs again?")
-
-	#ind_vec = get_mechanism_vector(mechanism)/col_avg
-	#fitness = toolbox.evaluate(ind, mechanism, ind_vec, mech_matrix, X_BOUND, Y_BOUND)
-	# append tuple of individual's outputs and fitness to the global list
-	ind_and_fits.append((mechanism, fitness))
-	"""
-
-for ind, fit in ind_and_fits:
-	print(fit)
-	vis_output(ind, C_DICT)
-	
 
 # sort list of outputs by fitness - only uses a single objective
 #ind_and_fits = sorted(ind_and_fits, key=lambda x: x[0], reverse=True)
