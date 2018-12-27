@@ -31,6 +31,7 @@ ACT_EXP = .5
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
 TOURN_SIZE = 3
+GEAR_RADII = [8.0, 12.0, 16.0, 20.0, 24.0, 28.0]
 
 # below are constants related to RNN output
 OUTPUT_MIN = -1

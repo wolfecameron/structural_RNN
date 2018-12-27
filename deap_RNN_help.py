@@ -266,10 +266,11 @@ def get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, sto
 		outs, hidden = rnn.forward_softmax(rnn_input, hidden, num_unique_gears, act_exp)
 		# output of this step becomes input for next step
 		rnn_input = outs
-	
+		stop = outs.data[0][num_unique_gears+1].item()	
+
 		# get the current gear type/size	
 		gear_type = np.argmax(outs.data[0][:num_unique_gears].numpy())
-	
+			
 		# append outputs into list
 		all_outputs.append((gear_type, outs.data[0][num_unique_gears].item(), outs.data[0][num_unique_gears+1].item()))
 	
@@ -440,9 +441,6 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 	ratio) so that all information for each gear in the mechanism is readily available
 	
 	this method converts the raw RNN output into the above form - stored as a Gear object
-	
-	radius pos prev gear
-	radius angle index stop
 	"""
 	
 	# populate mechanism with the first gear
@@ -472,6 +470,35 @@ def create_mechanism_representation(all_outputs, pos_thresh, output_min):
 			mechanism[-1].ratio = prev_gear.ratio
 
 	return mechanism	
+
+def create_discrete_mechanism(all_outputs, gear_radii, pos_thresh, output_min):
+	"""creates mechanism using RNN output based on discrete gear radius
+	options
+	
+	:param all_outputs: the list of outputs created by RNN
+	:param gear_radii: the list of gear radius options
+	"""
+
+	r = gear_radii[all_outputs[0][0]]
+	mechanism = [Gear(r, (r, r, 0), 0)]
+	for index, curr in enumerate(all_outputs[1:]):
+		prev_gear = mechanism[-1]
+
+		# get position for the next gear
+		new_pos = get_gear_pos_linear(prev_gear.pox, curr[1], prev_gear.radius, gear_radii[curr[0]], \
+				pos_thresh, output_min)
+		mechanism.append(Gear(gear_radii[curr[0]], new_pos, len(mechanism) - 1))
+		prev_gear.next_gears.append(index + 1)
+
+		# find ratio of the current gear
+		new_ratio = prev_gear.ratio*(prev_gear.radius/mechanism[-1].radius)
+		if(-pos_thresh <= curr[1] <= pos_thresh ):
+			mechanism[-1].ratio = new_ratio
+		else:
+			mechanism[-1].ratio = prev_gear.ratio
+
+	return mechanism	
+
 
 def find_novelty(curr_vec, other_vecs, k=1):
 	"""pass in a numpy vector characterizing gear mechanism and find the average distance between

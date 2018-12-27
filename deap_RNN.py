@@ -13,7 +13,7 @@ from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, POP_SIZE, PLACEME
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT
 from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, NUM_UNIQUE_GEARS
-from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_mechanism_representation
+from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_discrete_mechanism
 from deap_RNN_help import get_mechanism_vector 
 from deap_RNN_help import get_discrete_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
@@ -51,7 +51,7 @@ for g in range(N_GEN):
 	vec_list = []
 	mechanism_list = []
 	for ind in all_outputs:
-		mechanism_list.append(create_mechanism_representation(ind, PLACEMENT_THRESH, OUTPUT_MIN))
+		mechanism_list.append(create_discrete_mechanism(ind, PLACEMENT_THRESH, OUTPUT_MIN))
 		#print(ind)
 		#vis_output(mechanism_list[-1], C_DICT)
 		vec_list.append(get_mechanism_vector(mechanism_list[-1]))	
@@ -129,7 +129,7 @@ for g in range(N_GEN):
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	arch_out = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
 	# update archive matrix from current vector
-	arch_mech = create_mechanism_representation(arch_out, PLACEMENT_THRESH, OUTPUT_MIN)
+	arch_mech = create_discrete_mechanism(arch_out, PLACEMENT_THRESH, OUTPUT_MIN)
 	arch_vec = get_mechanism_vector(arch_mech)
 	#print(best_ind.fitness.values[0])
 	#vis_output(arch_mech, C_DICT)
@@ -190,7 +190,7 @@ for count, ind in enumerate(ARCHIVE):
 	output_positions = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
 	outs.append(output_positions)
-	mechanism_list.append(create_mechanism_representation(output_positions, PLACEMENT_THRESH, OUTPUT_MIN))
+	mechanism_list.append(create_discrete_mechanism(output_positions, PLACEMENT_THRESH, OUTPUT_MIN))
 	#vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 
 plt.title("Size of Mechanisms in Archive")
