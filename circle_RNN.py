@@ -23,7 +23,8 @@ class RNN(nn.Module):
 		self.hid_act = nn.Tanh()
 		
 		# activate output with ReLU so that outputs always positive
-		self.out_act = nn.Tanh()
+		self.out_act_tanh = nn.Tanh()
+		self.out_act_sm = nn.Softmax()
 	
 	def forward(self, inputs, hidden, activation_exponent):
 		"""forward propogation function for RNN - parameters
@@ -41,6 +42,31 @@ class RNN(nn.Module):
 		# return information for hidden and output layer
 		return (output, hidden)
 
+	def forward_softmax(self, inputs, hidden, num_sm, activation_exponent):
+		"""different forward propagation method for RNN - a certain number of
+		outputs are activated with softmax while others are activated with tanh
+		
+		:param inputs: the input values into forward prop
+		:param hidden: values for previous hidden layer
+		:param num_sm: the number of outputs values for which softmax is applied,
+			tanh is applied to all others
+		
+		:returns: output of forward prop and new values for hidden layer
+		"""
+
+		# combine hidden with inputs
+		combined_in = torch.cat((inputs, hidden), 1)
+		
+		# get hidden and output values - outputs not yet activated
+		hidden = self.hid_act(self.in2hid(combined_in))
+		output = self.hid2out(hidden)
+	
+		# separate output into softmax and tanh activation
+		out_sm = self.out_act_sm(output[:, :num_sm])
+		out_tanh = self.out_act_tanh(output[:, num_sm:])
+		output = torch.cat((out_sm, out_tanh), 1)
+
+		return (output, hidden)
 
 if __name__ == '__main__':
 	"""Used for simple testing"""

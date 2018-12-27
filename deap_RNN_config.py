@@ -17,9 +17,10 @@ from deap_RNN_sel import selNSGA2_cv
 called and edited from a central location"""
 
 # constants used for deap configuration
-N_IN=3
+NUM_UNIQUE_GEARS = 6
+N_IN=NUM_UNIQUE_GEARS + 2
 N_HID=8
-N_OUT=3
+N_OUT=N_IN
 weights=(1.0, )
 MUTPB = .25
 CXPB = .15

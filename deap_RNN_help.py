@@ -83,7 +83,7 @@ def get_rnn_output(rnn, max_it, act_exp, verbose=False):
 	rnn -- the rnn being used
 	max_it -- the maximum number of discrete points in the helical shape
 	sigmoid_exp -- constant to multiply numbers passed into output activation
-`	"""
+	"""
 	
 	# initialize all tracking values that are needed
 	# to create a structure with the rnn
@@ -243,6 +243,38 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 		all_outputs.append((radius_scaled, gear_pos_a, stop))
 	
 	return all_outputs
+
+
+def get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, stop_thresh, rad_scale, act_exp, pos_thresh, hidden_input):
+	"""generates output of RNN to create a gear mechanism, first n outputs of each time step
+	represent the probability of each discrete type of gear being present, the one with the highest
+	probability is the radius of gear that is present at that time step, there are also two other outputs,
+	positition and stop, that dictate where this gear will be placed and if the RNN should continue
+	outputting gears"""
+
+	# initialize all variables needed to get output
+	rnn_input = torch.ones(1, num_unique_gears + 2)
+
+	# initialize the hidden layer
+	hidden = get_hidden_input(1, rnn.hidden_size, hidden_input)#torch.zeros(1, rnn.hidden_size)	
+	
+	# length of the outputs is the number of gears that have been added to system
+	all_outputs = []
+
+	while((len(all_outputs) < min_gears) or (len(all_outputs) < max_gears and stop < stop_thresh)):
+		# run next forward propogation
+		outs, hidden = rnn.forward_softmax(rnn_input, hidden, num_unique_gears, act_exp)
+		# output of this step becomes input for next step
+		rnn_input = outs
+		
+		print(outs.data)
+		input() 
+	
+		# append outputs into list
+		all_outputs.append((radius_scaled, gear_pos_a, stop))
+	
+	return all_outputs
+
 
 def get_gear_ratio(outputs, pos_thresh):
 	"""method for finding the gear ratio of a set of gears that is generated

@@ -12,10 +12,10 @@ from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT
-from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE
+from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, NUM_UNIQUE_GEARS
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_mechanism_representation
 from deap_RNN_help import get_mechanism_vector 
-from deap_RNN_help import get_gear_mechanism as get_output
+from deap_RNN_help import get_discrete_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
 
 # import toolbox from config file
@@ -34,7 +34,7 @@ ARCHIVE = []
 ARCHIVE_MATRIX = None
 # begin the evolutionary loop
 for g in range(N_GEN):
-	print("Running Generation {0}".format(str(g)))
+	print(f'Running Generation {g}')
 	
 	# get output for every individual in population and store in a list
 	all_outputs = []
@@ -43,8 +43,9 @@ for g in range(N_GEN):
 		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
 		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, ind.h_nodes, N_OUT)
 		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-		output = get_output(rnn, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
-		all_outputs.append(output)  
+		output = get_output(rnn, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, \
+						RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
+		all_outputs.append(output)
 	
 	# generate matrix of vectors for all individuals
 	vec_list = []
