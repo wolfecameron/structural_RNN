@@ -63,7 +63,7 @@ class RNN(nn.Module):
 	
 		# separate output into softmax and tanh activation
 		out_sm = self.out_act_sm(output[:, :num_sm])
-		out_tanh = self.out_act_tanh(output[:, num_sm:])
+		out_tanh = self.out_act_tanh(activation_exponent*output[:, num_sm:])
 		output = torch.cat((out_sm, out_tanh), 1)
 
 		return (output, hidden)

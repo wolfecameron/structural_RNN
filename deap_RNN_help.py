@@ -270,7 +270,7 @@ def get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, sto
 
 		# get the current gear type/size	
 		gear_type = np.argmax(outs.data[0][:num_unique_gears].numpy())
-			
+
 		# append outputs into list
 		all_outputs.append((gear_type, outs.data[0][num_unique_gears].item(), outs.data[0][num_unique_gears+1].item()))
 	
@@ -485,7 +485,7 @@ def create_discrete_mechanism(all_outputs, gear_radii, pos_thresh, output_min):
 		prev_gear = mechanism[-1]
 
 		# get position for the next gear
-		new_pos = get_gear_pos_linear(prev_gear.pox, curr[1], prev_gear.radius, gear_radii[curr[0]], \
+		new_pos = get_gear_pos_linear(prev_gear.pos, curr[1], prev_gear.radius, gear_radii[curr[0]], \
 				pos_thresh, output_min)
 		mechanism.append(Gear(gear_radii[curr[0]], new_pos, len(mechanism) - 1))
 		prev_gear.next_gears.append(index + 1)
