@@ -24,7 +24,7 @@ class RNN(nn.Module):
 		
 		# activate output with ReLU so that outputs always positive
 		self.out_act_tanh = nn.Tanh()
-		self.out_act_sm = nn.Softmax()
+		self.out_act_sm = nn.Softmax(dim=1)
 	
 	def forward(self, inputs, hidden, activation_exponent):
 		"""forward propogation function for RNN - parameters

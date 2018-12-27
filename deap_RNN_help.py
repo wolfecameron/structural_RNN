@@ -256,7 +256,7 @@ def get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, sto
 	rnn_input = torch.ones(1, num_unique_gears + 2)
 
 	# initialize the hidden layer
-	hidden = get_hidden_input(1, rnn.hidden_size, hidden_input)#torch.zeros(1, rnn.hidden_size)	
+	hidden = get_hidden_input(1, rnn.hidden_size, hidden_input)	
 	
 	# length of the outputs is the number of gears that have been added to system
 	all_outputs = []
@@ -266,12 +266,12 @@ def get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, sto
 		outs, hidden = rnn.forward_softmax(rnn_input, hidden, num_unique_gears, act_exp)
 		# output of this step becomes input for next step
 		rnn_input = outs
-		
-		print(outs.data)
-		input() 
+	
+		# get the current gear type/size	
+		gear_type = np.argmax(outs.data[0][:num_unique_gears].numpy())
 	
 		# append outputs into list
-		all_outputs.append((radius_scaled, gear_pos_a, stop))
+		all_outputs.append((gear_type, outs.data[0][num_unique_gears].item(), outs.data[0][num_unique_gears+1].item()))
 	
 	return all_outputs
 
