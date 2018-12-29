@@ -210,5 +210,3 @@ for ind, mechanism in zip(ARCHIVE, mechanism_list):
 	# get individual vector and normalize
 	vis_output(mechanism, C_DICT)
 
-# sort list of outputs by fitness - only uses a single objective
-#ind_and_fits = sorted(ind_and_fits, key=lambda x: x[0], reverse=True)
