@@ -17,6 +17,7 @@ from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, NUM_UNIQU
 from deap_RNN_config import POP_FILE, VEC_FILE
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_discrete_mechanism
 from deap_RNN_help import get_mechanism_vector 
+from deap_RNN_evalg import apply_mutation, apply_crossover
 from deap_RNN_help import get_discrete_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
 
@@ -148,6 +149,9 @@ for g in range(N_GEN):
 	if(g < N_GEN - 1):
 		# APPLY MUTATION AND CROSSOVER
 		# both crossover and mutation are inplace operations
+		apply_mutation(pop, toolbox, MUTPB)
+		apply_crossover(pop, toolbox, CXPB, N_IN, N_OUT)		
+		"""
 		for ind in pop:
 			if np.random.uniform() <= MUTPB:
 				toolbox.mutate(ind)
@@ -176,6 +180,7 @@ for g in range(N_GEN):
 				child1[one_hid: one_end], child2[two_hid: two_end] = toolbox.ex_mate(child1[one_hid: one_end], child2[two_hid: two_end], CXPB)
 				del child1.fitness.values
 				del child2.fitness.values
+		"""
 
 # generate vectors for the population and write to csv file
 with open(VEC_FILE, "w") as f:
@@ -190,6 +195,9 @@ with open(VEC_FILE, "w") as f:
 		vec = get_mechanism_vector(create_discrete_mechanism(output_positions, GEAR_RADII, PLACEMENT_THRESH, OUTPUT_MIN))
 		f.write(str(list(vec)))
 		f.write("\n")
+
+# pickle the population to be read during next evolution
+pickle.dump(pop, open(POP_FILE, "wb"))
 
 """
 # contains tuples of individuals and their associated fitness
