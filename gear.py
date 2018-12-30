@@ -21,7 +21,7 @@ class Gear():
 
 		# calculate number of teeth in the gear and round to nearest int
 		n_teeth = (np.pi*2.0*self.radius)/circular_pitch
-		return round(n_teeth)	
+		return round(n_teeth)		
 
 	def get_SCAD_command(self, circular_pitch, gear_thick, hole_size, min_teeth):
 		"""prints out an openSCAD command to create this gear

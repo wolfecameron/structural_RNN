@@ -49,6 +49,11 @@ GEAR_THICKNESS = 6.0
 HOLE_SIZE = 4.0
 MIN_TEETH = 20 # minimum number of teeth a hollow gear can have
 
+# constants for pickle
+POP_FILE = "pop.txt"
+VEC_FILE = "vec.txt"
+FIT_FILE = "fit.csv"
+
 # constants configuring the size of 3D printer
 BED_WIDTH = 400
 PADDING_RATIO = 1.35

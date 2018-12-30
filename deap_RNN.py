@@ -7,12 +7,14 @@ import matplotlib
 from copy import deepcopy
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
+import pickle
 
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT, GEAR_RADII
 from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, NUM_UNIQUE_GEARS
+from deap_RNN_config import POP_FILE, VEC_FILE
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_discrete_mechanism
 from deap_RNN_help import get_mechanism_vector 
 from deap_RNN_help import get_discrete_gear_mechanism as get_output
@@ -175,6 +177,21 @@ for g in range(N_GEN):
 				del child1.fitness.values
 				del child2.fitness.values
 
+# generate vectors for the population and write to csv file
+with open(VEC_FILE, "w") as f:
+	for ind in pop:
+		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
+		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, ind.h_nodes, N_OUT)
+		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
+		# get output for each individual in final generation
+		output_positions = get_output(rnn, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+			STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
+		# insert placeholder list into evaluation - only first fitness value matters for sorting
+		vec = get_mechanism_vector(create_discrete_mechanism(output_positions, GEAR_RADII, PLACEMENT_THRESH, OUTPUT_MIN))
+		f.write(str(list(vec)))
+		f.write("\n")
+
+"""
 # contains tuples of individuals and their associated fitness
 # used to sort individual's output by fitness for viewing
 ind_and_fits = []
@@ -191,22 +208,22 @@ for count, ind in enumerate(ARCHIVE):
 			STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
 	# insert placeholder list into evaluation - only first fitness value matters for sorting
 	outs.append(output_positions)
-	mechanism_list.append(create_discrete_mechanism(output_positions, GEAR_RADII, PLACEMENT_THRESH, OUTPUT_MIN))
+	mechanism_list.append(create_discrete_mechanisa(output_positions, GEAR_RADII, PLACEMENT_THRESH, OUTPUT_MIN))
 	#vec_list.append(get_mechanism_vector(mechanism_list[-1]))
 
 plt.title("Size of Mechanisms in Archive")
 plt.hist([len(g) for g in mechanism_list], bins=(MAX_GEARS-MIN_GEARS))
 plt.show()
-
+"""
 """
 # stack all vectors into a matrix and normalize
 mech_matrix = np.vstack(vec_list)
 col_avg = np.mean(mech_matrix, axis=0) + .001
 mech_matrix /= col_avg
-"""
+
 
 # go through all mechanisms and assign fitness
 for ind, mechanism in zip(ARCHIVE, mechanism_list):
 	# get individual vector and normalize
 	vis_output(mechanism, C_DICT)
-
+"""
