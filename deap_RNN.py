@@ -8,15 +8,16 @@ from copy import deepcopy
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import pickle
+import csv
 
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT, GEAR_RADII
 from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, NUM_UNIQUE_GEARS
-from deap_RNN_config import POP_FILE, VEC_FILE
+from deap_RNN_config import POP_FILE, VEC_FILE, ARCH_FILE
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_discrete_mechanism
-from deap_RNN_help import get_mechanism_vector 
+from deap_RNN_help import get_mechanism_vector, get_mech_and_vec 
 from deap_RNN_evalg import apply_mutation, apply_crossover
 from deap_RNN_help import get_discrete_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
@@ -38,8 +39,20 @@ ARCHIVE_MATRIX = None
 # begin the evolutionary loop
 for g in range(N_GEN):
 	print(f'Running Generation {g}')
-	
+
+
+	all_outputs = []
+	vec_list = []
+	mechanism_list = []	
 	# get output for every individual in population and store in a list
+	for ind in pop:
+		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
+		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
+		all_outputs.append(output)
+		mechanism_list.append(mech)
+		vec_list.append(vec)
+	"""
 	all_outputs = []
 	for ind in pop:
 		# run the RNN to get gear mechanisms to evaluate
@@ -58,6 +71,7 @@ for g in range(N_GEN):
 		#print(ind)
 		#vis_output(mechanism_list[-1], C_DICT)
 		vec_list.append(get_mechanism_vector(mechanism_list[-1]))	
+	"""
 
 	# stack all vectors together to create a matrix
 	mech_matrix = np.vstack(vec_list)
@@ -128,6 +142,10 @@ for g in range(N_GEN):
 	ARCHIVE.append(deepcopy(best_ind))
 	# get all output information for next archive ind
 	rnn = RNN(N_IN, ARCHIVE[-1].h_nodes, N_OUT)
+	arch_out, arch_mech, arch_vec = get_mech_and_vec(ARCHIVE[-1], rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+			STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
+	
+	"""
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ARCHIVE[-1], N_IN, ARCHIVE[-1].h_nodes, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	arch_out = get_output(rnn, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
@@ -136,7 +154,7 @@ for g in range(N_GEN):
 	arch_vec = get_mechanism_vector(arch_mech)
 	#print(best_ind.fitness.values[0])
 	#vis_output(arch_mech, C_DICT)
-	
+	"""
 	if(g == 0):
 		ARCHIVE_MATRIX = np.vstack([arch_vec])
 	else:
@@ -182,19 +200,29 @@ for g in range(N_GEN):
 				del child2.fitness.values
 		"""
 
+# write archive vectors to csv file
+with open(ARCH_FILE, "w") as f:
+	arch_vecs = []
+	for ind in ARCHIVE:
+		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
+		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
+		arch_vecs.append(vec)
+	writer = csv.writer(f)
+	writer.writerows(arch_vecs)	
+
 # generate vectors for the population and write to csv file
 with open(VEC_FILE, "w") as f:
+	pop_vecs = []
 	for ind in pop:
 		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
-		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, ind.h_nodes, N_OUT)
-		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-		# get output for each individual in final generation
-		output_positions = get_output(rnn, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
-			STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
-		# insert placeholder list into evaluation - only first fitness value matters for sorting
-		vec = get_mechanism_vector(create_discrete_mechanism(output_positions, GEAR_RADII, PLACEMENT_THRESH, OUTPUT_MIN))
-		f.write(str(list(vec)))
-		f.write("\n")
+		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
+		pop_vecs.append(vec)
+	# write vector contents into csv file
+	writer = csv.writer(f)
+	writer.writerows(vec_list)
+	
 
 # pickle the population to be read during next evolution
 with open(POP_FILE, "wb") as f:	
