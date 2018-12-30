@@ -197,7 +197,8 @@ with open(VEC_FILE, "w") as f:
 		f.write("\n")
 
 # pickle the population to be read during next evolution
-pickle.dump(pop, open(POP_FILE, "wb"))
+with open(POP_FILE, "wb") as f:	
+	pickle.dump(pop, f)
 
 """
 # contains tuples of individuals and their associated fitness
