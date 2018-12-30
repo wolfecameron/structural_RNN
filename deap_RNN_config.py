@@ -54,6 +54,7 @@ POP_FILE = "pop.txt"
 VEC_FILE = "vec.csv"
 FIT_FILE = "fit.csv"
 ARCH_FILE = "arch_vec.csv"
+MECH_FILE = "mech"
 
 # constants configuring the size of 3D printer
 BED_WIDTH = 400

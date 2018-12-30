@@ -6,6 +6,7 @@ matlab surrogate code
 """
 
 import csv
+import os
 
 import pickle
 import numpy as np
@@ -13,7 +14,7 @@ import numpy as np
 from circle_RNN import RNN
 from deap_RNN_help import get_mech_and_vec
 from deap_RNN_config import get_tb, MUTPB, N_IN, N_OUT, CXPB, HOLE_SIZE
-from deap_RNN_config import FIT_FILE, POP_FILE, VEC_FILE
+from deap_RNN_config import FIT_FILE, POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE
 from deap_RNN_evalg import apply_mutation, apply_crossover
 
 # initialize the deap toolbox
@@ -94,8 +95,23 @@ pop = valid_pop
 
 # find best valid individual to print next
 best_ind = max(valid_pop, key=lambda x:x.fitness.values[0])
-# TODO: write info from best ind into file somewhere
-# figure out how to get information to user that allows you to recreate gear mechanism
+rnn = RNN(N_IN, best_ind.h_nodes, N_OUT)
+_, best_mech, best_vec = get_mech_and_vec(best_ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+		STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
+# append vector into the file with all archive vectors
+with open(ARCH_FILE, "a") as f:
+	writer = csv.writer(f)
+	writer.writerow(list(best_vec))
+# write info for next mech into file for printing/testing
+counter = 0
+# find file that isn't being used
+while(os.path.isfile(MECH_FILE + str(counter) + ".txt")):
+	counter += 1
+# write info for every gear to the file
+with open((MECH_FILE + str(counter) + ".txt"), "w"):
+	for g in best_mech:
+		f.write(str(g))
+		f.write("\n")
 
 # select population based on fitness from surrogate
 pop = tb.select(pop)

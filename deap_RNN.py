@@ -202,15 +202,28 @@ for g in range(N_GEN):
 		"""
 
 # write archive vectors to csv file
+# write instructions to construct mechanisms to file
 with open(ARCH_FILE, "w") as f:
 	arch_vecs = []
 	for ind in ARCHIVE:
+		# find vector and mechanism representation
 		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
 		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
 				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
 		arch_vecs.append(vec)
+		
+		# write mechanism info for printing to a separate file
+		counter = 0
+		while(os.path.isfile(MECH_FILE + str(counter) + ".txt")):
+			counter += 1
+		with open((MECH_FILE + str(counter) + ".txt"), "w"):
+			for g in mech:
+				f.write(str(g))
+				f.write("\n")
+	# write all archive vectors into file	
 	writer = csv.writer(f)
 	writer.writerows(arch_vecs)	
+
 
 # generate vectors for the population and write to csv file
 with open(VEC_FILE, "w") as f:
