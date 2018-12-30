@@ -52,6 +52,7 @@ for g in range(N_GEN):
 		all_outputs.append(output)
 		mechanism_list.append(mech)
 		vec_list.append(vec)
+	
 	"""
 	all_outputs = []
 	for ind in pop:

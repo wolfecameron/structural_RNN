@@ -5,10 +5,14 @@ entire file only runs one generation of the evolution so that evolution can be c
 matlab surrogate code
 """
 
-import pickle
 import csv
 
-from deap_RNN_config import get_tb, MUTPB, N_IN, N_OUT, CXPB
+import pickle
+import numpy as np
+
+from circle_RNN import RNN
+from deap_RNN_help import get_mech_and_vec
+from deap_RNN_config import get_tb, MUTPB, N_IN, N_OUT, CXPB, HOLE_SIZE
 from deap_RNN_config import FIT_FILE, POP_FILE, VEC_FILE
 from deap_RNN_evalg import apply_mutation, apply_crossover
 
@@ -30,9 +34,69 @@ with open(FIT_FILE, "r") as f:
 CV_bound = check_bounding_box(mech, x_bound, y_bound)
 CV_intersect = check_intersect_amount(mech) 
 CV_axis = check_conflicting_gear_axis(mech, hole_size)
+rnn = RNN(N_IN, ind.h_nodes, N_OUT)
+output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+		STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN)
 """
 
-# TODO: assess CV to change fitness
+# use to find averages of all CV values
+bound_CV = []
+intersect_CV = []
+axis_CV = []
+# determine CV for each individual 
+for ind in pop:
+	rnn = RNN(N_IN, ind.h_nodes, N_OUT)
+	output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+			STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN)	
+	
+	# find all different CV on mechanism
+	CV_bound = check_bounding_box(mech, x_bound, y_bound)
+	CV_intersect = check_intersect_amount(mech)
+	CV_axis = check_conflicting_gear_axis(mech, HOLE_SIZE)
+	
+	# append CV values into list to find averages
+	if(CV_bound > 0.0): bound_CV.append(CV_bound)
+	if(CV_intersect > 0.0): intersect_CV.append(CV_intersect)
+	if(CV_axis > 0.0): axis_CV.append(CV_axis)
+	ind.fitness.values = (ind.fitness.values[0], CV_bound, CV_intersect, CV_axis)
+
+# convert CV lists to numpy to find averages
+bound_CV = np.array(bound_CV)
+intersect_CV = np.array(intersect_CV)
+axis_CV = np.array(axis_CV)
+
+# normalize CV values for each ind
+for ind in pop:
+	fit_tup = ind.fitness.values
+	ind.fitness.values = fit_tup[0],
+	ind.CV = (fit_tup[1]/np.mean(bound_CV)) + (fit_tup[2]/np.mean(intersect_CV)) \
+			+ (fit_tup[3]/np.mean(axis_CV))
+
+# separate into valid and invalid individuals	
+valid_pop = []
+invalid_pop = []
+for ind in pop:
+	if(ind.CV > 0.0):
+		invalid_pop.append(ind)
+	else:
+		valid_pop.append(ind)
+
+# find minimum valid fitness
+min_fit = min(valid_pop, key=lambda x: x.fitness.values[0]).fitness.values[0]
+
+# assign all invalid individuals below the minimum fitness
+for ind in invalid_pop:
+	ind.fitness.values = (min_fit - ind.CV),
+
+# combine valid and invalid pops that now have correct fitness
+valid_pop.extend(invalid_pop)
+pop = valid_pop 
+
+# find best valid individual to print next
+best_ind = max(valid_pop, key=lambda x:x.fitness.values[0])
+# TODO: write info from best ind into file somewhere
+# figure out how to get information to user that allows you to recreate gear mechanism
+
 # select population based on fitness from surrogate
 pop = tb.select(pop)
 
@@ -47,13 +111,9 @@ with open(VEC_FILE, "w") as f:
 	vec_list = []
 	for ind in pop:
 		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
-		w1, w1_bias, w2, w2_bias = list_to_matrices(ind, N_IN, ind.h_nodes, N_OUT)
-		rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-		out = get_output(rnn, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
-				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, 'one')
-		mech = create_discrete_mechanism(out, GEAR_RADII, PLACEMENT_THRESH, OUTPUT_MIN)
-		vec = list(get_mechanism_vector(mech))
-		vec_list.append(arch_vec)
+		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN)	
+		vec_list.append(list(vec))
 	# write vector contents into csv file
 	writer = csv.writer(f)
 	writer.writerows(vec_list)
