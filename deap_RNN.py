@@ -2,20 +2,22 @@
 train mechanisms- uses deap to evolve sets of weights that are inputted into RNN to yield output
 """
 
-import numpy as np
-import matplotlib
 from copy import deepcopy
-matplotlib.use("TkAgg")
-import matplotlib.pyplot as plt
 import pickle
 import csv
+import os
+
+import numpy as np
+import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
 
 from circle_RNN import RNN
 from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, POP_SIZE, PLACEMENT_THRESH
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT, GEAR_RADII
 from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, NUM_UNIQUE_GEARS
-from deap_RNN_config import POP_FILE, VEC_FILE, ARCH_FILE
+from deap_RNN_config import POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_discrete_mechanism
 from deap_RNN_help import get_mechanism_vector, get_mech_and_vec 
 from deap_RNN_evalg import apply_mutation, apply_crossover
@@ -216,10 +218,10 @@ with open(ARCH_FILE, "w") as f:
 		counter = 0
 		while(os.path.isfile(MECH_FILE + str(counter) + ".txt")):
 			counter += 1
-		with open((MECH_FILE + str(counter) + ".txt"), "w"):
+		with open((MECH_FILE + str(counter) + ".txt"), "w") as mech_f:
 			for g in mech:
-				f.write(str(g))
-				f.write("\n")
+				mech_f.write(str(g))
+				mech_f.write("\n")
 	# write all archive vectors into file	
 	writer = csv.writer(f)
 	writer.writerows(arch_vecs)	

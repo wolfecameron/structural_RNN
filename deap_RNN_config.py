@@ -50,11 +50,11 @@ HOLE_SIZE = 4.0
 MIN_TEETH = 20 # minimum number of teeth a hollow gear can have
 
 # constants for pickle
-POP_FILE = "pop.txt"
-VEC_FILE = "vec.csv"
-FIT_FILE = "fit.csv"
-ARCH_FILE = "arch_vec.csv"
-MECH_FILE = "mech"
+POP_FILE = "POP_FILES/pop.txt"
+VEC_FILE = "POP_FILES/vec.csv"
+FIT_FILE = "POP_FILES/fit.csv"
+ARCH_FILE = "POP_FILES/arch_vec.csv"
+MECH_FILE = "POP_FILES/MECHANISMS/mech"
 
 # constants configuring the size of 3D printer
 BED_WIDTH = 400

@@ -745,11 +745,11 @@ def get_mech_and_vec(ind, rnn, num_in, num_out, num_unique_gears, max_gears, min
 	# get rnn output with weights from ind
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, num_in, ind.h_nodes, num_out)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
-	output = get_output(rnn, num_unique_gears, max_gears, min_gears, stop_threshold, \
+	output = get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, stop_threshold, \
 				radius_scale, act_exp, placement_thresh, 'one')
 	
 	# generate vector and mechanism representation for rnn output
-	mech = create_discrete_mechanism(output, GEAR_RADII, PLACEMENT_THRESH, OUTPUT_MIN)
+	mech = create_discrete_mechanism(output, gear_radii, placement_thresh, output_min)
 	vec = get_mechanism_vector(mech)
 
 	return (output, mech, vec)
