@@ -105,9 +105,12 @@ for g in range(N_GEN):
 			
 		# only consider nonzero terms in normalization to avoid watering down CV
 		# many of the CV values will be 0 and would throw off the average
-		if(fit_tup[1] > 0.0): total_bound_CV.append(fit_tup[1])
-		if(fit_tup[2] > 0.0): total_intersect_CV.append(fit_tup[2])
-		if(fit_tup[3] > 0.0): total_axis_CV.append(fit_tup[3])
+		if(fit_tup[1] > 0.0): 
+			total_bound_CV.append(fit_tup[1])
+		if(fit_tup[2] > 0.0):
+			total_intersect_CV.append(fit_tup[2])
+		if(fit_tup[3] > 0.0):
+			total_axis_CV.append(fit_tup[3])
 
 	# convert cv lists to numpy arrays
 	total_bound_CV = np.array(total_bound_CV)

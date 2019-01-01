@@ -15,13 +15,17 @@ from circle_RNN import RNN
 from deap_RNN_help import get_mech_and_vec
 from deap_RNN_config import get_tb, MUTPB, N_IN, N_OUT, CXPB, HOLE_SIZE
 from deap_RNN_config import FIT_FILE, POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE
+from deap_RNN_config import NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD
+from deap_RNN_config import RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN
+from deap_RNN_config import X_BOUND, Y_BOUND, HOLE_SIZE
+from deap_RNN_help import check_bounding_box, check_intersect_amount, check_conflicting_gear_axis
 from deap_RNN_evalg import apply_mutation, apply_crossover
 
 # initialize the deap toolbox
-toolbox = get_tb()
+tb = get_tb()
 
 # read pop in from pickle file
-f = open(POP_FILE, "r")
+f = open(POP_FILE, "rb")
 pop = pickle.load(f)
 f.close()
 
@@ -41,6 +45,7 @@ output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MA
 """
 
 # use to find averages of all CV values
+fits = []
 bound_CV = []
 intersect_CV = []
 axis_CV = []
@@ -51,15 +56,18 @@ for ind in pop:
 			STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN)	
 	
 	# find all different CV on mechanism
-	CV_bound = check_bounding_box(mech, x_bound, y_bound)
+	CV_bound = check_bounding_box(mech, X_BOUND, Y_BOUND)
 	CV_intersect = check_intersect_amount(mech)
-	CV_axis = check_conflicting_gear_axis(mech, HOLE_SIZE)
-	
+	CV_axis = check_conflicting_gear_axis(mech, HOLE_SIZE)	
+	fits.append((ind.fitness.values[0], CV_bound, CV_intersect, CV_axis))
+		
 	# append CV values into list to find averages
-	if(CV_bound > 0.0): bound_CV.append(CV_bound)
-	if(CV_intersect > 0.0): intersect_CV.append(CV_intersect)
-	if(CV_axis > 0.0): axis_CV.append(CV_axis)
-	ind.fitness.values = (ind.fitness.values[0], CV_bound, CV_intersect, CV_axis)
+	if(CV_bound > 0.0):
+		bound_CV.append(CV_bound)
+	if(CV_intersect > 0.0): 
+		intersect_CV.append(CV_intersect)
+	if(CV_axis > 0.0):
+		axis_CV.append(CV_axis)
 
 # convert CV lists to numpy to find averages
 bound_CV = np.array(bound_CV)
@@ -67,12 +75,18 @@ intersect_CV = np.array(intersect_CV)
 axis_CV = np.array(axis_CV)
 
 # normalize CV values for each ind
-for ind in pop:
-	fit_tup = ind.fitness.values
-	ind.fitness.values = fit_tup[0],
-	ind.CV = (fit_tup[1]/np.mean(bound_CV)) + (fit_tup[2]/np.mean(intersect_CV)) \
-			+ (fit_tup[3]/np.mean(axis_CV))
-
+for ind, fit in zip(pop, fits):
+	ind.fitness.values = fit[0],
+	# CV should be the normalized sum of the constraint types
+	# must ensure any divide by zero is avoided
+	total_bound_cv = 0.0 if bound_CV.shape[0] == 0 else \
+			(fit[1]/(np.sum(bound_CV)/bound_CV.shape[0]))
+	total_intersect_cv = 0.0 if intersect_CV.shape[0] == 0 else \
+			(fit[2]/(np.sum(intersect_CV)/intersect_CV.shape[0]))
+	total_axis_cv = 0.0 if axis_CV.shape[0] == 0 else \
+			(fit[3]/(np.sum(axis_CV)/axis_CV.shape[0]))
+	ind.CV = total_bound_cv + total_intersect_cv + total_axis_cv
+	
 # separate into valid and invalid individuals	
 valid_pop = []
 invalid_pop = []
@@ -108,7 +122,7 @@ counter = 0
 while(os.path.isfile(MECH_FILE + str(counter) + ".txt")):
 	counter += 1
 # write info for every gear to the file
-with open((MECH_FILE + str(counter) + ".txt"), "w"):
+with open((MECH_FILE + str(counter) + ".txt"), "w") as f:
 	for g in best_mech:
 		f.write(str(g))
 		f.write("\n")
