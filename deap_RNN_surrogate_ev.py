@@ -80,11 +80,11 @@ for ind, fit in zip(pop, fits):
 	# CV should be the normalized sum of the constraint types
 	# must ensure any divide by zero is avoided
 	total_bound_cv = 0.0 if bound_CV.shape[0] == 0 else \
-			(fit[1]/(np.sum(bound_CV)/bound_CV.shape[0]))
+			(fit[1]/(np.mean(bound_CV)))
 	total_intersect_cv = 0.0 if intersect_CV.shape[0] == 0 else \
-			(fit[2]/(np.sum(intersect_CV)/intersect_CV.shape[0]))
+			(fit[2]/(np.mean(intersect_CV)))
 	total_axis_cv = 0.0 if axis_CV.shape[0] == 0 else \
-			(fit[3]/(np.sum(axis_CV)/axis_CV.shape[0]))
+			(fit[3]/(np.mean(axis_CV)))
 	ind.CV = total_bound_cv + total_intersect_cv + total_axis_cv
 	
 # separate into valid and invalid individuals	
@@ -107,8 +107,9 @@ for ind in invalid_pop:
 valid_pop.extend(invalid_pop)
 pop = valid_pop 
 
+# DETERMINE NEXT MECHANISM TO TEST
 # find best valid individual to print next
-best_ind = max(valid_pop, key=lambda x:x.fitness.values[0])
+best_ind = max(valid_pop, key=lambda x: x.fitness.values[0])
 rnn = RNN(N_IN, best_ind.h_nodes, N_OUT)
 _, best_mech, best_vec = get_mech_and_vec(best_ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
 		STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
@@ -118,7 +119,6 @@ with open(ARCH_FILE, "a") as f:
 	writer.writerow(list(best_vec))
 # write info for next mech into file for printing/testing
 counter = 0
-# find file that isn't being used
 while(os.path.isfile(MECH_FILE + str(counter) + ".txt")):
 	counter += 1
 # write info for every gear to the file

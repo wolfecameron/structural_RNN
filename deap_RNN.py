@@ -216,7 +216,7 @@ with open(ARCH_FILE, "w") as f:
 		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
 				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
 		arch_vecs.append(vec)
-		
+		vis_output(mech, C_DICT)		
 		# write mechanism info for printing to a separate file
 		counter = 0
 		while(os.path.isfile(MECH_FILE + str(counter) + ".txt")):
