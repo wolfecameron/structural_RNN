@@ -46,7 +46,7 @@ RADIUS_SCALE = 15.0
 CIRCULAR_PITCH = 6.0
 PRESSURE_ANGLE = 28.0
 GEAR_THICKNESS = 6.0
-HOLE_SIZE = 4.0
+HOLE_SIZE = 5.0
 MIN_TEETH = 20 # minimum number of teeth a hollow gear can have
 
 # constants for pickle
@@ -61,7 +61,7 @@ BED_WIDTH = 400
 PADDING_RATIO = 1.35
 
 # define bounding box constraints for RNN
-X_BOUND = 400.0
+X_BOUND = 75.0
 Y_BOUND = 400.0
 
 # defines dictionary of colors that are used for different z dimensions in mechanism visualization
