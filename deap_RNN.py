@@ -85,6 +85,7 @@ for g in range(N_GEN):
 	total_bound_CV = []
 	total_intersect_CV = []
 	total_axis_CV = []
+	total_gear_CV = []	
 	# get average fit and append into running list
 	for ind, mech in zip(pop, mechanism_list):
 		# create vector for individual and normalize it
@@ -111,11 +112,14 @@ for g in range(N_GEN):
 			total_intersect_CV.append(fit_tup[2])
 		if(fit_tup[3] > 0.0):
 			total_axis_CV.append(fit_tup[3])
+		if(fit_tup[4] > 0.0):
+			total_gear_CV.append(fit_tup[4])
 
 	# convert cv lists to numpy arrays
 	total_bound_CV = np.array(total_bound_CV)
 	total_intersect_CV = np.array(total_intersect_CV)
 	total_axis_CV = np.array(total_axis_CV)
+	total_gear_CV = np.array(total_gear_CV)
 
 	# assign fitness and CV to individuals
 	for ind, fit in zip(pop, fits):
@@ -123,12 +127,14 @@ for g in range(N_GEN):
 		# CV should be the normalized sum of the constraint types
 		# must ensure any divide by zero is avoided
 		bound_cv = 0.0 if total_bound_CV.shape[0] == 0 else \
-				(fit[1]/(np.sum(total_bound_CV)/total_bound_CV.shape[0]))
+				(fit[1]/(np.mean(total_bound_CV)))
 		intersect_cv = 0.0 if total_intersect_CV.shape[0] == 0 else \
-				(fit[2]/(np.sum(total_intersect_CV)/total_intersect_CV.shape[0]))
+				(fit[2]/(np.mean(total_intersect_CV)))
 		axis_cv = 0.0 if total_axis_CV.shape[0] == 0 else \
-				(fit[3]/(np.sum(total_axis_CV)/total_axis_CV.shape[0]))
-		ind.CV = bound_cv + intersect_cv + axis_cv
+				(fit[3]/(np.mean(total_axis_CV)))
+		gear_cv = 0.0 if total_gear_CV.shape[0] == 0 else \
+				(fit[4]/(np.mean(total_gear_CV)))
+		ind.CV = bound_cv + intersect_cv + axis_cv + gear_cv
 	
 	# sort individuals and handle CV values
 	valid_pop = [i for i in pop if i.CV <= 0.0]

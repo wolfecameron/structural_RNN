@@ -19,6 +19,7 @@ from deap_RNN_config import NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, STOP_THRESHO
 from deap_RNN_config import RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN
 from deap_RNN_config import X_BOUND, Y_BOUND, HOLE_SIZE
 from deap_RNN_help import check_bounding_box, check_intersect_amount, check_conflicting_gear_axis
+from deap_RNN_help import check_useless_gears
 from deap_RNN_evalg import apply_mutation, apply_crossover
 
 # initialize the deap toolbox
@@ -49,6 +50,7 @@ fits = []
 bound_CV = []
 intersect_CV = []
 axis_CV = []
+gear_CV = []
 # determine CV for each individual 
 for ind in pop:
 	rnn = RNN(N_IN, ind.h_nodes, N_OUT)
@@ -58,7 +60,8 @@ for ind in pop:
 	# find all different CV on mechanism
 	CV_bound = check_bounding_box(mech, X_BOUND, Y_BOUND)
 	CV_intersect = check_intersect_amount(mech)
-	CV_axis = check_conflicting_gear_axis(mech, HOLE_SIZE)	
+	CV_axis = check_conflicting_gear_axis(mech, HOLE_SIZE)
+	CV_gear = check_useless_gears(mech)	
 	fits.append((ind.fitness.values[0], CV_bound, CV_intersect, CV_axis))
 		
 	# append CV values into list to find averages
@@ -68,11 +71,14 @@ for ind in pop:
 		intersect_CV.append(CV_intersect)
 	if(CV_axis > 0.0):
 		axis_CV.append(CV_axis)
+	if(CV_gear > 0.0):
+		gear_CV.append(CV_gear)
 
 # convert CV lists to numpy to find averages
 bound_CV = np.array(bound_CV)
 intersect_CV = np.array(intersect_CV)
 axis_CV = np.array(axis_CV)
+gear_CV = np.array(gear_CV)
 
 # normalize CV values for each ind
 for ind, fit in zip(pop, fits):
@@ -85,7 +91,9 @@ for ind, fit in zip(pop, fits):
 			(fit[2]/(np.mean(intersect_CV)))
 	total_axis_cv = 0.0 if axis_CV.shape[0] == 0 else \
 			(fit[3]/(np.mean(axis_CV)))
-	ind.CV = total_bound_cv + total_intersect_cv + total_axis_cv
+	total_gear_cv = 0.0 if gear_CV.shape[0] == 0 else \
+			(fit[4]/(np.mean(gear_CV)))
+	ind.CV = total_bound_cv + total_intersect_cv + total_axis_cv + total_gear_cv
 	
 # separate into valid and invalid individuals	
 valid_pop = []

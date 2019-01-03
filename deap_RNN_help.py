@@ -779,7 +779,6 @@ def eval_useless_gears(mech):
 	# check if an extra coaxial gear is added at end for no reason
 	if(len(mech) > 1 and mech[-1].pos[0] == mech[-2].pos[0]):
 		CV += 1
-
 	return CV
 		
 	
