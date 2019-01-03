@@ -636,19 +636,23 @@ def check_bounding_box(ind, x_bound, y_bound):
 	"""finds the total amount of gears that lie out of the desired boudning
 	box for gear system and adds all x and y distances outside of the desired
 	bounding box
+
+	:param ind: list of gears contained in the mechanism
+	:param x_bound: maximum allowed length of the mechanism
 	"""
 	
 	# find lowest allowed x and y values
-	lower_x = ind[0].pos[0]
-	upper_x = lower_x + x_bound
+	lower_x = ind[0].pos[0] - ind[0].radius
+	upper_x = ind[0].pos[0] + x_bound
     
 	# only check individuals after the first
 	total_outside = 0.0
 	for g in ind[1: ]:
 		# find the amount the gear lies out of x bound
 		x = g.pos[0]
-		if(x  < lower_x):
-			total_outside += np.square(x - lower_x)
+		r = g.radius
+		if((x - r)  < lower_x):
+			total_outside += np.square((x - r) - lower_x)
 		elif(x > upper_x):
 			total_outside += np.square(x - upper_x)
 		
@@ -754,6 +758,29 @@ def get_mech_and_vec(ind, rnn, num_in, num_out, num_unique_gears, max_gears, min
 
 	return (output, mech, vec)
 	
+def eval_useless_gears(mech):
+	"""determines the number of useless coaxial gears that were used in the
+	mechanism - this could be 3 or coaxial gears in a row, a coaxial gear at
+	the end of the mechanism, or a system of gears all at the origin"""
+
+	CV = 0.0
+	# check if all gears are coaxial at origin
+	if(np.var(np.array([g.pos[0] for g in mech])) == 0.0):
+		CV += len(mech) - 1
+
+	# check if there are 3 coaxial gear in a row
+	index = 2
+	while(index < len(mech)):
+		if(mech[index].pos[0] == mech[index - 1].pos[0] and \
+				mech[index].pos[0] == mech[index - 2].pos[0]):
+			CV += 1
+		index += 1
+
+	# check if an extra coaxial gear is added at end for no reason
+	if(len(mech) > 1 and mech[-1].pos[0] == mech[-2].pos[0]):
+		CV += 1
+
+	return CV
 		
 	
 if __name__ == '__main__':
