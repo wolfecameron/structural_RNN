@@ -803,7 +803,11 @@ def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, slot_ht, slot_t, dist
 		if(index < len(mech) - 1):
 			gear_one = min(mech[index].radius, mech[index + 1].radius)
 			gear_two = max(mech[index].radius, mech[index + 1].radius)
-			pos_delta = gear_dists[(gear_one, gear_two)]
+			# check if gears are coaxial
+			if(mech[index].pos[0] != mech[index + 1].pos[0]):
+				pos_delta = gear_dists[(gear_one, gear_two)]
+			else:
+				pos_delta = 0
 			pos += pos_delta
 		index += 1
 	commands += "}\n"
