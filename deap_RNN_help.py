@@ -780,7 +780,41 @@ def eval_useless_gears(mech):
 	if(len(mech) > 1 and mech[-1].pos[0] == mech[-2].pos[0]):
 		CV += 1
 	return CV
-		
+
+def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, slot_ht, slot_t, dist_from_cent, init_offset):		
+	"""generates SCAD commands for the locations of the holes for slots
+	within the insert that will be used to hold beams within the 3D printed
+	car"""
+	
+	# return result as a large string containing all CAD commands
+	left_commands = ""
+	right_commands = ""	
+
+	# add commands for the actual slot fillers
+	left_commands += f"translate([-({dist_from_cent} + {slot_len}), 0, 0])cube([{slot_len}, {slot_ht}, {slot_t}]);\n"
+	right_commands += f"translate([{dist_from_cent}, 0, 0])cube([{slot_len}, {slot_ht}, {slot_t}]);\n"
+	
+	hole = f"cylinder(10, {hole_r}, {hole_r});"
+	left_pos = -(dist_from_cent + slot_len) + init_offset
+	right_pos = dist_from_cent + init_offset
+	
+	# go through each gear and add command for its beam hole in slot
+	index = 0
+	while(index < len(mech)):
+		left_commands += f"translate([{left_pos}, 0, -1]){hole}\n"
+		right_commands += f"translate([{right_pos}, 0, -1]){hole}\n"
+		# find the distance between beam holes for this hole and the next
+		if(index < len(mech) - 1):
+			gear_one = min(mech[index].radius, mech[index + 1].radius)
+			gear_two = max(mech[index].radius, mech[index + 1].radius)
+			pos_delta = gear_dists[(gear_one, gear_two)]
+			left_pos += pos_delta
+			right_pos += pos_delta
+		index += 1
+	
+	return (left_commands, right_commands)
+	
+	
 	
 if __name__ == '__main__':
 	""" main function for quick tests"""

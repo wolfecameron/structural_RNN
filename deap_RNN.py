@@ -17,9 +17,11 @@ from deap_RNN_config import get_tb, N_IN, N_HID, N_OUT, N_GEN, POP_SIZE, PLACEME
 from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT, GEAR_RADII
 from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, NUM_UNIQUE_GEARS
-from deap_RNN_config import POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE
+from deap_RNN_config import POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE, GEAR_DISTS, HOLE_R, SLOT_LEN, DIST_FROM_CENT
+from deap_RNN_config import INIT_OFFSET, SLOT_HT, SLOT_T
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_discrete_mechanism
-from deap_RNN_help import get_mechanism_vector, get_mech_and_vec 
+from deap_RNN_help import get_mechanism_vector, get_mech_and_vec, gen_openSCAD_beams 
+#def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, dist_from_cent):		
 from deap_RNN_evalg import apply_mutation, apply_crossover
 from deap_RNN_help import get_discrete_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
@@ -222,7 +224,12 @@ with open(ARCH_FILE, "w") as f:
 		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
 				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
 		arch_vecs.append(vec)
-		print(str(ind.CV))
+		left_beams, right_beams = gen_openSCAD_beams(mech, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T, DIST_FROM_CENT, INIT_OFFSET)
+		print("LEFT")
+		print(left_beams)
+		print("RIGHT")
+		print(right_beams)
+		#def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, dist_from_cent):		
 		vis_output(mech, C_DICT)		
 		# write mechanism info for printing to a separate file
 		counter = 0
