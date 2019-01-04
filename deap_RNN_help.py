@@ -792,7 +792,7 @@ def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, slot_ht, slot_t, dist
 	# add commands for the actual slot fillers
 	commands += f"translate([{dist_from_cent}, 0, 0])cube([{slot_len}, {slot_ht}, {slot_t}]);\n"
 	
-	hole = f"cylinder(10, {hole_r}, {hole_r});"
+	hole = f"cylinder(10, {hole_r}, {hole_r}, $fn=20);"
 	pos = dist_from_cent + init_offset
 	
 	# go through each gear and add command for its beam hole in slot
