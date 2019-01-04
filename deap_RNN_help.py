@@ -787,32 +787,27 @@ def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, slot_ht, slot_t, dist
 	car"""
 	
 	# return result as a large string containing all CAD commands
-	left_commands = ""
-	right_commands = ""	
+	commands = "difference(){\n"	
 
 	# add commands for the actual slot fillers
-	left_commands += f"translate([-({dist_from_cent} + {slot_len}), 0, 0])cube([{slot_len}, {slot_ht}, {slot_t}]);\n"
-	right_commands += f"translate([{dist_from_cent}, 0, 0])cube([{slot_len}, {slot_ht}, {slot_t}]);\n"
+	commands += f"translate([{dist_from_cent}, 0, 0])cube([{slot_len}, {slot_ht}, {slot_t}]);\n"
 	
 	hole = f"cylinder(10, {hole_r}, {hole_r});"
-	left_pos = -(dist_from_cent + slot_len) + init_offset
-	right_pos = dist_from_cent + init_offset
+	pos = dist_from_cent + init_offset
 	
 	# go through each gear and add command for its beam hole in slot
 	index = 0
 	while(index < len(mech)):
-		left_commands += f"translate([{left_pos}, 0, -1]){hole}\n"
-		right_commands += f"translate([{right_pos}, 0, -1]){hole}\n"
+		commands += f"translate([{pos}, 0, -1]){hole}\n"
 		# find the distance between beam holes for this hole and the next
 		if(index < len(mech) - 1):
 			gear_one = min(mech[index].radius, mech[index + 1].radius)
 			gear_two = max(mech[index].radius, mech[index + 1].radius)
 			pos_delta = gear_dists[(gear_one, gear_two)]
-			left_pos += pos_delta
-			right_pos += pos_delta
+			pos += pos_delta
 		index += 1
-	
-	return (left_commands, right_commands)
+	commands += "}\n"
+	return commands
 	
 	
 	

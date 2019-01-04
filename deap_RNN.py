@@ -224,11 +224,8 @@ with open(ARCH_FILE, "w") as f:
 		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
 				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
 		arch_vecs.append(vec)
-		left_beams, right_beams = gen_openSCAD_beams(mech, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T, DIST_FROM_CENT, INIT_OFFSET)
-		print("LEFT")
-		print(left_beams)
-		print("RIGHT")
-		print(right_beams)
+		beams = gen_openSCAD_beams(mech, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T, DIST_FROM_CENT, INIT_OFFSET)
+		print(beams)
 		#def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, dist_from_cent):		
 		vis_output(mech, C_DICT)		
 		# write mechanism info for printing to a separate file
