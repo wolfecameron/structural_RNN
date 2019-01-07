@@ -531,7 +531,6 @@ def get_mechanism_vector(mechanism):
 	
 	# create lists that can be populated with all mechanism data
 	x = []
-	#z = []
 	r = []
 	total_gear = len(mechanism)
 	

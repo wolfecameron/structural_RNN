@@ -36,14 +36,6 @@ with open(FIT_FILE, "r") as f:
 	for fit, ind in zip(fits, pop):
 		fit = float(fit)
 		ind.fitness.values = fit,
-"""
-CV_bound = check_bounding_box(mech, x_bound, y_bound)
-CV_intersect = check_intersect_amount(mech) 
-CV_axis = check_conflicting_gear_axis(mech, hole_size)
-rnn = RNN(N_IN, ind.h_nodes, N_OUT)
-output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
-		STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN)
-"""
 
 # use to find averages of all CV values
 fits = []
