@@ -780,7 +780,7 @@ def eval_useless_gears(mech):
 		CV += 1
 	return CV
 
-def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, slot_ht, slot_t, dist_from_cent, init_offset, slot_hole):		
+def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, slot_ht, slot_t, dist_from_cent, init_offset, slot_hole_len, slot_hole_ht):		
 	"""generates SCAD commands for the locations of the holes for slots
 	within the insert that will be used to hold beams within the 3D printed
 	car"""
@@ -791,7 +791,7 @@ def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, slot_ht, slot_t, dist
 	# add commands for the actual slot fillers
 	commands += "union(){\n"
 	commands += f"translate([{dist_from_cent}, 0, 0])cube([{slot_len}, {slot_ht}, {slot_t}]);\n"
-	commands += f"translate([{dist_from_cent - slot_hole}, 0, 0])cube([{slot_len + 2*slot_hole}, {slot_hole}, {slot_t}]);\n"
+	commands += f"translate([{dist_from_cent - slot_hole_len}, 0, 0])cube([{slot_len + 2*slot_hole_len}, {slot_hole_ht}, {slot_t}]);\n"
 	commands += "}\n"
 
 	
