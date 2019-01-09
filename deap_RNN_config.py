@@ -43,9 +43,9 @@ SLOT_LEN = 90
 SLOT_HT = 4
 SLOT_T = 1.0
 INIT_OFFSET = 8
-DIST_FROM_CENT = 2
+DIST_FROM_CENT = 1.5
 HOLE_R = 1.75
-SLOT_HOLE = 2.0
+SLOT_HOLE = 1.5
 
 # below are constants related to RNN output
 OUTPUT_MIN = -1
