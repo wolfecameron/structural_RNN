@@ -19,7 +19,7 @@ from deap_RNN_config import MUTPB, CXPB, ACT_EXP, MAX_Y, MAX_X, MIN_GEARS, MAX_G
 from deap_RNN_config import RADIUS_SCALE, OUTPUT_MIN, X_BOUND, Y_BOUND, C_DICT, GEAR_RADII
 from deap_RNN_config import CIRCULAR_PITCH, GEAR_THICKNESS, HOLE_SIZE, NUM_UNIQUE_GEARS
 from deap_RNN_config import POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE, GEAR_DISTS, HOLE_R, SLOT_LEN, DIST_FROM_CENT
-from deap_RNN_config import INIT_OFFSET, SLOT_HT, SLOT_T
+from deap_RNN_config import INIT_OFFSET, SLOT_HT, SLOT_T, SLOT_HOLE
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_discrete_mechanism
 from deap_RNN_help import get_mechanism_vector, get_mech_and_vec, gen_openSCAD_beams 
 #def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, dist_from_cent):		
@@ -227,8 +227,8 @@ with open(ARCH_FILE, "w") as f:
 		arch_vecs.append(vec)
 		#mech = [Gear(28.0, (28.0, 28.0, 0), 0), Gear(8.0, (64.0, 28.0, 0), 0)]
 		#mech = [Gear(12.0, (12.0, 12.0, 0), 0), Gear(24.0, (48.0, 12.0, 0), 0), Gear(8.0, (80.0, 12.0, 0), 1)]
-		#beams = gen_openSCAD_beams(mech, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T, DIST_FROM_CENT, INIT_OFFSET)
-		#print(beams)
+		beams = gen_openSCAD_beams(mech, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T, DIST_FROM_CENT, INIT_OFFSET, SLOT_HOLE)
+		print(beams)
 		#def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, dist_from_cent):		
 		vis_output(mech, C_DICT)		
 		# write mechanism info for printing to a separate file
