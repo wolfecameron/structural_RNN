@@ -176,14 +176,16 @@ for g in range(N_GEN):
 		ARCHIVE_MATRIX = np.vstack([ARCHIVE_MATRIX, arch_vec])
 
 	# perform selection on the population to maximize fitness
-	pop = toolbox.select(pop, k=len(pop))
+	offspring = toolbox.select(pop, k=len(pop))
+	# clone offspring
+	offspring = toolbox.map(toolbox.clone, offspring)
 	
 	# only apply mutation if not last generation
 	if(g < N_GEN - 1):
 		# APPLY MUTATION AND CROSSOVER
 		# both crossover and mutation are inplace operations
-		apply_mutation(pop, toolbox, MUTPB)
-		apply_crossover(pop, toolbox, CXPB, N_IN, N_OUT)		
+		apply_mutation(offspring, toolbox, MUTPB)
+		apply_crossover(offspring, toolbox, CXPB, N_IN, N_OUT)		
 		"""
 		for ind in pop:
 			if np.random.uniform() <= MUTPB:
@@ -214,6 +216,7 @@ for g in range(N_GEN):
 				del child1.fitness.values
 				del child2.fitness.values
 		"""
+	pop[:] = offspring
 
 # write archive vectors to csv file
 # write instructions to construct mechanisms to file
