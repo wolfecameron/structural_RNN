@@ -1,26 +1,16 @@
-"""implements the second phase of evolution utilizing the surrogate to assign fitnesses to individuals
-within the population
+"""implements evolution past the 20th generation for pure GA experiment"""
 
-entire file only runs one generation of the evolution so that evolution can be controlled by the
-matlab surrogate code
-"""
-
-import csv
 import os
+import csv
 
-import pickle
 import numpy as np
 
-from circle_RNN import RNN
-from deap_RNN_help import get_mech_and_vec
-from deap_RNN_config import get_tb, MUTPB, N_IN, N_OUT, CXPB, HOLE_SIZE
+from deap_GA_config import get_tb
+from deap_RNN_config import X_BOUND, Y_BOUND, HOLE_SIZE, 
 from deap_RNN_config import FIT_FILE, POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE
-from deap_RNN_config import NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD
-from deap_RNN_config import RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN
-from deap_RNN_config import X_BOUND, Y_BOUND, HOLE_SIZE
-from deap_RNN_help import check_bounding_box, check_intersect_amount, check_conflicting_gear_axis
-from deap_RNN_help import check_useless_gears
-from deap_RNN_evalg import apply_mutation, apply_crossover
+from deap_RNN_help import check_bounding_box, check_intersect_amount, mechanism_from_GA, get_mechanism_vector
+from deap_RNN_help import check_conflicting_gear_axis, check_useless_gears
+import pickle
 
 # initialize the deap toolbox
 tb = get_tb()
@@ -45,10 +35,8 @@ axis_CV = []
 gear_CV = []
 # determine CV for each individual 
 for ind in pop:
-	rnn = RNN(N_IN, ind.h_nodes, N_OUT)
-	output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
-			STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN)	
-	
+	mech = mechanism_from_GA(ind)
+	vec = get_mechanism_vector(mech)	
 	# find all different CV on mechanism
 	CV_bound = check_bounding_box(mech, X_BOUND, Y_BOUND)
 	CV_intersect = check_intersect_amount(mech)
@@ -110,9 +98,8 @@ pop = valid_pop
 # DETERMINE NEXT MECHANISM TO TEST
 # find best valid individual to print next
 best_ind = max(valid_pop, key=lambda x: x.fitness.values[0])
-rnn = RNN(N_IN, best_ind.h_nodes, N_OUT)
-_, best_mech, best_vec = get_mech_and_vec(best_ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
-		STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
+best_mech = mechanism_from_GA(best_ind)
+best_vec = get_mechanism_vector(best_mech)
 # append vector into the file with all archive vectors
 with open(ARCH_FILE, "a") as f:
 	writer = csv.writer(f)
@@ -127,17 +114,23 @@ with open((MECH_FILE + str(counter) + ".txt"), "w") as f:
 		f.write(str(g))
 		f.write("\n")
 
-
 # perform selection on the population to maximize fitness
 offspring = toolbox.select(pop, k=len(pop))
 # clone offspring
 offspring = toolbox.map(toolbox.clone, offspring)
 
 # apply mutation and perform crossover
-apply_mutation(offspring, tb, MUTPB)
-apply_crossover(offspring, tb, CXPB, N_IN, N_OUT)
+for ind in offspring:
+	if np.random.uniform() <= MUTPB:
+		toolbox.mutate(ind)
+		del ind.fitness.values	
 
-# set population equal to result of mutation and crossover
+for child1, child2 in zip(offspring[::2], offspring[1::2]):
+	if np.random.uniform() <= CXPB:
+		toolbox.mate(child1, child2)
+		del child1.fitness.values
+		del child2.fitness.values
+
 pop[:] = offspring
 
 # generate vector for each individual in resulting pop
@@ -145,9 +138,8 @@ pop[:] = offspring
 with open(VEC_FILE, "w") as f:
 	vec_list = []
 	for ind in pop:
-		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
-		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
-				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN)	
+		mech = mechanism_from_GA(ind)
+		vec = get_mechanism_vector(mech)
 		vec_list.append(list(vec))
 	# write vector contents into csv file
 	writer = csv.writer(f)
