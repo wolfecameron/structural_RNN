@@ -5,24 +5,53 @@ from deap import base, tools, algorithms, creator
 
 import numpy as np
 
+from deap_RNN_evals import phase_one_eval
+from deap_RNN_config import X_BOUND, Y_BOUND, HOLE_SIZE
+
+
 # constants used for config
 LEN_GENOME = 6
 POP_SIZE = 50
 WEIGHTS = (1.0,)
+N_GEN = 20
 
 # list of all the possible gear sizes in mechanisms for GA
 GEAR_RADII = [8.0, 12.0, 16.0, 20.0, 24.0, 28.0]
 
 
-# define function for creating an individual in the population
 def create_ind():
+	"""creates a single individual in the population"""
+
 	ind = creator.Individual()
 	# append all sizes of gears to the individual
 	for i in range(LEN_GENOME):
-		ind.append(np.random.choice(GEAR_RADII))
+		gear_rad = np.random.choice(GEAR_RADII)
+		coax = np.random.choice([0, 1, 2])
+		ind.append((gear_rad, coax))
 	# append index for last gear in the system
-	ind.append(np.random.randint(1, LEN_GENOME))
+	ind.append(np.random.randint(1, LEN_GENOME + 1))
 	return ind
+
+def mutate_ind(ind, mutpb):
+	"""mutates an individual in the population"""
+
+	for i in range(LEN_GENOME):
+		# check if this gear in genome should be mutated
+		new_rad = ind[i][0]
+		new_coax = ind[i][1]
+		if(np.random.uniform() <= mutpb):
+			new_rad = np.random.choice(GEAR_RADII)
+		if(np.random.uniform() <= mutpb):
+			new_coax = np.random.choice([0, 1, 2])
+		new_gear = (new_rad, new_coax)
+		ind[i] = new_gear
+
+	
+	# check if length of mechanism should be mutated
+	if(np.random.uniform() <= mutpb):
+		new_len = np.random.randint(1, LEN_GENOME + 1)
+		ind[LEN_GENOME] = new_len
+		
 
 # DEAP CONFIG
 # create types needed for deap
@@ -42,6 +71,16 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual, n=POP
 
 # register all functions needed for evolution in the toolbox
 toolbox.register("mate", tools.cxTwoPoint)
-# TODO: need a custom mutation operator
+toolbox.register("mutate", mutate_ind)
 toolbox.register("select", tools.selTournament, tournsize=3)
-# TODO: NEED EVALUATION
+toolbox.register("evaluate", phase_one_eval)
+
+# evolutionary loop/initialization
+pop = toolbox.population()
+for i in range(N_GEN):
+	print(f"Running Generation {i}")
+
+	
+
+
+def phase_one_eval(mech, mech_vec, other_vecs, x_bound,dd y_bound, hole_size, k=1):
