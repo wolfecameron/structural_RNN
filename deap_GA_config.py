@@ -33,7 +33,7 @@ def create_ind():
 	return ind
 
 def mutate_ind(ind, mutpb):
-	"""mutates an individual in the population"""
+	"""mutates a  n individual in the population"""
 
 	for i in range(LEN_GENOME):
 		# check if this gear in genome should be mutated
