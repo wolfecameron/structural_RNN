@@ -2,6 +2,7 @@
 GA - no RNN involved, used for comparison of effectiveness of RNN approach"""
 
 import os
+from copy import deepcopy
 
 from deap import base, tools, algorithms, creator
 import numpy as np
@@ -10,10 +11,11 @@ import pickle
 from deap_GA_config import get_tb, LEN_GENOME, POP_SIZE, WEIGHTS, N_GEN, MUTPB, CXPB, GEAR_RADII
 from deap_RNN_evals import phase_one_eval
 from deap_RNN_config import X_BOUND, Y_BOUND, HOLE_SIZE, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T
-from deap_RNN_config import DIST_FROM_CENT, INIT_OFFSET, SLOT_HOLE_LEN, SLOT_HOLE_HT
+from deap_RNN_config import DIST_FROM_CENT, INIT_OFFSET, SLOT_HOLE_LEN, SLOT_HOLE_HT, C_DICT
 from deap_RNN_config import POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE
 from deap_GA_help import mechanism_from_GA
-from deap_RNN_help import get_mechanism_vector
+from deap_RNN_help import get_mechanism_vector, gen_openSCAD_beams
+from vis_structs import vis_gears_nonlinear as vis_output
 
 # retrieve toolbox from config file
 toolbox = get_tb()
@@ -24,8 +26,8 @@ ARCHIVE_MATRIX = []
 
 # evolutionary loop/initialization
 pop = toolbox.population()
-for i in range(N_GEN):
-	print(f"Running Generation {i}")
+for g in range(N_GEN):
+	print(f"Running Generation {g}")
 
 	# get vector and mechanism for each individual
 	vecs = []
@@ -72,7 +74,13 @@ for i in range(N_GEN):
 			total_axis_CV.append(fit_tup[3])
 		if(fit_tup[4] > 0.0):
 			total_gear_CV.append(fit_tup[4])
-	
+		
+	# convert all CV lists to np arrays
+	total_bound_CV = np.array(total_bound_CV)
+	total_intersect_CV = np.array(total_intersect_CV)
+	total_axis_CV = np.array(total_axis_CV)
+	total_gear_CV = np.array(total_gear_CV)
+
 	# assign fitness and CV to individuals
 	for ind, fit in zip(pop, fits):
 		ind.fitness.values = fit[0],
@@ -117,14 +125,14 @@ for i in range(N_GEN):
 	# perform selection on the population to maximize fitness
 	offspring = toolbox.select(pop, k=len(pop))
 	# clone offspring
-	offspring = toolbox.map(toolbox.clone, offspring)
+	offspring = list(toolbox.map(toolbox.clone, offspring))
 
 	# perform mutation and crossover
-	if(i < N_GEN - 1):
+	if(g < N_GEN - 1):
 		# MUTATION
 		for ind in offspring:
 			if np.random.uniform() <= MUTPB:
-				toolbox.mutate(ind)
+				toolbox.mutate(ind, MUTPB)
 				del ind.fitness.values	
 
 		for child1, child2 in zip(offspring[::2], offspring[1::2]):

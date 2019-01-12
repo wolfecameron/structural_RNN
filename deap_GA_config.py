@@ -3,7 +3,7 @@
 import os
 
 from deap import base, tools, algorithms, creator
-import numpy as npi
+import numpy as np
 
 from deap_RNN_evals import phase_one_eval
 

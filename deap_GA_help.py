@@ -1,11 +1,14 @@
 """contains all helper functions used in the pure GA evolution"""
 
+from gear import Gear
+
 def mechanism_from_GA(ind):
 	"""create mechanism representation from GA genome"""	
 
 	r = ind[0][0]
 	mechanism = [Gear(r, (r, r, 0), 0)]
-	for index, curr in enumerate(ind[1:]):
+	end_ind = ind[-1]
+	for index, curr in enumerate(ind[1: end_ind]):
 		prev_gear = mechanism[-1]
 
 		# get position for the next gear
