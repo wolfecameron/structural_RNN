@@ -178,7 +178,7 @@ for g in range(N_GEN):
 	# perform selection on the population to maximize fitness
 	offspring = toolbox.select(pop, k=len(pop))
 	# clone offspring
-	offspring = toolbox.map(toolbox.clone, offspring)
+	offspring = list(toolbox.map(deepcopy, offspring))
 	
 	# only apply mutation if not last generation
 	if(g < N_GEN - 1):
