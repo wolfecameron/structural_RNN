@@ -231,7 +231,7 @@ with open(ARCH_FILE, "w") as f:
 		#mech = [Gear(28.0, (28.0, 28.0, 0), 0), Gear(8.0, (64.0, 28.0, 0), 0)]
 		#mech = [Gear(12.0, (12.0, 12.0, 0), 0), Gear(24.0, (48.0, 12.0, 0), 0), Gear(8.0, (80.0, 12.0, 0), 1)]
 		beams = gen_openSCAD_beams(mech, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T, DIST_FROM_CENT, INIT_OFFSET, SLOT_HOLE_LEN, SLOT_HOLE_HT)
-		#print(beams)
+		print(beams)
 		#def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, dist_from_cent):		
 		vis_output(mech, C_DICT)		
 		# write mechanism info for printing to a separate file
