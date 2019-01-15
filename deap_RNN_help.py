@@ -278,7 +278,7 @@ def get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, sto
 
 		# append outputs into list
 		all_outputs.append((gear_type, outs.data[0][num_unique_gears].item(), outs.data[0][num_unique_gears+1].item()))
-	
+
 	return all_outputs
 
 

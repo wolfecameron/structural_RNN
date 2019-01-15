@@ -22,7 +22,6 @@ from deap_RNN_config import POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE, GEAR_DISTS
 from deap_RNN_config import INIT_OFFSET, SLOT_HT, SLOT_T, SLOT_HOLE_LEN, SLOT_HOLE_HT
 from deap_RNN_help import list_to_matrices, inject_weights, get_gear_ratio, create_discrete_mechanism
 from deap_RNN_help import get_mechanism_vector, get_mech_and_vec, gen_openSCAD_beams 
-#def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, dist_from_cent):		
 from deap_RNN_evalg import apply_mutation, apply_crossover
 from deap_RNN_help import get_discrete_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
@@ -61,6 +60,7 @@ for g in range(N_GEN):
 				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
 		all_outputs.append(output)
 		mechanism_list.append(mech)
+		#vis_output(mech, C_DICT)
 		vec_list.append(vec)
 	
 	"""
@@ -244,9 +244,12 @@ with open(ARCH_FILE, "w") as f:
 		while(os.path.isfile(MECH_FILE + str(counter) + ".txt")):
 			counter += 1
 		with open((MECH_FILE + str(counter) + ".txt"), "w") as mech_f:
+			mech_f.write("Mechanism Info:\n")
 			for g in mech:
 				mech_f.write(str(g))
 				mech_f.write("\n")
+			mech_f.write("\nopenSCAD Script:")
+			mech_f.write(beams)
 	# write all archive vectors into file	
 	writer = csv.writer(f)
 	writer.writerows(arch_vecs)	

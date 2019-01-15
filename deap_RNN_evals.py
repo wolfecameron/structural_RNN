@@ -246,7 +246,7 @@ def phase_one_eval(mech, mech_vec, other_vecs, x_bound, y_bound, hole_size, k=1)
 	"""	
 
 	# maximize the gear ratio and novelty
-	nov = find_novelty(mech_vec, other_vecs, k=k)
+	nov = len(mech)*find_novelty(mech_vec, other_vecs, k=k)
 	
 	# find the amount of constraint violation
 	CV_bound = check_bounding_box(mech, x_bound, y_bound)

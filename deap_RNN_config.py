@@ -27,11 +27,11 @@ seed_f.close()
 # constants used for deap configuration
 NUM_UNIQUE_GEARS = 6
 N_IN=NUM_UNIQUE_GEARS + 2
-N_HID=8
+N_HID=12
 N_OUT=N_IN
 weights=(1.0, )
-MUTPB = .3
-CXPB = .15
+MUTPB = .7
+CXPB = .5
 INIT_WINDOW=1.0
 POP_SIZE=50
 N_GEN=20
@@ -63,8 +63,8 @@ OUTPUT_MAX = 1
 # the below constants are used for gear generation
 MAX_GEARS = 6
 MIN_GEARS = 2
-STOP_THRESHOLD = .5
-PLACEMENT_THRESH = .5
+STOP_THRESHOLD = .95
+PLACEMENT_THRESH = .75
 RADIUS_SCALE = 15.0
 CIRCULAR_PITCH = 6.0
 PRESSURE_ANGLE = 28.0
