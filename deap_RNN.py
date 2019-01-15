@@ -164,7 +164,12 @@ for g in range(N_GEN):
 	rnn = RNN(N_IN, ARCHIVE[-1].h_nodes, N_OUT)
 	arch_out, arch_mech, arch_vec = get_mech_and_vec(ARCHIVE[-1], rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
 			STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
-	
+
+	for gear in arch_mech:
+		print(gear)
+	print("\n\n")
+	print(best_ind.CV)
+	vis_output(arch_mech, C_DICT)	
 	"""
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ARCHIVE[-1], N_IN, ARCHIVE[-1].h_nodes, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)

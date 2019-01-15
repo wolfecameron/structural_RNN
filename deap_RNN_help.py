@@ -557,7 +557,9 @@ def get_mechanism_vector(mechanism):
 	
 
 	# construct the vector of items to characterize mechanism
-	vec = np.array([np.mean(x), np.var(x), np.mean(ratios), np.var(ratios), \
+	#vec = np.array([np.mean(x), np.var(x), np.mean(ratios), np.var(ratios), \
+	#				np.mean(r), np.var(r), len(mechanism)])
+	vec = np.array([np.var(x), np.mean(ratios), np.var(ratios), \
 					np.mean(r), np.var(r), len(mechanism)])
 	
 	return vec					
@@ -783,6 +785,12 @@ def eval_useless_gears(mech):
 	# check if an extra coaxial gear is added at end for no reason
 	if(len(mech) > 1 and mech[-1].pos[0] == mech[-2].pos[0]):
 		CV += 1
+	
+	# check if there are any coaxial gears of the same size
+	for first_g, sec_g in zip(mech[:], mech[1:]):
+		if(first_g.radius == sec_g.radius and first_g.pos[2] != sec_g.pos[2]):
+			CV += 1	
+
 	return CV
 
 def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, slot_ht, slot_t, dist_from_cent, init_offset, slot_hole_len, slot_hole_ht):		
