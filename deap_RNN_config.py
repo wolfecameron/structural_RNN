@@ -27,15 +27,15 @@ seed_f.close()
 # constants used for deap configuration
 NUM_UNIQUE_GEARS = 6
 N_IN=NUM_UNIQUE_GEARS + 2
-N_HID=12
+N_HID=10
 N_OUT=N_IN
 weights=(1.0, )
-MUTPB = .7
+MUTPB = .75
 CXPB = .5
 INIT_WINDOW=1.0
-POP_SIZE=50
+POP_SIZE=100
 N_GEN=20
-ACT_EXP = 1.0
+ACT_EXP = .5
 MAX_Y = 1.0
 MAX_X = MAX_Y/2.0
 TOURN_SIZE = 3
