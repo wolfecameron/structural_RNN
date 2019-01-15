@@ -5,6 +5,11 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+# set seed number in numpy for reproducing results
+seed_f = open("seed.txt", "r")
+np.random.seed(int(seed_f.readlines()[0]))
+seed_f.close()
+
 class RNN(nn.Module):
 	"""Implementation of the recurrent neural network"""
 

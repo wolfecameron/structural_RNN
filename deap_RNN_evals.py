@@ -11,6 +11,11 @@ from deap_RNN_help import create_mechanism_representation, get_mechanism_vector
 from deap_RNN_help import find_novelty, check_intersect_amount, check_bounding_box
 from deap_RNN_help import check_conflicting_gear_axis, eval_useless_gears
 
+# set seed number in numpy for reproducing results
+seed_f = open("seed.txt", "r")
+np.random.seed(int(seed_f.readlines()[0]))
+seed_f.close()
+
 def specified_change_eval(position_list):
 	"""evaluates positions in the list based on the closeness
 	of each pair of adjacent points to a desired change in theta

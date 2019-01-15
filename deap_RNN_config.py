@@ -7,6 +7,7 @@ to create circular/spiral structures
 import numpy as np
 from deap import base, tools, algorithms, creator
 from scoop import futures
+import random
 
 from deap_RNN_xover import insertion_xover, exchange_xover
 from deap_RNN_evals import phase_one_eval as eval_single_obj
@@ -15,6 +16,13 @@ from deap_RNN_sel import selNSGA2_cv
 
 """The below contains all of the deap configuration used for CPPN so that it can be
 called and edited from a central location"""
+
+# set seed number in numpy for reproducing results
+seed_f = open("seed.txt", "r")
+seed_val = int(seed_f.readlines()[0])
+np.random.seed(seed_val)
+random.seed(seed_val)
+seed_f.close()
 
 # constants used for deap configuration
 NUM_UNIQUE_GEARS = 6
@@ -110,7 +118,8 @@ toolbox.register("evaluate_single_objective", eval_single_obj)
 toolbox.register("ins_mate", insertion_xover)
 toolbox.register("ex_mate", exchange_xover)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
+toolbox.register("select", tools.selTournament, k=POP_SIZE, tournsize=3)
+#toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", map)
 
 

@@ -3,6 +3,11 @@
 import numpy as np
 from copy import deepcopy
 
+# set seed number in numpy for reproducing results
+seed_f = open("seed.txt", "r")
+np.random.seed(int(seed_f.readlines()[0]))
+seed_f.close()
+
 def insertion_xover(ind1, ind2):
 	"""performs insertion crossover between two sets of weights, where
 	a given portion of weights is exchanged between the two lists

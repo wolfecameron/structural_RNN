@@ -27,6 +27,11 @@ from deap_RNN_evalg import apply_mutation, apply_crossover
 from deap_RNN_help import get_discrete_gear_mechanism as get_output
 from vis_structs import vis_gears_nonlinear as vis_output
 
+# set seed number in numpy for reproducing results
+seed_f = open("seed.txt", "r")
+np.random.seed(int(seed_f.readlines()[0]))
+seed_f.close()
+
 # import toolbox from config file
 toolbox = get_tb()
 

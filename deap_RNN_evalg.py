@@ -2,6 +2,11 @@
 
 import numpy as np
 
+# set seed number in numpy for reproducing results
+seed_f = open("seed.txt", "r")
+np.random.seed(int(seed_f.readlines()[0]))
+seed_f.close()
+
 def apply_mutation(pop, tb, mutpb):
 	"""applies mutations to the population
 	
