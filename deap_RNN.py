@@ -165,11 +165,6 @@ for g in range(N_GEN):
 	arch_out, arch_mech, arch_vec = get_mech_and_vec(ARCHIVE[-1], rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
 			STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
 
-	for gear in arch_mech:
-		print(gear)
-	print("\n\n")
-	print(best_ind.CV)
-	vis_output(arch_mech, C_DICT)	
 	"""
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ARCHIVE[-1], N_IN, ARCHIVE[-1].h_nodes, N_OUT)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
@@ -241,7 +236,6 @@ with open(ARCH_FILE, "w") as f:
 		#mech = [Gear(28.0, (28.0, 28.0, 0), 0), Gear(8.0, (64.0, 28.0, 0), 0)]
 		#mech = [Gear(12.0, (12.0, 12.0, 0), 0), Gear(24.0, (48.0, 12.0, 0), 0), Gear(8.0, (80.0, 12.0, 0), 1)]
 		beams = gen_openSCAD_beams(mech, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T, DIST_FROM_CENT, INIT_OFFSET, SLOT_HOLE_LEN, SLOT_HOLE_HT)
-		print(beams)
 		#def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, dist_from_cent):		
 		vis_output(mech, C_DICT)		
 		# write mechanism info for printing to a separate file
@@ -253,7 +247,7 @@ with open(ARCH_FILE, "w") as f:
 			for g in mech:
 				mech_f.write(str(g))
 				mech_f.write("\n")
-			mech_f.write("\nopenSCAD Script:")
+			mech_f.write("\nopenSCAD Script:\n")
 			mech_f.write(beams)
 	# write all archive vectors into file	
 	writer = csv.writer(f)
