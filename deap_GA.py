@@ -3,6 +3,7 @@ GA - no RNN involved, used for comparison of effectiveness of RNN approach"""
 
 import os
 from copy import deepcopy
+import csv
 
 from deap import base, tools, algorithms, creator
 import numpy as np
@@ -16,6 +17,11 @@ from deap_RNN_config import POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE
 from deap_GA_help import mechanism_from_GA
 from deap_RNN_help import get_mechanism_vector, gen_openSCAD_beams
 from vis_structs import vis_gears_nonlinear as vis_output
+
+# set seed number in numpy for reproducing results
+seed_f = open("seed.txt", "r")
+np.random.seed(int(seed_f.readlines()[0]))
+seed_f.close()
 
 # retrieve toolbox from config file
 toolbox = get_tb()
@@ -178,7 +184,7 @@ with open(VEC_FILE, "w") as f:
 		pop_vecs.append(vec)
 	# write vector contents into csv file
 	writer = csv.writer(f)
-	writer.writerows(vec_list)
+	writer.writerows(pop_vecs)
 	
 
 # pickle the population to be read during next evolution

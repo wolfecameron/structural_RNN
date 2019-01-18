@@ -1,19 +1,27 @@
 """contains all deap config for the pure GA experiment"""
 
 import os
+import random
 
 from deap import base, tools, algorithms, creator
 import numpy as np
 
 from deap_RNN_evals import phase_one_eval
 
+# set seed number in numpy for reproducing results
+seed_f = open("seed.txt", "r")
+seed_val = int(seed_f.readlines()[0])
+np.random.seed(seed_val)
+random.seed(seed_val)
+seed_f.close()
+
 # constants used for config
 LEN_GENOME = 6
-POP_SIZE = 50
+POP_SIZE = 150
 WEIGHTS = (1.0,)
 N_GEN = 20
-MUTPB = .3
-CXPB = .15
+MUTPB = .8
+CXPB = .4
 
 # list of all the possible gear sizes in mechanisms for GA
 GEAR_RADII = [8.0, 12.0, 16.0, 20.0, 24.0, 28.0]
@@ -29,7 +37,7 @@ def create_ind():
 		coax = np.random.choice([0, 1, 2])
 		ind.append((gear_rad, coax))
 	# append index for last gear in the system
-	ind.append(np.random.randint(1, LEN_GENOME + 1))
+	ind.append(np.random.randint(2, LEN_GENOME + 1))
 	return ind
 
 def mutate_ind(ind, mutpb):
@@ -49,7 +57,7 @@ def mutate_ind(ind, mutpb):
 	
 	# check if length of mechanism should be mutated
 	if(np.random.uniform() <= mutpb):
-		new_len = np.random.randint(1, LEN_GENOME + 1)
+		new_len = np.random.randint(2, LEN_GENOME + 1)
 		ind[LEN_GENOME] = new_len
 		
 

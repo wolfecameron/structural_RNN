@@ -12,13 +12,13 @@ def mechanism_from_GA(ind):
 		prev_gear = mechanism[-1]
 
 		# get position for the next gear
-		new_pos = (prev_gear.radius + curr[0], prev_gear.pos[1], prev_gear.pos[2])
+		new_pos = (prev_gear.pos[0] + prev_gear.radius + curr[0], prev_gear.pos[1], prev_gear.pos[2])
 		if(curr[1] == 2):
 			new_pos = (prev_gear.pos[0], prev_gear.pos[1], prev_gear.pos[2] + 1)
 		elif(curr[1] == 0):
 			new_pos = (prev_gear.pos[0], prev_gear.pos[1], prev_gear.pos[2] - 1)
 		mechanism.append(Gear(curr[0], new_pos, len(mechanism) - 1))
 		prev_gear.next_gears.append(index + 1)
-
+	
 	return mechanism	
 
