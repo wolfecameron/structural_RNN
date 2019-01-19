@@ -48,13 +48,13 @@ pop = []
 archive = sorted(archive, key=lambda x: x.fitness.values, reverse=True)
 pop.extend(archive[:3])
 index_one = np.random.randint(3, 12)
-pop.append(archive[index_one])
+pop.append(archive[index])
 index_two = np.random.randint(3, 12)
 while(index_two == index_one):
 	index_two = np.random.randint(3, 12)
-pop.append(archive[index_two])
+pop.append(archive[index])
 index_three = np.random.randint(12, 20)
-pop.append(archive[index_three])
+pop.append(archive[index])
 
 for ind in pop:
 	print(ind.fitness.values)
