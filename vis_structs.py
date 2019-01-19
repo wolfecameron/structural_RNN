@@ -144,13 +144,14 @@ def vis_gears_nonlinear(mechanism, c_dict):
 		ax.add_artist(c)
 	
 	# find bounds for creating the window of the visualization
+	padding = 5.0
 	max_radius = max([x.radius for x in mechanism])
 	max_x = max([abs(x.pos[0]) for x in mechanism])
-	max_y = max([abs(x.pos[1]) for x in mechanism])
-	x_lim = 1.1*(max_radius + max_x) # scale up a bit to give extra space
-	y_lim = 1.1*(max_radius + max_y)
-	ax.set_xlim((-x_lim, x_lim))
-	ax.set_ylim((-y_lim, y_lim))
+	x_lim = (max_radius + max_x) # scale up a bit to give extra space
+	y_lim_lower = (mechanism[0].radius - max_radius) - padding
+	y_lim_upper = (mechanism[0].radius + max_radius) + padding
+	ax.set_xlim((-padding, x_lim + padding))
+	ax.set_ylim((y_lim_lower, y_lim_upper))
 
 	plt.show()
 	
