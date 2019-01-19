@@ -144,8 +144,8 @@ for g in range(5):
 	valid_pop.extend(invalid_pop)
 	pop = valid_pop 
 
-	# perform selection on the population to maximize fitness
-	offspring = tb.select(pop, k=len(pop))
+	# perform binary selection on the population to maximize fitness
+	offspring = tb.select_ptwo(pop)
 	# clone offspring
 	offspring = list(tb.map(tb.clone, offspring))
 

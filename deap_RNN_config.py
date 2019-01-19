@@ -36,6 +36,7 @@ MUTPB_DIST = .3
 CXPB_DIST = .15
 INIT_WINDOW=1.0
 POP_SIZE=150
+POP_SIZE_PTWO=6
 N_GEN=20
 ACT_EXP = .5
 MAX_Y = 1.0
@@ -120,7 +121,11 @@ toolbox.register("evaluate_single_objective", eval_single_obj)
 toolbox.register("ins_mate", insertion_xover)
 toolbox.register("ex_mate", exchange_xover)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-toolbox.register("select", tools.selTournament, k=POP_SIZE, tournsize=3)
+toolbox.register("select", tools.selTournament, k=POP_SIZE, tournsize=2)
+toolbox.register("select_ptwo", tools.selTournament, k=POP_SIZE_PTWO, tournsize=2)
+#toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
+toolbox.register("map", map)
+
 #toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", map)
 
