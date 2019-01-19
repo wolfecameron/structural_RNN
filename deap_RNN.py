@@ -252,24 +252,11 @@ with open(ARCH_FILE, "w") as f:
 	# write all archive vectors into file	
 	writer = csv.writer(f)
 	writer.writerows(arch_vecs)	
-
-
-# generate vectors for the population and write to csv file
-with open(VEC_FILE, "w") as f:
-	pop_vecs = []
-	for ind in pop:
-		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
-		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
-				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
-		pop_vecs.append(vec)
-	# write vector contents into csv file
-	writer = csv.writer(f)
-	writer.writerows(vec_list)
 	
 
 # pickle the population to be read during next evolution
 with open(POP_FILE, "wb") as f:	
-	pickle.dump(pop, f)
+	pickle.dump(ARCHIVE, f)
 
 """
 # contains tuples of individuals and their associated fitness
