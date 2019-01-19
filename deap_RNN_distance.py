@@ -12,17 +12,17 @@ import numpy as np
 
 from circle_RNN import RNN
 from deap_RNN_help import get_mech_and_vec
-from deap_RNN_config import get_tb, MUTPB, N_IN, N_OUT, CXPB, HOLE_SIZE
+from deap_RNN_config import get_tb, MUTPB_DIST, N_IN, N_OUT, CXPB_DIST, HOLE_SIZE
 from deap_RNN_config import FIT_FILE, POP_FILE, VEC_FILE, ARCH_FILE, MECH_FILE
 from deap_RNN_config import NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, STOP_THRESHOLD
 from deap_RNN_config import RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN
 from deap_RNN_config import X_BOUND, Y_BOUND, HOLE_SIZE, GEAR_DISTS,  HOLE_R, SLOT_LEN, SLOT_HT
 from deap_RNN_config import SLOT_T, DIST_FROM_CENT, INIT_OFFSET, SLOT_HOLE_LEN, SLOT_HOLE_HT
 from deap_RNN_help import check_bounding_box, check_intersect_amount, check_conflicting_gear_axis
-from deap_RNN_help import eval_useless_gears
+from deap_RNN_help import eval_useless_gears, gen_openSCAD_beams
 from deap_RNN_evalg import apply_mutation, apply_crossover
 
-# initialize the deap toolbox
+# initialize the deap tb
 tb = get_tb()
 
 # set seed number in numpy for reproducing results
@@ -56,15 +56,11 @@ pop.append(archive[index_two])
 index_three = np.random.randint(12, 20)
 pop.append(archive[index_three])
 
-for ind in pop:
-	print(ind.fitness.values)
-input()
-
 
 # write fitnesses from archive into the fitness file to begin evolution
 with open(FIT_FILE, "w") as f:
 	for ind in pop:
-		f.write(ind.fitness.values[0])
+		f.write(str(ind.fitness.values[0]))
 		f.write("\n")
 
 # evolve smaller pop directly for 5 generation
@@ -74,8 +70,9 @@ for g in range(5):
 		fits = f.readlines()
 		for fit, ind in zip(fits, pop):
 			fit = float(fit)
+			print(fit)
 			ind.fitness.values = fit,
-
+	input()
 	# use to find averages of all CV values
 	fits = []
 	bound_CV = []
@@ -93,8 +90,8 @@ for g in range(5):
 		CV_intersect = check_intersect_amount(mech)
 		CV_axis = check_conflicting_gear_axis(mech, HOLE_SIZE)
 		CV_gear = eval_useless_gears(mech)	
-		fits.append((ind.fitness.values[0], CV_bound, CV_intersect, CV_axis))
-		
+		fits.append((ind.fitness.values[0], CV_bound, CV_intersect, CV_axis, CV_gear))
+
 		# append CV values into list to find averages
 		if(CV_bound > 0.0):
 			bound_CV.append(CV_bound)
@@ -114,6 +111,7 @@ for g in range(5):
 	# normalize CV values for each ind
 	for ind, fit in zip(pop, fits):
 		ind.fitness.values = fit[0],
+		
 		# CV should be the normalized sum of the constraint types
 		# must ensure any divide by zero is avoided
 		total_bound_cv = 0.0 if bound_CV.shape[0] == 0 else \
@@ -147,13 +145,13 @@ for g in range(5):
 	pop = valid_pop 
 
 	# perform selection on the population to maximize fitness
-	offspring = toolbox.select(pop, k=len(pop))
+	offspring = tb.select(pop, k=len(pop))
 	# clone offspring
-	offspring = toolbox.map(toolbox.clone, offspring)
+	offspring = list(tb.map(tb.clone, offspring))
 
 	# apply mutation and perform crossover
-	apply_mutation(offspring, tb, MUTPB)
-	apply_crossover(offspring, tb, CXPB, N_IN, N_OUT)
+	apply_mutation(offspring, tb, MUTPB_DIST)
+	apply_crossover(offspring, tb, CXPB_DIST, N_IN, N_OUT)
 
 	# set population equal to result of mutation and crossover
 	pop[:] = offspring
@@ -179,10 +177,10 @@ for g in range(5):
 		with open((MECH_FILE + str(i) + ".txt"), "w") as f:
 			if(CV_bound > 0 or CV_intersect > 0 or CV_axis > 0 or CV_gear > 0):
 				f.write("***** MECHANISM INVALID *****\n")
-			for g in best_mech:
+			for g in mech:
 				f.write(str(g))
 				f.write("\n")
 			f.write("\n\nopenSCAD script:\n")
 			f.write(beams)
 
-	input("Populate the fit file with all fitnesses, then press enter.")
+	input(f"Populate the fit file with {len(pop)} fitnesses, then press enter.")
