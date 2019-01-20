@@ -42,9 +42,10 @@ with open(FIT_FILE, "r") as f:
 		fit = float(fit)
 		ind.fitness.values = fit,
 
-# take 6 individuals from archive to form smaller population
+# take 10 individuals from archive to form smaller population
 # take best 3 individuals, 2 from upper remaining half, 1 from lower remaining half
-pop = []
+pop = [:10]
+"""
 archive = sorted(archive, key=lambda x: x.fitness.values, reverse=True)
 pop.extend(archive[:3])
 index_one = np.random.randint(3, 12)
@@ -55,7 +56,7 @@ while(index_two == index_one):
 pop.append(archive[index_two])
 index_three = np.random.randint(12, 20)
 pop.append(archive[index_three])
-
+"""
 
 # write fitnesses from archive into the fitness file to begin evolution
 with open(FIT_FILE, "w") as f:
@@ -145,7 +146,7 @@ for g in range(5):
 	pop = valid_pop 
 
 	# perform binary selection on the population to maximize fitness
-	offspring = tb.select_ptwo(pop)
+	offspring = tb.select_ptwo(pop, k=len(pop))
 	# clone offspring
 	offspring = list(tb.map(tb.clone, offspring))
 

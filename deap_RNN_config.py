@@ -46,7 +46,7 @@ GEAR_RADII = [8.0, 12.0, 16.0, 20.0, 24.0, 28.0]
 
 # 20 24, 8 20, 
 # constants for creating slot inserts for gears
-GEAR_DISTS = {(8.0, 8.0): 13.0, (8.0, 12.0): 16.0, (8.0, 16.0): 20.0, (8.0, 20.0): 24.0, (8.0,24.0): 28.5, (8.0, 28.0): 33.0\
+GEAR_DISTS = {(8.0, 8.0): 13.0, (8.0, 12.0): 16.0, (8.0, 16.0): 20.0, (8.0, 20.0): 24.0, (8.0,24.0): 28.5, (8.0, 28.0): 32.0\
 				,(12.0, 12.0): 20.0, (12.0, 16.0): 25.0, (12.0, 20.0): 29.0, (12.0, 24.0): 32.0, (12.0, 28.0): 37.0\
 				,(16.0, 16.0): 29.0, (16.0, 20.0): 32.0, (16.0, 24.0): 37.0, (16.0, 28.0): 40.5, (20.0, 20.0): 37.0\
 				,(20.0, 24.0): 40.5, (20.0, 28.0): 45.0, (24.0, 24.0): 45.0, (24.0, 28.0): 49.0, (28.0, 28.0): 53.0}
@@ -101,7 +101,7 @@ TOTAL_WEIGHTS=(N_IN + N_HID)*N_HID + (N_HID*N_OUT) + N_HID + N_OUT
 
 # create types needed for deap
 creator.create("FitnessMulti", base.Fitness, weights=weights)
-creator.create("Individual", list, fitness=creator.FitnessMulti, CV=0.0, h_nodes=-1)
+creator.create("Individual", list, fitness=creator.FitnessMulti, CV=0.0, h_nodes=N_HID)
 
 # initialize the toolbox
 toolbox = base.Toolbox()
@@ -121,7 +121,7 @@ toolbox.register("evaluate_single_objective", eval_single_obj)
 toolbox.register("ins_mate", insertion_xover)
 toolbox.register("ex_mate", exchange_xover)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
-toolbox.register("select", tools.selTournament, k=POP_SIZE, tournsize=2)
+toolbox.register("select", tools.selTournament, k=POP_SIZE, tournsize=3)
 toolbox.register("select_ptwo", tools.selTournament, k=POP_SIZE_PTWO, tournsize=2)
 #toolbox.register("select", tools.selNSGA2, k=POP_SIZE)
 toolbox.register("map", map)
