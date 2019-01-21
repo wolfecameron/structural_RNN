@@ -19,7 +19,7 @@ seed_f.close()
 LEN_GENOME = 6
 POP_SIZE = 150
 WEIGHTS = (1.0,)
-N_GEN = 20
+N_GEN = 40
 MUTPB = .8
 CXPB = .4
 
