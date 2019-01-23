@@ -1,10 +1,7 @@
-Mechanism Info:
 (r: 12.0, pos: (12.0, 12.0, 0))
 (r: 8.0, pos: (32.0, 12.0, 0))
-(r: 12.0, pos: (32.0, 12.0, -1))
-(r: 12.0, pos: (56.0, 12.0, -1))
+(r: 8.0, pos: (48.0, 12.0, 0))
 
-openSCAD Script:
 difference(){
 union(){
 translate([1.5, 0, 0])cube([90, 3.5, 1.0]);
@@ -12,6 +9,5 @@ translate([0.0, 0, 0])cube([93.0, 1.5, 1.0]);
 }
 translate([9.5, 0, -1])cylinder(10, 1.75, 1.75, $fn=20);
 translate([25.5, 0, -1])cylinder(10, 1.75, 1.75, $fn=20);
-translate([25.5, 0, -1])cylinder(10, 1.75, 1.75, $fn=20);
-translate([45.5, 0, -1])cylinder(10, 1.75, 1.75, $fn=20);
+translate([38.5, 0, -1])cylinder(10, 1.75, 1.75, $fn=20);
 }
