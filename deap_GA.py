@@ -153,13 +153,14 @@ for g in range(N_GEN):
 # write instructions to construct mechanisms to file
 with open(ARCH_FILE, "w") as f:
 	arch_vecs = []
-	for ind in ARCHIVE:
+	for i, ind in enumerate(ARCHIVE):
 		# find vector and mechanism representation
 		mech = mechanism_from_GA(ind)
 		vec = get_mechanism_vector(mech)
 		arch_vecs.append(vec)
 		beams = gen_openSCAD_beams(mech, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T, DIST_FROM_CENT, INIT_OFFSET, SLOT_HOLE_LEN, SLOT_HOLE_HT)
-		#vis_output(mech, C_DICT)		
+		if(i > -1):
+			vis_output(mech, C_DICT)		
 		# write mechanism info for printing to a separate file
 		counter = 0
 		while(os.path.isfile(MECH_FILE + str(counter) + ".txt")):
