@@ -227,17 +227,23 @@ for g in range(N_GEN):
 # write instructions to construct mechanisms to file
 with open(ARCH_FILE, "w") as f:
 	arch_vecs = []
+	important_mech = 0
 	for i, ind in enumerate(ARCHIVE):
 		# find vector and mechanism representation
 		rnn = RNN(N_IN, ind.h_nodes, N_OUT)
-		output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
-				STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
+		# get verbose output from mechanism in question
+		if(i == important_mech):
+			output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+					STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN, verbose=True) 	
+		else:
+			output, mech, vec = get_mech_and_vec(ind, rnn, N_IN, N_OUT, NUM_UNIQUE_GEARS, MAX_GEARS, MIN_GEARS, \
+					STOP_THRESHOLD, RADIUS_SCALE, ACT_EXP, PLACEMENT_THRESH, GEAR_RADII, OUTPUT_MIN) 
 		arch_vecs.append(vec)
 		#mech = [Gear(28.0, (28.0, 28.0, 0), 0), Gear(8.0, (64.0, 28.0, 0), 0)]
 		#mech = [Gear(12.0, (12.0, 12.0, 0), 0), Gear(24.0, (48.0, 12.0, 0), 0), Gear(8.0, (80.0, 12.0, 0), 1)]
 		beams = gen_openSCAD_beams(mech, GEAR_DISTS, HOLE_R, SLOT_LEN, SLOT_HT, SLOT_T, DIST_FROM_CENT, INIT_OFFSET, SLOT_HOLE_LEN, SLOT_HOLE_HT)
 		#def gen_openSCAD_beams(mech, gear_dists, hole_r, slot_len, dist_from_cent):		
-		if(i > -1):
+		if(i == important_mech):
 			vis_output(mech, C_DICT)		
 		# write mechanism info for printing to a separate file
 		counter = 0

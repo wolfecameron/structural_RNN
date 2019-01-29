@@ -250,7 +250,8 @@ def get_gear_mechanism(rnn, max_gears, min_gears, stop_thresh, rad_scale, act_ex
 	return all_outputs
 
 
-def get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, stop_thresh, rad_scale, act_exp, pos_thresh, hidden_input):
+def get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, stop_thresh, 
+		rad_scale, act_exp, pos_thresh, hidden_input, verbose=False):
 	"""generates output of RNN to create a gear mechanism, first n outputs of each time step
 	represent the probability of each discrete type of gear being present, the one with the highest
 	probability is the radius of gear that is present at that time step, there are also two other outputs,
@@ -269,6 +270,13 @@ def get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, sto
 	while((len(all_outputs) < min_gears) or (len(all_outputs) < max_gears and stop < stop_thresh)):
 		# run next forward propogation
 		outs, hidden = rnn.forward_softmax(rnn_input, hidden, num_unique_gears, act_exp)
+		
+		# print out hidden state and outputs if verbose
+		if verbose:
+			print(f"Hidden State: {hidden}")
+			print(f"Output State: {outs}")
+			input()
+
 		# output of this step becomes input for next step
 		rnn_input = outs
 		stop = outs.data[0][num_unique_gears+1].item()	
@@ -748,7 +756,7 @@ def get_3DP_layout(mechanism, bed_width, padding_ratio):
 	return (mechanism, og_mech)
 		
 def get_mech_and_vec(ind, rnn, num_in, num_out, num_unique_gears, max_gears, min_gears, stop_threshold,
-		radius_scale, act_exp, placement_thresh, gear_radii, output_min):
+		radius_scale, act_exp, placement_thresh, gear_radii, output_min, verbose=False):
 	"""takes in a set of weights, uses it to activate and rnn and returns the
 	outputs, mechanism, and vector for that set of weights"""
 
@@ -756,7 +764,7 @@ def get_mech_and_vec(ind, rnn, num_in, num_out, num_unique_gears, max_gears, min
 	w1, w1_bias, w2, w2_bias = list_to_matrices(ind, num_in, ind.h_nodes, num_out)
 	rnn = inject_weights(rnn, w1, w1_bias, w2, w2_bias)
 	output = get_discrete_gear_mechanism(rnn, num_unique_gears, max_gears, min_gears, stop_threshold, \
-				radius_scale, act_exp, placement_thresh, 'one')
+				radius_scale, act_exp, placement_thresh, 'one', verbose=verbose)
 	
 	# generate vector and mechanism representation for rnn output
 	mech = create_discrete_mechanism(output, gear_radii, placement_thresh, output_min)
