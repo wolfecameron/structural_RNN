@@ -148,6 +148,11 @@ for g in range(N_GEN):
 	valid_pop = [i for i in pop if i.CV <= 0.0]
 	invalid_pop = [i for i in pop if i.CV > 0.0]
 	lowest_valid = min(valid_pop, key=lambda x: x.fitness.values[0]).fitness.values[0]
+	
+	if g > 38:
+		print(len(invalid_pop))
+		input()
+
 	# change all fitnesses of invalid pop to be lower than lowest valid fit
 	# subtract CV from the lowest valid fitness - creates gradient even for invalid
 	for i in invalid_pop:
